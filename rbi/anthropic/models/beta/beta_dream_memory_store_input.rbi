@@ -14,6 +14,10 @@ module Anthropic
             )
           end
 
+        # The ID of the memory store for the dream to read (`memstore_...`).
+        #
+        # The memory store must be in the same workspace as the dream and must not be
+        # archived.
         sig { returns(String) }
         attr_accessor :memory_store_id
 
@@ -31,7 +35,14 @@ module Anthropic
             type: Anthropic::Beta::BetaDreamMemoryStoreInput::Type::OrSymbol
           ).returns(T.attached_class)
         end
-        def self.new(memory_store_id:, type:)
+        def self.new(
+          # The ID of the memory store for the dream to read (`memstore_...`).
+          #
+          # The memory store must be in the same workspace as the dream and must not be
+          # archived.
+          memory_store_id:,
+          type:
+        )
         end
 
         sig do

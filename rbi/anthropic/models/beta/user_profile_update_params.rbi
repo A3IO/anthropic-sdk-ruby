@@ -15,6 +15,7 @@ module Anthropic
             )
           end
 
+        # The ID of the user profile to update (`uprof_...`).
         sig { returns(String) }
         attr_accessor :user_profile_id
 
@@ -128,6 +129,7 @@ module Anthropic
           ).returns(T.attached_class)
         end
         def self.new(
+          # The ID of the user profile to update (`uprof_...`).
           user_profile_id:,
           # How the platform uses the API on behalf of the entity this profile represents.
           # `application`: the platform sells a product that uses the API behind the scenes,
@@ -209,11 +211,14 @@ module Anthropic
             end
           OrSymbol = T.type_alias { T.any(Symbol, String) }
 
+          # The user profile represents an individual end-user of a product that the platform builds on the API. New profiles get this value by default.
           APPLICATION =
             T.let(
               :application,
               Anthropic::Beta::UserProfileUpdateParams::AccessType::TaggedSymbol
             )
+
+          # The user profile represents a company that the platform resells Claude access to.
           PASSTHROUGH =
             T.let(
               :passthrough,

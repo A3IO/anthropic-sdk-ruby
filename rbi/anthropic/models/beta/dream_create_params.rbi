@@ -15,6 +15,8 @@ module Anthropic
             )
           end
 
+        # The memory store and sessions for the dream to read, as exactly one
+        # `memory_store` entry and exactly one `sessions` entry.
         sig do
           returns(
             T::Array[
@@ -27,14 +29,30 @@ module Anthropic
         end
         attr_accessor :inputs
 
+        # The model that runs a dream, given as a model ID or as an object with `id` and
+        # `speed`.
+        #
+        # In the object form, `speed` can only be `standard`.
+        #
+        # The
+        # [limits table in the Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#limits)
+        # lists the supported models.
         sig do
           returns(T.any(Anthropic::Beta::BetaDreamModelConfigParam, String))
         end
         attr_accessor :model
 
+        # Guidance that steers how the dream reads the sessions and organizes the output
+        # memory store, from 1 to 4,096 characters.
+        #
+        # See the
+        # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#steer-with-instructions)
+        # for what kinds of instructions work well.
         sig { returns(T.nilable(String)) }
         attr_accessor :instructions
 
+        # Which memory store a dream writes its result to. Defaults to `create_new` when
+        # left out of a create request.
         sig do
           returns(
             T.nilable(
@@ -110,9 +128,27 @@ module Anthropic
           ).returns(T.attached_class)
         end
         def self.new(
+          # The memory store and sessions for the dream to read, as exactly one
+          # `memory_store` entry and exactly one `sessions` entry.
           inputs:,
+          # The model that runs a dream, given as a model ID or as an object with `id` and
+          # `speed`.
+          #
+          # In the object form, `speed` can only be `standard`.
+          #
+          # The
+          # [limits table in the Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#limits)
+          # lists the supported models.
           model:,
+          # Guidance that steers how the dream reads the sessions and organizes the output
+          # memory store, from 1 to 4,096 characters.
+          #
+          # See the
+          # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#steer-with-instructions)
+          # for what kinds of instructions work well.
           instructions: nil,
+          # Which memory store a dream writes its result to. Defaults to `create_new` when
+          # left out of a create request.
           output_behavior: nil,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -154,6 +190,14 @@ module Anthropic
         def to_hash
         end
 
+        # The model that runs a dream, given as a model ID or as an object with `id` and
+        # `speed`.
+        #
+        # In the object form, `speed` can only be `standard`.
+        #
+        # The
+        # [limits table in the Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#limits)
+        # lists the supported models.
         module Model
           extend Anthropic::Internal::Type::Union
 

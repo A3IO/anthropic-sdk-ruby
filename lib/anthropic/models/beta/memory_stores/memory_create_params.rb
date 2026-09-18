@@ -10,6 +10,7 @@ module Anthropic
           include Anthropic::Internal::Type::RequestParameters
 
           # @!attribute memory_store_id
+          #   The ID of the memory store to create the memory in (`memstore_...`).
           #
           #   @return [String]
           required :memory_store_id, String
@@ -62,7 +63,7 @@ module Anthropic
           #   Some parameter documentations has been truncated, see
           #   {Anthropic::Models::Beta::MemoryStores::MemoryCreateParams} for more details.
           #
-          #   @param memory_store_id [String]
+          #   @param memory_store_id [String] The ID of the memory store to create the memory in (`memstore_...`).
           #
           #   @param content [String, nil] UTF-8 text content for the new memory. Maximum 100 kB (102,400 bytes). Required;
           #

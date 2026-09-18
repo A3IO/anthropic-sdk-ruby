@@ -156,16 +156,21 @@ module Anthropic
             end
           OrSymbol = T.type_alias { T.any(Symbol, String) }
 
+          # The platform has neither restricted nor barred the account of the entity that the user profile represents.
           ACTIVE =
             T.let(
               :active,
               Anthropic::Beta::BetaUserProfileExternalUserDetailsParams::AccountStatus::TaggedSymbol
             )
+
+          # The platform has restricted the account of the entity that the user profile represents and may restore it.
           SUSPENDED =
             T.let(
               :suspended,
               Anthropic::Beta::BetaUserProfileExternalUserDetailsParams::AccountStatus::TaggedSymbol
             )
+
+          # The platform has barred the account of the entity that the user profile represents.
           BLOCKED =
             T.let(
               :blocked,

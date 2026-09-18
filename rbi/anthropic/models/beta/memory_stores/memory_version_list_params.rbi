@@ -16,9 +16,11 @@ module Anthropic
               )
             end
 
+          # The ID of the memory store whose version history to list (`memstore_...`).
           sig { returns(String) }
           attr_accessor :memory_store_id
 
+          # Return only versions written with the API key that has this ID.
           sig { returns(T.nilable(String)) }
           attr_reader :api_key_id
 
@@ -39,20 +41,24 @@ module Anthropic
           sig { params(created_at_lte: Time).void }
           attr_writer :created_at_lte
 
+          # The maximum number of versions to return per page. Defaults to 20.
           sig { returns(T.nilable(Integer)) }
           attr_reader :limit
 
           sig { params(limit: Integer).void }
           attr_writer :limit
 
+          # Return only versions of the memory with this ID (`mem_...`).
+          #
+          # The filter still works after the memory is deleted. The results then include the
+          # version whose `operation` is `deleted`.
           sig { returns(T.nilable(String)) }
           attr_reader :memory_id
 
           sig { params(memory_id: String).void }
           attr_writer :memory_id
 
-          # The kind of mutation a `memory_version` records. Every non-no-op mutation to a
-          # memory appends exactly one version row with one of these values.
+          # Return only versions that record this kind of change.
           sig do
             returns(
               T.nilable(
@@ -70,18 +76,22 @@ module Anthropic
           end
           attr_writer :operation
 
+          # The `next_page` value from a previous response, to get the next page. Omit it to
+          # get the first page.
           sig { returns(T.nilable(String)) }
           attr_reader :page
 
           sig { params(page: String).void }
           attr_writer :page
 
+          # Return only versions written by the service account with this ID (`svac_...`).
           sig { returns(T.nilable(String)) }
           attr_reader :service_account_id
 
           sig { params(service_account_id: String).void }
           attr_writer :service_account_id
 
+          # Return only versions written by the session with this ID.
           sig { returns(T.nilable(String)) }
           attr_reader :session_id
 
@@ -161,19 +171,29 @@ module Anthropic
             ).returns(T.attached_class)
           end
           def self.new(
+            # The ID of the memory store whose version history to list (`memstore_...`).
             memory_store_id:,
+            # Return only versions written with the API key that has this ID.
             api_key_id: nil,
             # Return versions created at or after this time (inclusive).
             created_at_gte: nil,
             # Return versions created at or before this time (inclusive).
             created_at_lte: nil,
+            # The maximum number of versions to return per page. Defaults to 20.
             limit: nil,
+            # Return only versions of the memory with this ID (`mem_...`).
+            #
+            # The filter still works after the memory is deleted. The results then include the
+            # version whose `operation` is `deleted`.
             memory_id: nil,
-            # The kind of mutation a `memory_version` records. Every non-no-op mutation to a
-            # memory appends exactly one version row with one of these values.
+            # Return only versions that record this kind of change.
             operation: nil,
+            # The `next_page` value from a previous response, to get the next page. Omit it to
+            # get the first page.
             page: nil,
+            # Return only versions written by the service account with this ID (`svac_...`).
             service_account_id: nil,
+            # Return only versions written by the session with this ID.
             session_id: nil,
             # Selects which projection of a `memory` or `memory_version` the server returns.
             # `basic` returns the object with `content` set to `null`; `full` populates

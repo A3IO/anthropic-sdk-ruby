@@ -11,6 +11,9 @@ module Anthropic
         required :status, enum: -> { Anthropic::Beta::BetaUserProfileTrustGrant::Status }
 
         # @!method initialize(status:)
+        #   The status of one trust grant on a user profile, listed in the profile's
+        #   `trust_grants` map under the grant's name.
+        #
         #   @param status [Symbol, Anthropic::Models::Beta::BetaUserProfileTrustGrant::Status] Status of the trust grant.
 
         # Status of the trust grant.

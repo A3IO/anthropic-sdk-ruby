@@ -10,16 +10,23 @@ module Anthropic
           include Anthropic::Internal::Type::RequestParameters
 
           # @!attribute memory_store_id
+          #   The ID of the memory store that holds the memory (`memstore_...`).
           #
           #   @return [String]
           required :memory_store_id, String
 
           # @!attribute memory_id
+          #   The ID of the memory to delete (`mem_...`).
           #
           #   @return [String]
           required :memory_id, String
 
           # @!attribute expected_content_sha256
+          #   Delete the memory only if its current `content_sha256` equals this value, given
+          #   as 64 lowercase hexadecimal characters. Omit it to delete unconditionally.
+          #
+          #   If the hashes differ, the request fails with HTTP status 409 and nothing is
+          #   deleted.
           #
           #   @return [String, nil]
           optional :expected_content_sha256, String
@@ -45,11 +52,11 @@ module Anthropic
           #   Some parameter documentations has been truncated, see
           #   {Anthropic::Models::Beta::MemoryStores::MemoryDeleteParams} for more details.
           #
-          #   @param memory_store_id [String]
+          #   @param memory_store_id [String] The ID of the memory store that holds the memory (`memstore_...`).
           #
-          #   @param memory_id [String]
+          #   @param memory_id [String] The ID of the memory to delete (`mem_...`).
           #
-          #   @param expected_content_sha256 [String]
+          #   @param expected_content_sha256 [String] Delete the memory only if its current `content_sha256` equals this value, given
           #
           #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
           #

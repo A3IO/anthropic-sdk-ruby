@@ -3,6 +3,8 @@
 module Anthropic
   module Models
     module Beta
+      # Which memory store a dream writes its result to. Defaults to `create_new` when
+      # left out of a create request.
       module BetaOutputBehavior
         extend Anthropic::Internal::Type::Union
 
@@ -30,11 +32,14 @@ module Anthropic
         # Creates a new instance of the variant class whose `type` matches the given
         # value, passing the remaining arguments to its constructor.
         #
+        # Some parameter documentations has been truncated, see
+        # {Anthropic::Models::Beta::BetaOutputBehavior} for more details.
+        #
         # @param type [Symbol, Anthropic::Models::Beta::BetaOutputBehavior::Type, String]
         #
         # @param args [Hash{Symbol=>Object}] Attributes for the chosen variant.
         #
-        #   @option args [String] :memory_store_id
+        #   @option args [String] :memory_store_id The ID of the memory store for the dream to write its result to (`memstore_...`)
         #
         # @raise [ArgumentError]
         # @return [Anthropic::Models::Beta::BetaOutputBehaviorCreateNew, Anthropic::Models::Beta::BetaOutputBehaviorUpdateExisting]

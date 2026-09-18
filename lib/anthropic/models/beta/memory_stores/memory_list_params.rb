@@ -10,6 +10,7 @@ module Anthropic
           include Anthropic::Internal::Type::RequestParameters
 
           # @!attribute memory_store_id
+          #   The ID of the memory store to list memories from (`memstore_...`).
           #
           #   @return [String]
           required :memory_store_id, String
@@ -74,7 +75,7 @@ module Anthropic
           #   Some parameter documentations has been truncated, see
           #   {Anthropic::Models::Beta::MemoryStores::MemoryListParams} for more details.
           #
-          #   @param memory_store_id [String]
+          #   @param memory_store_id [String] The ID of the memory store to list memories from (`memstore_...`).
           #
           #   @param depth [Integer] `0` (or omitted) returns all descendants below `path_prefix` (recursive). `1` re
           #

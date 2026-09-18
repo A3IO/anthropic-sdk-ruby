@@ -5,6 +5,10 @@ module Anthropic
     module Beta
       class BetaDreamMemoryStoreInput < Anthropic::Internal::Type::BaseModel
         # @!attribute memory_store_id
+        #   The ID of the memory store for the dream to read (`memstore_...`).
+        #
+        #   The memory store must be in the same workspace as the dream and must not be
+        #   archived.
         #
         #   @return [String]
         required :memory_store_id, String
@@ -19,7 +23,11 @@ module Anthropic
         #   unless it is also the destination: with output_behavior {type:
         #   "update_existing"} the job consolidates this store in place.
         #
-        #   @param memory_store_id [String]
+        #   Some parameter documentations has been truncated, see
+        #   {Anthropic::Models::Beta::BetaDreamMemoryStoreInput} for more details.
+        #
+        #   @param memory_store_id [String] The ID of the memory store for the dream to read (`memstore_...`).
+        #
         #   @param type [Symbol, Anthropic::Models::Beta::BetaDreamMemoryStoreInput::Type]
 
         # @see Anthropic::Models::Beta::BetaDreamMemoryStoreInput#type

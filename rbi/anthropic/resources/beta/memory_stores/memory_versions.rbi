@@ -21,9 +21,9 @@ module Anthropic
             )
           end
           def retrieve(
-            # Path param
+            # Path param: The ID of the memory version to retrieve (`memver_...`).
             memory_version_id,
-            # Path param
+            # Path param: The ID of the memory store that holds the version (`memstore_...`).
             memory_store_id:,
             # Query param: Selects which projection of a `memory` or `memory_version` the
             # server returns. `basic` returns the object with `content` set to `null`; `full`
@@ -71,26 +71,31 @@ module Anthropic
             )
           end
           def list(
-            # Path param
+            # Path param: The ID of the memory store whose version history to list
+            # (`memstore_...`).
             memory_store_id,
-            # Query param
+            # Query param: Return only versions written with the API key that has this ID.
             api_key_id: nil,
             # Query param: Return versions created at or after this time (inclusive).
             created_at_gte: nil,
             # Query param: Return versions created at or before this time (inclusive).
             created_at_lte: nil,
-            # Query param
+            # Query param: The maximum number of versions to return per page. Defaults to 20.
             limit: nil,
-            # Query param
+            # Query param: Return only versions of the memory with this ID (`mem_...`).
+            #
+            # The filter still works after the memory is deleted. The results then include the
+            # version whose `operation` is `deleted`.
             memory_id: nil,
-            # Query param: The kind of mutation a `memory_version` records. Every non-no-op
-            # mutation to a memory appends exactly one version row with one of these values.
+            # Query param: Return only versions that record this kind of change.
             operation: nil,
-            # Query param
+            # Query param: The `next_page` value from a previous response, to get the next
+            # page. Omit it to get the first page.
             page: nil,
-            # Query param
+            # Query param: Return only versions written by the service account with this ID
+            # (`svac_...`).
             service_account_id: nil,
-            # Query param
+            # Query param: Return only versions written by the session with this ID.
             session_id: nil,
             # Query param: Selects which projection of a `memory` or `memory_version` the
             # server returns. `basic` returns the object with `content` set to `null`; `full`
@@ -125,9 +130,9 @@ module Anthropic
             )
           end
           def redact(
-            # Path param
+            # Path param: The ID of the memory version to redact (`memver_...`).
             memory_version_id,
-            # Path param
+            # Path param: The ID of the memory store that holds the version (`memstore_...`).
             memory_store_id:,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,

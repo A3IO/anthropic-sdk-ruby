@@ -5,6 +5,8 @@ module Anthropic
     BetaOutputBehavior = Beta::BetaOutputBehavior
 
     module Beta
+      # Which memory store a dream writes its result to. Defaults to `create_new` when
+      # left out of a create request.
       module BetaOutputBehavior
         extend Anthropic::Internal::Type::Union
 
@@ -61,7 +63,13 @@ module Anthropic
             memory_store_id: String
           ).returns(Anthropic::Beta::BetaOutputBehavior::Variants)
         end
-        def self.new(type:, memory_store_id: nil)
+        def self.new(
+          type:,
+          # The ID of the memory store for the dream to write its result to
+          # (`memstore_...`). It must be the memory store in the `memory_store` entry of
+          # `inputs`.
+          memory_store_id: nil
+        )
         end
       end
     end

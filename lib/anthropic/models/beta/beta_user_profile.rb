@@ -85,6 +85,14 @@ module Anthropic
         optional :name, String, nil?: true
 
         # @!method initialize(id:, created_at:, metadata:, trust_grants:, type:, updated_at:, access_type: nil, external_id: nil, external_user_details: nil, external_user_onboarded_at: nil, name: nil)
+        #   A record of an entity that the platform serves through the API, such as an
+        #   end-user of the platform's product or a company that the platform resells Claude
+        #   access to.
+        #
+        #   A Messages, Message Batches or token counting request can send a profile's `id`
+        #   in the `anthropic-user-profile-id` header to attribute the request to that
+        #   entity.
+        #
         #   Some parameter documentations has been truncated, see
         #   {Anthropic::Models::Beta::BetaUserProfile} for more details.
         #
@@ -132,7 +140,10 @@ module Anthropic
         module AccessType
           extend Anthropic::Internal::Type::Enum
 
+          # The user profile represents an individual end-user of a product that the platform builds on the API. New profiles get this value by default.
           APPLICATION = :application
+
+          # The user profile represents a company that the platform resells Claude access to.
           PASSTHROUGH = :passthrough
 
           # @!method self.values

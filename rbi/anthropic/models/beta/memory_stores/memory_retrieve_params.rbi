@@ -16,9 +16,11 @@ module Anthropic
               )
             end
 
+          # The ID of the memory store that holds the memory (`memstore_...`).
           sig { returns(String) }
           attr_accessor :memory_store_id
 
+          # The ID of the memory to retrieve (`mem_...`).
           sig { returns(String) }
           attr_accessor :memory_id
 
@@ -86,7 +88,9 @@ module Anthropic
             ).returns(T.attached_class)
           end
           def self.new(
+            # The ID of the memory store that holds the memory (`memstore_...`).
             memory_store_id:,
+            # The ID of the memory to retrieve (`mem_...`).
             memory_id:,
             # Selects which projection of a `memory` or `memory_version` the server returns.
             # `basic` returns the object with `content` set to `null`; `full` populates

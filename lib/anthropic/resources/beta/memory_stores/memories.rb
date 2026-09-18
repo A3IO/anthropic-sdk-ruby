@@ -12,7 +12,7 @@ module Anthropic
           #
           # @overload create(memory_store_id, content:, path:, view: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_store_id [String] Path param
+          # @param memory_store_id [String] Path param: The ID of the memory store to create the memory in (`memstore_...`).
           #
           # @param content [String, nil] Body param: UTF-8 text content for the new memory. Maximum 100 kB (102,400 bytes
           #
@@ -52,9 +52,9 @@ module Anthropic
           #
           # @overload retrieve(memory_id, memory_store_id:, view: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_id [String] Path param
+          # @param memory_id [String] Path param: The ID of the memory to retrieve (`mem_...`).
           #
-          # @param memory_store_id [String] Path param
+          # @param memory_store_id [String] Path param: The ID of the memory store that holds the memory (`memstore_...`).
           #
           # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Selects which projection of a `memory` or `memory_version` the serv
           #
@@ -95,9 +95,9 @@ module Anthropic
           #
           # @overload update(memory_id, memory_store_id:, view: nil, content: nil, path: nil, precondition: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_id [String] Path param
+          # @param memory_id [String] Path param: The ID of the memory to update (`mem_...`).
           #
-          # @param memory_store_id [String] Path param
+          # @param memory_store_id [String] Path param: The ID of the memory store that holds the memory (`memstore_...`).
           #
           # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Selects which projection of a `memory` or `memory_version` the serv
           #
@@ -143,7 +143,7 @@ module Anthropic
           #
           # @overload list(memory_store_id, depth: nil, limit: nil, page: nil, path_prefix: nil, view: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_store_id [String] Path param
+          # @param memory_store_id [String] Path param: The ID of the memory store to list memories from (`memstore_...`).
           #
           # @param depth [Integer] Query param: `0` (or omitted) returns all descendants below `path_prefix` (recur
           #
@@ -189,11 +189,11 @@ module Anthropic
           #
           # @overload delete(memory_id, memory_store_id:, expected_content_sha256: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_id [String] Path param
+          # @param memory_id [String] Path param: The ID of the memory to delete (`mem_...`).
           #
-          # @param memory_store_id [String] Path param
+          # @param memory_store_id [String] Path param: The ID of the memory store that holds the memory (`memstore_...`).
           #
-          # @param expected_content_sha256 [String] Query param
+          # @param expected_content_sha256 [String] Query param: Delete the memory only if its current `content_sha256` equals this
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #

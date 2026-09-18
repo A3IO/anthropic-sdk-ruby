@@ -9,6 +9,7 @@ module Anthropic
         include Anthropic::Internal::Type::RequestParameters
 
         # @!attribute user_profile_id
+        #   The ID of the user profile to get (`uprof_...`).
         #
         #   @return [String]
         required :user_profile_id, String
@@ -34,7 +35,7 @@ module Anthropic
         #   Some parameter documentations has been truncated, see
         #   {Anthropic::Models::Beta::UserProfileRetrieveParams} for more details.
         #
-        #   @param user_profile_id [String]
+        #   @param user_profile_id [String] The ID of the user profile to get (`uprof_...`).
         #
         #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #

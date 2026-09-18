@@ -9,6 +9,7 @@ module Anthropic
         include Anthropic::Internal::Type::RequestParameters
 
         # @!attribute user_profile_id
+        #   The ID of the user profile to update (`uprof_...`).
         #
         #   @return [String]
         required :user_profile_id, String
@@ -84,7 +85,7 @@ module Anthropic
         #   Some parameter documentations has been truncated, see
         #   {Anthropic::Models::Beta::UserProfileUpdateParams} for more details.
         #
-        #   @param user_profile_id [String]
+        #   @param user_profile_id [String] The ID of the user profile to update (`uprof_...`).
         #
         #   @param access_type [Symbol, Anthropic::Models::Beta::UserProfileUpdateParams::AccessType, nil] How the platform uses the API on behalf of the entity this profile represents. `
         #
@@ -112,7 +113,10 @@ module Anthropic
         module AccessType
           extend Anthropic::Internal::Type::Enum
 
+          # The user profile represents an individual end-user of a product that the platform builds on the API. New profiles get this value by default.
           APPLICATION = :application
+
+          # The user profile represents a company that the platform resells Claude access to.
           PASSTHROUGH = :passthrough
 
           # @!method self.values

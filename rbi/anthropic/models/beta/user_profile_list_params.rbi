@@ -15,13 +15,15 @@ module Anthropic
             )
           end
 
+        # The maximum number of user profiles to return, from 1 to 100. Defaults to 20.
         sig { returns(T.nilable(Integer)) }
         attr_reader :limit
 
         sig { params(limit: Integer).void }
         attr_writer :limit
 
-        # ListOrder enum
+        # The sort direction, applied to the field that `order_by` selects. Defaults to
+        # `desc`.
         sig do
           returns(
             T.nilable(Anthropic::Beta::UserProfileListParams::Order::OrSymbol)
@@ -36,8 +38,8 @@ module Anthropic
         end
         attr_writer :order
 
-        # Sort field for listing user profiles: `created_at` (default) or `name`
-        # (case-insensitive; profiles without a name sort last).
+        # The field to sort user profiles by, in the direction that `order` sets. Defaults
+        # to `created_at`.
         sig do
           returns(
             T.nilable(Anthropic::Beta::UserProfileListParams::OrderBy::OrSymbol)
@@ -52,6 +54,10 @@ module Anthropic
         end
         attr_writer :order_by
 
+        # The cursor for the page to return, taken from `next_page` in a previous
+        # response.
+        #
+        # Leave it out to get the first page.
         sig { returns(T.nilable(String)) }
         attr_reader :page
 
@@ -99,12 +105,18 @@ module Anthropic
           ).returns(T.attached_class)
         end
         def self.new(
+          # The maximum number of user profiles to return, from 1 to 100. Defaults to 20.
           limit: nil,
-          # ListOrder enum
+          # The sort direction, applied to the field that `order_by` selects. Defaults to
+          # `desc`.
           order: nil,
-          # Sort field for listing user profiles: `created_at` (default) or `name`
-          # (case-insensitive; profiles without a name sort last).
+          # The field to sort user profiles by, in the direction that `order` sets. Defaults
+          # to `created_at`.
           order_by: nil,
+          # The cursor for the page to return, taken from `next_page` in a previous
+          # response.
+          #
+          # Leave it out to get the first page.
           page: nil,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -137,7 +149,8 @@ module Anthropic
         def to_hash
         end
 
-        # ListOrder enum
+        # The sort direction, applied to the field that `order_by` selects. Defaults to
+        # `desc`.
         module Order
           extend Anthropic::Internal::Type::Enum
 
@@ -147,11 +160,14 @@ module Anthropic
             end
           OrSymbol = T.type_alias { T.any(Symbol, String) }
 
+          # Oldest first when `order_by` is `created_at`, or names in ascending order when `order_by` is `name`.
           ASC =
             T.let(
               :asc,
               Anthropic::Beta::UserProfileListParams::Order::TaggedSymbol
             )
+
+          # Newest first when `order_by` is `created_at`, or names in descending order when `order_by` is `name`. This is the default.
           DESC =
             T.let(
               :desc,
@@ -169,8 +185,8 @@ module Anthropic
           end
         end
 
-        # Sort field for listing user profiles: `created_at` (default) or `name`
-        # (case-insensitive; profiles without a name sort last).
+        # The field to sort user profiles by, in the direction that `order` sets. Defaults
+        # to `created_at`.
         module OrderBy
           extend Anthropic::Internal::Type::Enum
 
@@ -180,11 +196,14 @@ module Anthropic
             end
           OrSymbol = T.type_alias { T.any(Symbol, String) }
 
+          # Sort by when each user profile was created. This is the default.
           CREATED_AT =
             T.let(
               :created_at,
               Anthropic::Beta::UserProfileListParams::OrderBy::TaggedSymbol
             )
+
+          # Sort by `name`, ignoring the case of ASCII letters. Profiles without a name come last in either direction.
           NAME =
             T.let(
               :name,

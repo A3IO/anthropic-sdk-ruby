@@ -6,6 +6,7 @@ module Anthropic
       # @see Anthropic::Resources::Beta::Dreams#create
       class BetaDream < Anthropic::Internal::Type::BaseModel
         # @!attribute id
+        #   The unique ID of the dream (`drm_...`).
         #
         #   @return [String]
         required :id, String
@@ -35,11 +36,13 @@ module Anthropic
         required :error, -> { Anthropic::Beta::BetaDreamError }, nil?: true
 
         # @!attribute inputs
+        #   The sources that the dream reads, from the request that created it.
         #
         #   @return [Array<Anthropic::Models::Beta::BetaDreamMemoryStoreInput, Anthropic::Models::Beta::BetaDreamSessionsInput>]
         required :inputs, -> { Anthropic::Internal::Type::ArrayOf[union: Anthropic::Beta::BetaDreamInput] }
 
         # @!attribute instructions
+        #   The guidance given when the dream was created, or `null` if none was given.
         #
         #   @return [String, nil]
         required :instructions, String, nil?: true
@@ -52,16 +55,37 @@ module Anthropic
         required :model, -> { Anthropic::Beta::BetaDreamModelConfig }
 
         # @!attribute output_behavior
+        #   Which memory store a dream writes its result to. Defaults to `create_new` when
+        #   left out of a create request.
         #
         #   @return [Anthropic::Models::Beta::BetaOutputBehaviorCreateNew, Anthropic::Models::Beta::BetaOutputBehaviorUpdateExisting]
         required :output_behavior, union: -> { Anthropic::Beta::BetaOutputBehavior }
 
         # @!attribute outputs
+        #   The memory store that holds the dream's result, as a one-item array, or an empty
+        #   array until the dream records that memory store.
+        #
+        #   The array is empty while the dream is `pending` and for a short time after it
+        #   starts `running`. It can stay empty if the dream fails or is canceled before
+        #   then. The memory store holds the complete result only once `status` is
+        #   `completed`.
+        #
+        #   See the
+        #   [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#use-the-output)
+        #   for how to review and use the result.
         #
         #   @return [Array<Anthropic::Models::Beta::BetaDreamOutput>]
         required :outputs, -> { Anthropic::Internal::Type::ArrayOf[Anthropic::Beta::BetaDreamOutput] }
 
         # @!attribute session_id
+        #   The ID of the session that runs the dream (`sesn_...`), or `null` if that
+        #   session hasn't started.
+        #
+        #   Stream that session's events to follow what the dream reads and writes.
+        #
+        #   See the
+        #   [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#watch-the-pipeline-run)
+        #   for how to watch a running dream.
         #
         #   @return [String, nil]
         required :session_id, String, nil?: true
@@ -94,7 +118,7 @@ module Anthropic
         #   Some parameter documentations has been truncated, see
         #   {Anthropic::Models::Beta::BetaDream} for more details.
         #
-        #   @param id [String]
+        #   @param id [String] The unique ID of the dream (`drm_...`).
         #
         #   @param archived_at [Time, nil] A timestamp in RFC 3339 format
         #
@@ -104,17 +128,17 @@ module Anthropic
         #
         #   @param error [Anthropic::Models::Beta::BetaDreamError, nil] Failure detail for a Dream whose `status` is `failed`.
         #
-        #   @param inputs [Array<Anthropic::Models::Beta::BetaDreamMemoryStoreInput, Anthropic::Models::Beta::BetaDreamSessionsInput>]
+        #   @param inputs [Array<Anthropic::Models::Beta::BetaDreamMemoryStoreInput, Anthropic::Models::Beta::BetaDreamSessionsInput>] The sources that the dream reads, from the request that created it.
         #
-        #   @param instructions [String, nil]
+        #   @param instructions [String, nil] The guidance given when the dream was created, or `null` if none was given.
         #
         #   @param model [Anthropic::Models::Beta::BetaDreamModelConfig] Model identifier and configuration applied to every pipeline stage. Same wire sh
         #
-        #   @param output_behavior [Anthropic::Models::Beta::BetaOutputBehaviorCreateNew, Anthropic::Models::Beta::BetaOutputBehaviorUpdateExisting]
+        #   @param output_behavior [Anthropic::Models::Beta::BetaOutputBehaviorCreateNew, Anthropic::Models::Beta::BetaOutputBehaviorUpdateExisting] Which memory store a dream writes its result to. Defaults to `create_new` when l
         #
-        #   @param outputs [Array<Anthropic::Models::Beta::BetaDreamOutput>]
+        #   @param outputs [Array<Anthropic::Models::Beta::BetaDreamOutput>] The memory store that holds the dream's result, as a one-item array, or an empty
         #
-        #   @param session_id [String, nil]
+        #   @param session_id [String, nil] The ID of the session that runs the dream (`sesn_...`), or `null` if that sessio
         #
         #   @param status [Symbol, Anthropic::Models::Beta::BetaDreamStatus] Lifecycle status of a Dream.
         #

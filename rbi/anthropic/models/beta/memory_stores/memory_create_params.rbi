@@ -16,6 +16,7 @@ module Anthropic
               )
             end
 
+          # The ID of the memory store to create the memory in (`memstore_...`).
           sig { returns(String) }
           attr_accessor :memory_store_id
 
@@ -97,6 +98,7 @@ module Anthropic
             ).returns(T.attached_class)
           end
           def self.new(
+            # The ID of the memory store to create the memory in (`memstore_...`).
             memory_store_id:,
             # UTF-8 text content for the new memory. Maximum 100 kB (102,400 bytes). Required;
             # pass `""` explicitly to create an empty memory.

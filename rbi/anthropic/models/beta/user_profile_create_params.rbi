@@ -207,11 +207,14 @@ module Anthropic
             end
           OrSymbol = T.type_alias { T.any(Symbol, String) }
 
+          # The user profile represents an individual end-user of a product that the platform builds on the API. New profiles get this value by default.
           APPLICATION =
             T.let(
               :application,
               Anthropic::Beta::UserProfileCreateParams::AccessType::TaggedSymbol
             )
+
+          # The user profile represents a company that the platform resells Claude access to.
           PASSTHROUGH =
             T.let(
               :passthrough,

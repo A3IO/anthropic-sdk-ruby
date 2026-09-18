@@ -15,6 +15,7 @@ module Anthropic
             )
           end
 
+        # The ID of the user profile to get (`uprof_...`).
         sig { returns(String) }
         attr_accessor :user_profile_id
 
@@ -56,6 +57,7 @@ module Anthropic
           ).returns(T.attached_class)
         end
         def self.new(
+          # The ID of the user profile to get (`uprof_...`).
           user_profile_id:,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,

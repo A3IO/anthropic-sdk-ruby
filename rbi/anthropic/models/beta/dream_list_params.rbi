@@ -31,18 +31,24 @@ module Anthropic
         sig { params(created_at_lt: Time).void }
         attr_writer :created_at_lt
 
+        # Whether to include archived dreams. Defaults to `false`.
         sig { returns(T.nilable(T::Boolean)) }
         attr_reader :include_archived
 
         sig { params(include_archived: T::Boolean).void }
         attr_writer :include_archived
 
+        # The maximum number of dreams to return, from 1 to 100. Defaults to 20.
         sig { returns(T.nilable(Integer)) }
         attr_reader :limit
 
         sig { params(limit: Integer).void }
         attr_writer :limit
 
+        # The cursor for the page to return, taken from `next_page` in a previous
+        # response.
+        #
+        # Leave it out to get the first page.
         sig { returns(T.nilable(String)) }
         attr_reader :page
 
@@ -114,8 +120,14 @@ module Anthropic
           # Return dreams with `created_at` strictly before this timestamp (exclusive upper
           # bound, RFC 3339). Unset applies no upper bound.
           created_at_lt: nil,
+          # Whether to include archived dreams. Defaults to `false`.
           include_archived: nil,
+          # The maximum number of dreams to return, from 1 to 100. Defaults to 20.
           limit: nil,
+          # The cursor for the page to return, taken from `next_page` in a previous
+          # response.
+          #
+          # Leave it out to get the first page.
           page: nil,
           # Filter by lifecycle status. Repeat the parameter to match any of multiple
           # statuses. Empty applies no status filter.

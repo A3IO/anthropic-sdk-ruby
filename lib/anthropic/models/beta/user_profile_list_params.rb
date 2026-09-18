@@ -9,24 +9,30 @@ module Anthropic
         include Anthropic::Internal::Type::RequestParameters
 
         # @!attribute limit
+        #   The maximum number of user profiles to return, from 1 to 100. Defaults to 20.
         #
         #   @return [Integer, nil]
         optional :limit, Integer
 
         # @!attribute order
-        #   ListOrder enum
+        #   The sort direction, applied to the field that `order_by` selects. Defaults to
+        #   `desc`.
         #
         #   @return [Symbol, Anthropic::Models::Beta::UserProfileListParams::Order, nil]
         optional :order, enum: -> { Anthropic::Beta::UserProfileListParams::Order }
 
         # @!attribute order_by
-        #   Sort field for listing user profiles: `created_at` (default) or `name`
-        #   (case-insensitive; profiles without a name sort last).
+        #   The field to sort user profiles by, in the direction that `order` sets. Defaults
+        #   to `created_at`.
         #
         #   @return [Symbol, Anthropic::Models::Beta::UserProfileListParams::OrderBy, nil]
         optional :order_by, enum: -> { Anthropic::Beta::UserProfileListParams::OrderBy }
 
         # @!attribute page
+        #   The cursor for the page to return, taken from `next_page` in a previous
+        #   response.
+        #
+        #   Leave it out to get the first page.
         #
         #   @return [String, nil]
         optional :page, String
@@ -52,13 +58,13 @@ module Anthropic
         #   Some parameter documentations has been truncated, see
         #   {Anthropic::Models::Beta::UserProfileListParams} for more details.
         #
-        #   @param limit [Integer]
+        #   @param limit [Integer] The maximum number of user profiles to return, from 1 to 100. Defaults to 20.
         #
-        #   @param order [Symbol, Anthropic::Models::Beta::UserProfileListParams::Order] ListOrder enum
+        #   @param order [Symbol, Anthropic::Models::Beta::UserProfileListParams::Order] The sort direction, applied to the field that `order_by` selects. Defaults to `d
         #
-        #   @param order_by [Symbol, Anthropic::Models::Beta::UserProfileListParams::OrderBy] Sort field for listing user profiles: `created_at` (default) or `name` (case-ins
+        #   @param order_by [Symbol, Anthropic::Models::Beta::UserProfileListParams::OrderBy] The field to sort user profiles by, in the direction that `order` sets. Defaults
         #
-        #   @param page [String]
+        #   @param page [String] The cursor for the page to return, taken from `next_page` in a previous response
         #
         #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #
@@ -66,23 +72,30 @@ module Anthropic
         #
         #   @param request_options [Anthropic::RequestOptions, Hash{Symbol=>Object}]
 
-        # ListOrder enum
+        # The sort direction, applied to the field that `order_by` selects. Defaults to
+        # `desc`.
         module Order
           extend Anthropic::Internal::Type::Enum
 
+          # Oldest first when `order_by` is `created_at`, or names in ascending order when `order_by` is `name`.
           ASC = :asc
+
+          # Newest first when `order_by` is `created_at`, or names in descending order when `order_by` is `name`. This is the default.
           DESC = :desc
 
           # @!method self.values
           #   @return [Array<Symbol>]
         end
 
-        # Sort field for listing user profiles: `created_at` (default) or `name`
-        # (case-insensitive; profiles without a name sort last).
+        # The field to sort user profiles by, in the direction that `order` sets. Defaults
+        # to `created_at`.
         module OrderBy
           extend Anthropic::Internal::Type::Enum
 
+          # Sort by when each user profile was created. This is the default.
           CREATED_AT = :created_at
+
+          # Sort by `name`, ignoring the case of ASCII letters. Profiles without a name come last in either direction.
           NAME = :name
 
           # @!method self.values

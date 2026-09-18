@@ -15,6 +15,7 @@ module Anthropic
             )
           end
 
+        # The ID of the dream to archive (`drm_...`).
         sig { returns(String) }
         attr_accessor :dream_id
 
@@ -56,6 +57,7 @@ module Anthropic
           ).returns(T.attached_class)
         end
         def self.new(
+          # The ID of the dream to archive (`drm_...`).
           dream_id:,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,

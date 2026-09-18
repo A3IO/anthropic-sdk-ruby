@@ -14,6 +14,9 @@ module Anthropic
             )
           end
 
+        # The ID of the memory store for the dream to write its result to
+        # (`memstore_...`). It must be the memory store in the `memory_store` entry of
+        # `inputs`.
         sig { returns(String) }
         attr_accessor :memory_store_id
 
@@ -34,7 +37,13 @@ module Anthropic
               Anthropic::Beta::BetaOutputBehaviorUpdateExisting::Type::OrSymbol
           ).returns(T.attached_class)
         end
-        def self.new(memory_store_id:, type:)
+        def self.new(
+          # The ID of the memory store for the dream to write its result to
+          # (`memstore_...`). It must be the memory store in the `memory_store` entry of
+          # `inputs`.
+          memory_store_id:,
+          type:
+        )
         end
 
         sig do

@@ -10,11 +10,13 @@ module Anthropic
           include Anthropic::Internal::Type::RequestParameters
 
           # @!attribute memory_store_id
+          #   The ID of the memory store that holds the memory (`memstore_...`).
           #
           #   @return [String]
           required :memory_store_id, String
 
           # @!attribute memory_id
+          #   The ID of the memory to retrieve (`mem_...`).
           #
           #   @return [String]
           required :memory_id, String
@@ -50,9 +52,9 @@ module Anthropic
           #   Some parameter documentations has been truncated, see
           #   {Anthropic::Models::Beta::MemoryStores::MemoryRetrieveParams} for more details.
           #
-          #   @param memory_store_id [String]
+          #   @param memory_store_id [String] The ID of the memory store that holds the memory (`memstore_...`).
           #
-          #   @param memory_id [String]
+          #   @param memory_id [String] The ID of the memory to retrieve (`mem_...`).
           #
           #   @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Selects which projection of a `memory` or `memory_version` the server returns. `
           #

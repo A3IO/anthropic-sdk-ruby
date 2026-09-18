@@ -16,6 +16,7 @@ module Anthropic
               )
             end
 
+          # The ID of the memory store to list memories from (`memstore_...`).
           sig { returns(String) }
           attr_accessor :memory_store_id
 
@@ -119,6 +120,7 @@ module Anthropic
             ).returns(T.attached_class)
           end
           def self.new(
+            # The ID of the memory store to list memories from (`memstore_...`).
             memory_store_id:,
             # `0` (or omitted) returns all descendants below `path_prefix` (recursive). `1`
             # returns immediate children only; deeper entries roll up as `memory_prefix`

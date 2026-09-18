@@ -11,6 +11,7 @@ module Anthropic
             T.any(Anthropic::Beta::BetaDream, Anthropic::Internal::AnyHash)
           end
 
+        # The unique ID of the dream (`drm_...`).
         sig { returns(String) }
         attr_accessor :id
 
@@ -35,9 +36,11 @@ module Anthropic
         end
         attr_writer :error
 
+        # The sources that the dream reads, from the request that created it.
         sig { returns(T::Array[Anthropic::Beta::BetaDreamInput::Variants]) }
         attr_accessor :inputs
 
+        # The guidance given when the dream was created, or `null` if none was given.
         sig { returns(T.nilable(String)) }
         attr_accessor :instructions
 
@@ -51,12 +54,33 @@ module Anthropic
         end
         attr_writer :model
 
+        # Which memory store a dream writes its result to. Defaults to `create_new` when
+        # left out of a create request.
         sig { returns(Anthropic::Beta::BetaOutputBehavior::Variants) }
         attr_accessor :output_behavior
 
+        # The memory store that holds the dream's result, as a one-item array, or an empty
+        # array until the dream records that memory store.
+        #
+        # The array is empty while the dream is `pending` and for a short time after it
+        # starts `running`. It can stay empty if the dream fails or is canceled before
+        # then. The memory store holds the complete result only once `status` is
+        # `completed`.
+        #
+        # See the
+        # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#use-the-output)
+        # for how to review and use the result.
         sig { returns(T::Array[Anthropic::Beta::BetaDreamOutput]) }
         attr_accessor :outputs
 
+        # The ID of the session that runs the dream (`sesn_...`), or `null` if that
+        # session hasn't started.
+        #
+        # Stream that session's events to follow what the dream reads and writes.
+        #
+        # See the
+        # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#watch-the-pipeline-run)
+        # for how to watch a running dream.
         sig { returns(T.nilable(String)) }
         attr_accessor :session_id
 
@@ -109,6 +133,7 @@ module Anthropic
           ).returns(T.attached_class)
         end
         def self.new(
+          # The unique ID of the dream (`drm_...`).
           id:,
           # A timestamp in RFC 3339 format
           archived_at:,
@@ -118,13 +143,36 @@ module Anthropic
           ended_at:,
           # Failure detail for a Dream whose `status` is `failed`.
           error:,
+          # The sources that the dream reads, from the request that created it.
           inputs:,
+          # The guidance given when the dream was created, or `null` if none was given.
           instructions:,
           # Model identifier and configuration applied to every pipeline stage. Same wire
           # shape as the Agents API ModelConfig.
           model:,
+          # Which memory store a dream writes its result to. Defaults to `create_new` when
+          # left out of a create request.
           output_behavior:,
+          # The memory store that holds the dream's result, as a one-item array, or an empty
+          # array until the dream records that memory store.
+          #
+          # The array is empty while the dream is `pending` and for a short time after it
+          # starts `running`. It can stay empty if the dream fails or is canceled before
+          # then. The memory store holds the complete result only once `status` is
+          # `completed`.
+          #
+          # See the
+          # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#use-the-output)
+          # for how to review and use the result.
           outputs:,
+          # The ID of the session that runs the dream (`sesn_...`), or `null` if that
+          # session hasn't started.
+          #
+          # Stream that session's events to follow what the dream reads and writes.
+          #
+          # See the
+          # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#watch-the-pipeline-run)
+          # for how to watch a running dream.
           session_id:,
           # Lifecycle status of a Dream.
           status:,

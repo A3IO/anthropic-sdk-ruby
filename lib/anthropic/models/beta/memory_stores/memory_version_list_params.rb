@@ -10,11 +10,13 @@ module Anthropic
           include Anthropic::Internal::Type::RequestParameters
 
           # @!attribute memory_store_id
+          #   The ID of the memory store whose version history to list (`memstore_...`).
           #
           #   @return [String]
           required :memory_store_id, String
 
           # @!attribute api_key_id
+          #   Return only versions written with the API key that has this ID.
           #
           #   @return [String, nil]
           optional :api_key_id, String
@@ -32,33 +34,41 @@ module Anthropic
           optional :created_at_lte, Time
 
           # @!attribute limit
+          #   The maximum number of versions to return per page. Defaults to 20.
           #
           #   @return [Integer, nil]
           optional :limit, Integer
 
           # @!attribute memory_id
+          #   Return only versions of the memory with this ID (`mem_...`).
+          #
+          #   The filter still works after the memory is deleted. The results then include the
+          #   version whose `operation` is `deleted`.
           #
           #   @return [String, nil]
           optional :memory_id, String
 
           # @!attribute operation
-          #   The kind of mutation a `memory_version` records. Every non-no-op mutation to a
-          #   memory appends exactly one version row with one of these values.
+          #   Return only versions that record this kind of change.
           #
           #   @return [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryVersionOperation, nil]
           optional :operation, enum: -> { Anthropic::Beta::MemoryStores::BetaManagedAgentsMemoryVersionOperation }
 
           # @!attribute page
+          #   The `next_page` value from a previous response, to get the next page. Omit it to
+          #   get the first page.
           #
           #   @return [String, nil]
           optional :page, String
 
           # @!attribute service_account_id
+          #   Return only versions written by the service account with this ID (`svac_...`).
           #
           #   @return [String, nil]
           optional :service_account_id, String
 
           # @!attribute session_id
+          #   Return only versions written by the session with this ID.
           #
           #   @return [String, nil]
           optional :session_id, String
@@ -95,25 +105,25 @@ module Anthropic
           #   {Anthropic::Models::Beta::MemoryStores::MemoryVersionListParams} for more
           #   details.
           #
-          #   @param memory_store_id [String]
+          #   @param memory_store_id [String] The ID of the memory store whose version history to list (`memstore_...`).
           #
-          #   @param api_key_id [String]
+          #   @param api_key_id [String] Return only versions written with the API key that has this ID.
           #
           #   @param created_at_gte [Time] Return versions created at or after this time (inclusive).
           #
           #   @param created_at_lte [Time] Return versions created at or before this time (inclusive).
           #
-          #   @param limit [Integer]
+          #   @param limit [Integer] The maximum number of versions to return per page. Defaults to 20.
           #
-          #   @param memory_id [String]
+          #   @param memory_id [String] Return only versions of the memory with this ID (`mem_...`).
           #
-          #   @param operation [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryVersionOperation] The kind of mutation a `memory_version` records. Every non-no-op mutation to a m
+          #   @param operation [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryVersionOperation] Return only versions that record this kind of change.
           #
-          #   @param page [String]
+          #   @param page [String] The `next_page` value from a previous response, to get the next page. Omit it to
           #
-          #   @param service_account_id [String]
+          #   @param service_account_id [String] Return only versions written by the service account with this ID (`svac_...`).
           #
-          #   @param session_id [String]
+          #   @param session_id [String] Return only versions written by the session with this ID.
           #
           #   @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Selects which projection of a `memory` or `memory_version` the server returns. `
           #

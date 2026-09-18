@@ -16,12 +16,19 @@ module Anthropic
               )
             end
 
+          # The ID of the memory store that holds the memory (`memstore_...`).
           sig { returns(String) }
           attr_accessor :memory_store_id
 
+          # The ID of the memory to delete (`mem_...`).
           sig { returns(String) }
           attr_accessor :memory_id
 
+          # Delete the memory only if its current `content_sha256` equals this value, given
+          # as 64 lowercase hexadecimal characters. Omit it to delete unconditionally.
+          #
+          # If the hashes differ, the request fails with HTTP status 409 and nothing is
+          # deleted.
           sig { returns(T.nilable(String)) }
           attr_reader :expected_content_sha256
 
@@ -69,8 +76,15 @@ module Anthropic
             ).returns(T.attached_class)
           end
           def self.new(
+            # The ID of the memory store that holds the memory (`memstore_...`).
             memory_store_id:,
+            # The ID of the memory to delete (`mem_...`).
             memory_id:,
+            # Delete the memory only if its current `content_sha256` equals this value, given
+            # as 64 lowercase hexadecimal characters. Omit it to delete unconditionally.
+            #
+            # If the hashes differ, the request fails with HTTP status 409 and nothing is
+            # deleted.
             expected_content_sha256: nil,
             # Optional header to specify the beta version(s) you want to use.
             betas: nil,

@@ -27,9 +27,17 @@ module Anthropic
 
           variant :overloaded_error, -> { Anthropic::BetaOverloadedError }
 
+          # The error returned with HTTP status 409 when a request's precondition doesn't hold for the memory's current state, such as `precondition` on an update or `expected_content_sha256` on a delete.
+          #
+          # The error doesn't include the memory's current state. Retrieve the memory to see its current content and `content_sha256` before you retry.
+          #
+          # See the [memory guide](https://platform.claude.com/docs/en/managed-agents/memory#safe-content-edits-optimistic-concurrency) to learn more about safe content edits with content hash preconditions.
           variant :memory_precondition_failed_error,
                   -> { Anthropic::Beta::MemoryStores::BetaManagedAgentsMemoryPreconditionFailedError }
 
+          # The error returned with HTTP status 409 when a create or rename targets a path that another memory uses, or a path that overlaps another memory's path.
+          #
+          # Two paths overlap when one is an ancestor of the other, such as `/notes` and `/notes/todo.md`. To free the path, rename or delete the memory that `conflicting_memory_id` references, then retry. To change that memory instead of creating a new one, update it.
           variant :memory_path_conflict_error,
                   -> { Anthropic::Beta::MemoryStores::BetaManagedAgentsMemoryPathConflictError }
 
@@ -61,15 +69,19 @@ module Anthropic
           # Creates a new instance of the variant class whose `type` matches the given
           # value, passing the remaining arguments to its constructor.
           #
+          # Some parameter documentations has been truncated, see
+          # {Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsError} for more
+          # details.
+          #
           # @param type [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsError::Type, String]
           #
           # @param args [Hash{Symbol=>Object}] Attributes for the chosen variant.
           #
-          #   @option args [String] :message
+          #   @option args [String] :message A human-readable explanation of why the precondition failed.
           #
-          #   @option args [String] :conflicting_memory_id
+          #   @option args [String] :conflicting_memory_id The ID of the memory that blocked the write (`mem_...`), or an empty string if t
           #
-          #   @option args [String] :conflicting_path
+          #   @option args [String] :conflicting_path The path that blocked the write: the requested path, or the path of a memory tha
           #
           # @raise [ArgumentError]
           # @return [Anthropic::Models::BetaInvalidRequestError, Anthropic::Models::BetaAuthenticationError, Anthropic::Models::BetaBillingError, Anthropic::Models::BetaPermissionError, Anthropic::Models::BetaNotFoundError, Anthropic::Models::BetaRateLimitError, Anthropic::Models::BetaGatewayTimeoutError, Anthropic::Models::BetaAPIError, Anthropic::Models::BetaOverloadedError, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryPreconditionFailedError, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryPathConflictError, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsConflictError]

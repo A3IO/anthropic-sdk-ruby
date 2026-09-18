@@ -10,11 +10,13 @@ module Anthropic
           include Anthropic::Internal::Type::RequestParameters
 
           # @!attribute memory_store_id
+          #   The ID of the memory store that holds the version (`memstore_...`).
           #
           #   @return [String]
           required :memory_store_id, String
 
           # @!attribute memory_version_id
+          #   The ID of the memory version to redact (`memver_...`).
           #
           #   @return [String]
           required :memory_version_id, String
@@ -41,9 +43,9 @@ module Anthropic
           #   {Anthropic::Models::Beta::MemoryStores::MemoryVersionRedactParams} for more
           #   details.
           #
-          #   @param memory_store_id [String]
+          #   @param memory_store_id [String] The ID of the memory store that holds the version (`memstore_...`).
           #
-          #   @param memory_version_id [String]
+          #   @param memory_version_id [String] The ID of the memory version to redact (`memver_...`).
           #
           #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
           #

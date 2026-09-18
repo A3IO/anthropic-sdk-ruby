@@ -16,9 +16,11 @@ module Anthropic
               )
             end
 
+          # The ID of the memory store that holds the version (`memstore_...`).
           sig { returns(String) }
           attr_accessor :memory_store_id
 
+          # The ID of the memory version to redact (`memver_...`).
           sig { returns(String) }
           attr_accessor :memory_version_id
 
@@ -62,7 +64,9 @@ module Anthropic
             ).returns(T.attached_class)
           end
           def self.new(
+            # The ID of the memory store that holds the version (`memstore_...`).
             memory_store_id:,
+            # The ID of the memory version to redact (`memver_...`).
             memory_version_id:,
             # Optional header to specify the beta version(s) you want to use.
             betas: nil,

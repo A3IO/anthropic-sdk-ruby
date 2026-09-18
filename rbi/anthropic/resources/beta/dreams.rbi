@@ -4,7 +4,17 @@ module Anthropic
   module Resources
     class Beta
       class Dreams
-        # Create a Dream
+        # Start an asynchronous job that uses past sessions to produce a reorganized
+        # version of a memory store and get back the dream to poll for the result.
+        #
+        # By default the dream writes its result to a new memory store and doesn't change
+        # the input memory store. The response has `status` set to `pending` and an empty
+        # `outputs` array. Poll the dream until `status` is `completed`, `failed`, or
+        # `canceled`.
+        #
+        # See the
+        # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#create-a-dream)
+        # to learn more about creating dreams.
         sig do
           params(
             inputs:
@@ -28,13 +38,27 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaDream)
         end
         def create(
-          # Body param
+          # Body param: The memory store and sessions for the dream to read, as exactly one
+          # `memory_store` entry and exactly one `sessions` entry.
           inputs:,
-          # Body param
+          # Body param: The model that runs a dream, given as a model ID or as an object
+          # with `id` and `speed`.
+          #
+          # In the object form, `speed` can only be `standard`.
+          #
+          # The
+          # [limits table in the Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#limits)
+          # lists the supported models.
           model:,
-          # Body param
+          # Body param: Guidance that steers how the dream reads the sessions and organizes
+          # the output memory store, from 1 to 4,096 characters.
+          #
+          # See the
+          # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#steer-with-instructions)
+          # for what kinds of instructions work well.
           instructions: nil,
-          # Body param
+          # Body param: Which memory store a dream writes its result to. Defaults to
+          # `create_new` when left out of a create request.
           output_behavior: nil,
           # Header param: Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -49,7 +73,13 @@ module Anthropic
         )
         end
 
-        # Get a Dream
+        # Get a dream by ID to check its status, output memory store, and token usage.
+        #
+        # Archived dreams are returned too.
+        #
+        # See the
+        # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#track-progress)
+        # for how to poll a dream and what each status means.
         sig do
           params(
             dream_id: String,
@@ -59,6 +89,7 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaDream)
         end
         def retrieve(
+          # The ID of the dream to get (`drm_...`).
           dream_id,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -73,7 +104,13 @@ module Anthropic
         )
         end
 
-        # List Dreams
+        # List the dreams in the workspace, newest first.
+        #
+        # Archived dreams are left out unless `include_archived` is `true`.
+        #
+        # See the
+        # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#list-dreams)
+        # for how to page through dreams.
         sig do
           params(
             created_at_gt: Time,
@@ -94,11 +131,15 @@ module Anthropic
           # Query param: Return dreams with `created_at` strictly before this timestamp
           # (exclusive upper bound, RFC 3339). Unset applies no upper bound.
           created_at_lt: nil,
-          # Query param
+          # Query param: Whether to include archived dreams. Defaults to `false`.
           include_archived: nil,
-          # Query param
+          # Query param: The maximum number of dreams to return, from 1 to 100. Defaults
+          # to 20.
           limit: nil,
-          # Query param
+          # Query param: The cursor for the page to return, taken from `next_page` in a
+          # previous response.
+          #
+          # Leave it out to get the first page.
           page: nil,
           # Query param: Filter by lifecycle status. Repeat the parameter to match any of
           # multiple statuses. Empty applies no status filter.
@@ -116,7 +157,16 @@ module Anthropic
         )
         end
 
-        # Archive a Dream
+        # Hide a `completed`, `failed`, or `canceled` dream from the default list of
+        # dreams.
+        #
+        # Archiving a `pending` or `running` dream returns a 400 error, so cancel it
+        # first. Archiving an archived dream returns it unchanged. An archived dream can
+        # still be fetched by ID. Archiving can't be undone.
+        #
+        # See the
+        # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#archive-a-dream)
+        # to learn more about archiving dreams.
         sig do
           params(
             dream_id: String,
@@ -126,6 +176,7 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaDream)
         end
         def archive(
+          # The ID of the dream to archive (`drm_...`).
           dream_id,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -140,7 +191,16 @@ module Anthropic
         )
         end
 
-        # Cancel a Dream
+        # Stop a `pending` or `running` dream.
+        #
+        # The response shows `status` as `canceled`, unless the dream reached `completed`
+        # or `failed` first. `usage` can keep changing after the response. Canceling a
+        # `canceled` dream returns it unchanged. Canceling a `completed` or `failed` dream
+        # returns a 400 error.
+        #
+        # See the
+        # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#cancel-a-dream)
+        # to learn more about canceling dreams.
         sig do
           params(
             dream_id: String,
@@ -150,6 +210,7 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaDream)
         end
         def cancel(
+          # The ID of the dream to cancel (`drm_...`).
           dream_id,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,

@@ -9,6 +9,7 @@ module Anthropic
         include Anthropic::Internal::Type::RequestParameters
 
         # @!attribute user_profile_id
+        #   The ID of the user profile to create an enrollment URL for (`uprof_...`).
         #
         #   @return [String]
         required :user_profile_id, String
@@ -35,7 +36,7 @@ module Anthropic
         #   {Anthropic::Models::Beta::UserProfileCreateEnrollmentURLParams} for more
         #   details.
         #
-        #   @param user_profile_id [String]
+        #   @param user_profile_id [String] The ID of the user profile to create an enrollment URL for (`uprof_...`).
         #
         #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #

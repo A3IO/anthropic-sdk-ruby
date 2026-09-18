@@ -9,6 +9,7 @@ module Anthropic
         include Anthropic::Internal::Type::RequestParameters
 
         # @!attribute dream_id
+        #   The ID of the dream to cancel (`drm_...`).
         #
         #   @return [String]
         required :dream_id, String
@@ -34,7 +35,7 @@ module Anthropic
         #   Some parameter documentations has been truncated, see
         #   {Anthropic::Models::Beta::DreamCancelParams} for more details.
         #
-        #   @param dream_id [String]
+        #   @param dream_id [String] The ID of the dream to cancel (`drm_...`).
         #
         #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #

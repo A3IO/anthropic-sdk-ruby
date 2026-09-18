@@ -134,8 +134,15 @@ module Anthropic
           end
           def self.new(
             type:,
+            # A human-readable explanation of why the precondition failed.
             message: nil,
+            # The ID of the memory that blocked the write (`mem_...`), or an empty string if
+            # that memory can't be identified.
+            #
+            # Retry the request when it is empty.
             conflicting_memory_id: nil,
+            # The path that blocked the write: the requested path, or the path of a memory
+            # that is an ancestor or descendant of it.
             conflicting_path: nil
           )
           end
