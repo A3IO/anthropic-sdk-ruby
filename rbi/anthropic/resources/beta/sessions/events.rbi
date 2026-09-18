@@ -29,7 +29,7 @@ module Anthropic
             )
           end
           def list(
-            # Path param: Path parameter session_id
+            # Path param
             session_id,
             # Query param: Return events created after this time (exclusive). Compared against
             # the event's `processed_at` value.
@@ -43,7 +43,7 @@ module Anthropic
             # Query param: Return events created at or before this time (inclusive). Compared
             # against the event's `processed_at` value.
             created_at_lte: nil,
-            # Query param: Query parameter for limit
+            # Query param
             limit: nil,
             # Query param: Sort direction for results, ordered by the event's `processed_at`.
             # Defaults to `asc` (chronological).
@@ -92,7 +92,7 @@ module Anthropic
             )
           end
           def send_(
-            # Path param: Path parameter session_id
+            # Path param
             session_id,
             # Body param: Events to send to the `session`.
             events:,
@@ -126,7 +126,7 @@ module Anthropic
             )
           end
           def stream_events(
-            # Path param: Path parameter session_id
+            # Path param
             session_id,
             # Query param: When set, this connection also receives streaming deltas
             # (`event_start`, `event_delta`) while an event is being produced, before the

@@ -96,7 +96,6 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaManagedAgentsSession)
         end
         def retrieve(
-          # Path parameter session_id
           session_id,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -127,7 +126,7 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaManagedAgentsSession)
         end
         def update(
-          # Path param: Path parameter session_id
+          # Path param
           session_id,
           # Body param: Mid-session agent configuration update. Only `tools` and
           # `mcp_servers` are updatable. Full replacement: the provided array becomes the
@@ -238,7 +237,6 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaManagedAgentsDeletedSession)
         end
         def delete(
-          # Path parameter session_id
           session_id,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -263,7 +261,6 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaManagedAgentsSession)
         end
         def archive(
-          # Path parameter session_id
           session_id,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,

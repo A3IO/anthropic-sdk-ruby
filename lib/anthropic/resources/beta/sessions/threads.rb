@@ -15,9 +15,9 @@ module Anthropic
           #
           # @overload retrieve(thread_id, session_id:, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param thread_id [String] Path param: Path parameter thread_id
+          # @param thread_id [String] Path param
           #
-          # @param session_id [String] Path param: Path parameter session_id
+          # @param session_id [String] Path param
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #
@@ -50,7 +50,7 @@ module Anthropic
           #
           # @overload list(session_id, limit: nil, page: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param session_id [String] Path param: Path parameter session_id
+          # @param session_id [String] Path param
           #
           # @param limit [Integer] Query param: Maximum results per page. Defaults to 1000.
           #
@@ -90,9 +90,9 @@ module Anthropic
           #
           # @overload archive(thread_id, session_id:, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param thread_id [String] Path param: Path parameter thread_id
+          # @param thread_id [String] Path param
           #
-          # @param session_id [String] Path param: Path parameter session_id
+          # @param session_id [String] Path param
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #

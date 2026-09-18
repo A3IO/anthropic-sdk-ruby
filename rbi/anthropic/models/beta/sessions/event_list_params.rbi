@@ -51,7 +51,6 @@ module Anthropic
           sig { params(created_at_lte: Time).void }
           attr_writer :created_at_lte
 
-          # Query parameter for limit
           sig { returns(T.nilable(Integer)) }
           attr_reader :limit
 
@@ -146,7 +145,6 @@ module Anthropic
             # Return events created at or before this time (inclusive). Compared against the
             # event's `processed_at` value.
             created_at_lte: nil,
-            # Query parameter for limit
             limit: nil,
             # Sort direction for results, ordered by the event's `processed_at`. Defaults to
             # `asc` (chronological).

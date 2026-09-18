@@ -21,13 +21,11 @@ module Anthropic
             required :thread_id, String
 
             # @!attribute limit
-            #   Query parameter for limit
             #
             #   @return [Integer, nil]
             optional :limit, Integer
 
             # @!attribute page
-            #   Query parameter for page
             #
             #   @return [String, nil]
             optional :page, String
@@ -48,9 +46,9 @@ module Anthropic
             #
             #   @param thread_id [String]
             #
-            #   @param limit [Integer] Query parameter for limit
+            #   @param limit [Integer]
             #
-            #   @param page [String] Query parameter for page
+            #   @param page [String]
             #
             #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
             #

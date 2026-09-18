@@ -70,7 +70,6 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaUserProfile)
         end
         def retrieve(
-          # Path parameter user_profile_id
           user_profile_id,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -105,7 +104,7 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaUserProfile)
         end
         def update(
-          # Path param: Path parameter user_profile_id
+          # Path param
           user_profile_id,
           # Body param: How the platform uses the API on behalf of the entity this profile
           # represents. `application`: the platform sells a product that uses the API behind
@@ -161,13 +160,14 @@ module Anthropic
           )
         end
         def list(
-          # Query param: Query parameter for limit
+          # Query param
           limit: nil,
-          # Query param: Query parameter for order
+          # Query param: ListOrder enum
           order: nil,
-          # Query param: Query parameter for order_by
+          # Query param: Sort field for listing user profiles: `created_at` (default) or
+          # `name` (case-insensitive; profiles without a name sort last).
           order_by: nil,
-          # Query param: Query parameter for page
+          # Query param
           page: nil,
           # Header param: Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -192,7 +192,6 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaUserProfileEnrollmentURL)
         end
         def create_enrollment_url(
-          # Path parameter user_profile_id
           user_profile_id,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,

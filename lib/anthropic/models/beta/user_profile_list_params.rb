@@ -9,25 +9,24 @@ module Anthropic
         include Anthropic::Internal::Type::RequestParameters
 
         # @!attribute limit
-        #   Query parameter for limit
         #
         #   @return [Integer, nil]
         optional :limit, Integer
 
         # @!attribute order
-        #   Query parameter for order
+        #   ListOrder enum
         #
         #   @return [Symbol, Anthropic::Models::Beta::UserProfileListParams::Order, nil]
         optional :order, enum: -> { Anthropic::Beta::UserProfileListParams::Order }
 
         # @!attribute order_by
-        #   Query parameter for order_by
+        #   Sort field for listing user profiles: `created_at` (default) or `name`
+        #   (case-insensitive; profiles without a name sort last).
         #
         #   @return [Symbol, Anthropic::Models::Beta::UserProfileListParams::OrderBy, nil]
         optional :order_by, enum: -> { Anthropic::Beta::UserProfileListParams::OrderBy }
 
         # @!attribute page
-        #   Query parameter for page
         #
         #   @return [String, nil]
         optional :page, String
@@ -44,13 +43,16 @@ module Anthropic
         optional :workspace_id, String
 
         # @!method initialize(limit: nil, order: nil, order_by: nil, page: nil, betas: nil, workspace_id: nil, request_options: {})
-        #   @param limit [Integer] Query parameter for limit
+        #   Some parameter documentations has been truncated, see
+        #   {Anthropic::Models::Beta::UserProfileListParams} for more details.
         #
-        #   @param order [Symbol, Anthropic::Models::Beta::UserProfileListParams::Order] Query parameter for order
+        #   @param limit [Integer]
         #
-        #   @param order_by [Symbol, Anthropic::Models::Beta::UserProfileListParams::OrderBy] Query parameter for order_by
+        #   @param order [Symbol, Anthropic::Models::Beta::UserProfileListParams::Order] ListOrder enum
         #
-        #   @param page [String] Query parameter for page
+        #   @param order_by [Symbol, Anthropic::Models::Beta::UserProfileListParams::OrderBy] Sort field for listing user profiles: `created_at` (default) or `name` (case-ins
+        #
+        #   @param page [String]
         #
         #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #
@@ -58,7 +60,7 @@ module Anthropic
         #
         #   @param request_options [Anthropic::RequestOptions, Hash{Symbol=>Object}]
 
-        # Query parameter for order
+        # ListOrder enum
         module Order
           extend Anthropic::Internal::Type::Enum
 
@@ -69,7 +71,8 @@ module Anthropic
           #   @return [Array<Symbol>]
         end
 
-        # Query parameter for order_by
+        # Sort field for listing user profiles: `created_at` (default) or `name`
+        # (case-insensitive; profiles without a name sort last).
         module OrderBy
           extend Anthropic::Internal::Type::Enum
 

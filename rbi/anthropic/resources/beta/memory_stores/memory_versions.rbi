@@ -21,11 +21,15 @@ module Anthropic
             )
           end
           def retrieve(
-            # Path param: Path parameter memory_version_id
+            # Path param
             memory_version_id,
-            # Path param: Path parameter memory_store_id
+            # Path param
             memory_store_id:,
-            # Query param: Query parameter for view
+            # Query param: Selects which projection of a `memory` or `memory_version` the
+            # server returns. `basic` returns the object with `content` set to `null`; `full`
+            # populates `content`. When omitted, the default is endpoint-specific: retrieve
+            # operations default to `full`; list, create, and update operations default to
+            # `basic`. Listing with `view=full` caps `limit` at 20.
             view: nil,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,
@@ -67,27 +71,32 @@ module Anthropic
             )
           end
           def list(
-            # Path param: Path parameter memory_store_id
+            # Path param
             memory_store_id,
-            # Query param: Query parameter for api_key_id
+            # Query param
             api_key_id: nil,
             # Query param: Return versions created at or after this time (inclusive).
             created_at_gte: nil,
             # Query param: Return versions created at or before this time (inclusive).
             created_at_lte: nil,
-            # Query param: Query parameter for limit
+            # Query param
             limit: nil,
-            # Query param: Query parameter for memory_id
+            # Query param
             memory_id: nil,
-            # Query param: Query parameter for operation
+            # Query param: The kind of mutation a `memory_version` records. Every non-no-op
+            # mutation to a memory appends exactly one version row with one of these values.
             operation: nil,
-            # Query param: Query parameter for page
+            # Query param
             page: nil,
-            # Query param: Query parameter for service_account_id
+            # Query param
             service_account_id: nil,
-            # Query param: Query parameter for session_id
+            # Query param
             session_id: nil,
-            # Query param: Query parameter for view
+            # Query param: Selects which projection of a `memory` or `memory_version` the
+            # server returns. `basic` returns the object with `content` set to `null`; `full`
+            # populates `content`. When omitted, the default is endpoint-specific: retrieve
+            # operations default to `full`; list, create, and update operations default to
+            # `basic`. Listing with `view=full` caps `limit` at 20.
             view: nil,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,
@@ -116,9 +125,9 @@ module Anthropic
             )
           end
           def redact(
-            # Path param: Path parameter memory_version_id
+            # Path param
             memory_version_id,
-            # Path param: Path parameter memory_store_id
+            # Path param
             memory_store_id:,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,

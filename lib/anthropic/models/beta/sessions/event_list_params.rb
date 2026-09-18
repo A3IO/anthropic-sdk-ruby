@@ -43,7 +43,6 @@ module Anthropic
           optional :created_at_lte, Time
 
           # @!attribute limit
-          #   Query parameter for limit
           #
           #   @return [Integer, nil]
           optional :limit, Integer
@@ -93,7 +92,7 @@ module Anthropic
           #
           #   @param created_at_lte [Time] Return events created at or before this time (inclusive). Compared against the e
           #
-          #   @param limit [Integer] Query parameter for limit
+          #   @param limit [Integer]
           #
           #   @param order [Symbol, Anthropic::Models::Beta::Sessions::EventListParams::Order] Sort direction for results, ordered by the event's `processed_at`. Defaults to `
           #

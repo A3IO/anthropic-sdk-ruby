@@ -20,7 +20,11 @@ module Anthropic
           required :memory_id, String
 
           # @!attribute view
-          #   Query parameter for view
+          #   Selects which projection of a `memory` or `memory_version` the server returns.
+          #   `basic` returns the object with `content` set to `null`; `full` populates
+          #   `content`. When omitted, the default is endpoint-specific: retrieve operations
+          #   default to `full`; list, create, and update operations default to `basic`.
+          #   Listing with `view=full` caps `limit` at 20.
           #
           #   @return [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView, nil]
           optional :view, enum: -> { Anthropic::Beta::MemoryStores::BetaManagedAgentsMemoryView }
@@ -73,7 +77,7 @@ module Anthropic
           #
           #   @param memory_id [String]
           #
-          #   @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query parameter for view
+          #   @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Selects which projection of a `memory` or `memory_version` the server returns. `
           #
           #   @param content [String, nil] New UTF-8 text content for the memory. Maximum 100 kB (102,400 bytes). Omit to l
           #

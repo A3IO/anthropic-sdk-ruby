@@ -32,7 +32,11 @@ module Anthropic
           sig { returns(String) }
           attr_accessor :path
 
-          # Query parameter for view
+          # Selects which projection of a `memory` or `memory_version` the server returns.
+          # `basic` returns the object with `content` set to `null`; `full` populates
+          # `content`. When omitted, the default is endpoint-specific: retrieve operations
+          # default to `full`; list, create, and update operations default to `basic`.
+          # Listing with `view=full` caps `limit` at 20.
           sig do
             returns(
               T.nilable(
@@ -97,7 +101,11 @@ module Anthropic
             # characters, or the Unicode line and paragraph separators (U+2028, U+2029), and
             # must be NFC-normalized. Paths are case-sensitive.
             path:,
-            # Query parameter for view
+            # Selects which projection of a `memory` or `memory_version` the server returns.
+            # `basic` returns the object with `content` set to `null`; `full` populates
+            # `content`. When omitted, the default is endpoint-specific: retrieve operations
+            # default to `full`; list, create, and update operations default to `basic`.
+            # Listing with `view=full` caps `limit` at 20.
             view: nil,
             # Optional header to specify the beta version(s) you want to use.
             betas: nil,

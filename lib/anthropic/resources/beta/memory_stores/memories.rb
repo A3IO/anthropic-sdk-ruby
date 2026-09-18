@@ -12,13 +12,13 @@ module Anthropic
           #
           # @overload create(memory_store_id, content:, path:, view: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_store_id [String] Path param: Path parameter memory_store_id
+          # @param memory_store_id [String] Path param
           #
           # @param content [String, nil] Body param: UTF-8 text content for the new memory. Maximum 100 kB (102,400 bytes
           #
           # @param path [String] Body param: Hierarchical path for the new memory, e.g. `/projects/foo/notes.md`.
           #
-          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Query parameter for view
+          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Selects which projection of a `memory` or `memory_version` the serv
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #
@@ -52,11 +52,11 @@ module Anthropic
           #
           # @overload retrieve(memory_id, memory_store_id:, view: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_id [String] Path param: Path parameter memory_id
+          # @param memory_id [String] Path param
           #
-          # @param memory_store_id [String] Path param: Path parameter memory_store_id
+          # @param memory_store_id [String] Path param
           #
-          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Query parameter for view
+          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Selects which projection of a `memory` or `memory_version` the serv
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #
@@ -95,11 +95,11 @@ module Anthropic
           #
           # @overload update(memory_id, memory_store_id:, view: nil, content: nil, path: nil, precondition: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_id [String] Path param: Path parameter memory_id
+          # @param memory_id [String] Path param
           #
-          # @param memory_store_id [String] Path param: Path parameter memory_store_id
+          # @param memory_store_id [String] Path param
           #
-          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Query parameter for view
+          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Selects which projection of a `memory` or `memory_version` the serv
           #
           # @param content [String, nil] Body param: New UTF-8 text content for the memory. Maximum 100 kB (102,400 bytes
           #
@@ -143,7 +143,7 @@ module Anthropic
           #
           # @overload list(memory_store_id, depth: nil, limit: nil, page: nil, path_prefix: nil, view: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_store_id [String] Path param: Path parameter memory_store_id
+          # @param memory_store_id [String] Path param
           #
           # @param depth [Integer] Query param: `0` (or omitted) returns all descendants below `path_prefix` (recur
           #
@@ -189,11 +189,11 @@ module Anthropic
           #
           # @overload delete(memory_id, memory_store_id:, expected_content_sha256: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_id [String] Path param: Path parameter memory_id
+          # @param memory_id [String] Path param
           #
-          # @param memory_store_id [String] Path param: Path parameter memory_store_id
+          # @param memory_store_id [String] Path param
           #
-          # @param expected_content_sha256 [String] Query param: Query parameter for expected_content_sha256
+          # @param expected_content_sha256 [String] Query param
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #

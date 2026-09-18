@@ -20,9 +20,9 @@ module Anthropic
             ).returns(Anthropic::Beta::Sessions::BetaManagedAgentsSessionThread)
           end
           def retrieve(
-            # Path param: Path parameter thread_id
+            # Path param
             thread_id,
-            # Path param: Path parameter session_id
+            # Path param
             session_id:,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,
@@ -54,7 +54,7 @@ module Anthropic
             )
           end
           def list(
-            # Path param: Path parameter session_id
+            # Path param
             session_id,
             # Query param: Maximum results per page. Defaults to 1000.
             limit: nil,
@@ -86,9 +86,9 @@ module Anthropic
             ).returns(Anthropic::Beta::Sessions::BetaManagedAgentsSessionThread)
           end
           def archive(
-            # Path param: Path parameter thread_id
+            # Path param
             thread_id,
-            # Path param: Path parameter session_id
+            # Path param
             session_id:,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,

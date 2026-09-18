@@ -15,14 +15,13 @@ module Anthropic
             )
           end
 
-        # Query parameter for limit
         sig { returns(T.nilable(Integer)) }
         attr_reader :limit
 
         sig { params(limit: Integer).void }
         attr_writer :limit
 
-        # Query parameter for order
+        # ListOrder enum
         sig do
           returns(
             T.nilable(Anthropic::Beta::UserProfileListParams::Order::OrSymbol)
@@ -37,7 +36,8 @@ module Anthropic
         end
         attr_writer :order
 
-        # Query parameter for order_by
+        # Sort field for listing user profiles: `created_at` (default) or `name`
+        # (case-insensitive; profiles without a name sort last).
         sig do
           returns(
             T.nilable(Anthropic::Beta::UserProfileListParams::OrderBy::OrSymbol)
@@ -52,7 +52,6 @@ module Anthropic
         end
         attr_writer :order_by
 
-        # Query parameter for page
         sig { returns(T.nilable(String)) }
         attr_reader :page
 
@@ -94,13 +93,12 @@ module Anthropic
           ).returns(T.attached_class)
         end
         def self.new(
-          # Query parameter for limit
           limit: nil,
-          # Query parameter for order
+          # ListOrder enum
           order: nil,
-          # Query parameter for order_by
+          # Sort field for listing user profiles: `created_at` (default) or `name`
+          # (case-insensitive; profiles without a name sort last).
           order_by: nil,
-          # Query parameter for page
           page: nil,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -127,7 +125,7 @@ module Anthropic
         def to_hash
         end
 
-        # Query parameter for order
+        # ListOrder enum
         module Order
           extend Anthropic::Internal::Type::Enum
 
@@ -159,7 +157,8 @@ module Anthropic
           end
         end
 
-        # Query parameter for order_by
+        # Sort field for listing user profiles: `created_at` (default) or `name`
+        # (case-insensitive; profiles without a name sort last).
         module OrderBy
           extend Anthropic::Internal::Type::Enum
 

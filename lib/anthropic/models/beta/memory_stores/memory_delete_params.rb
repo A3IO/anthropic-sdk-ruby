@@ -20,7 +20,6 @@ module Anthropic
           required :memory_id, String
 
           # @!attribute expected_content_sha256
-          #   Query parameter for expected_content_sha256
           #
           #   @return [String, nil]
           optional :expected_content_sha256, String
@@ -41,7 +40,7 @@ module Anthropic
           #
           #   @param memory_id [String]
           #
-          #   @param expected_content_sha256 [String] Query parameter for expected_content_sha256
+          #   @param expected_content_sha256 [String]
           #
           #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
           #

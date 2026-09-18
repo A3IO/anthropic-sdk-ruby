@@ -22,7 +22,11 @@ module Anthropic
           sig { returns(String) }
           attr_accessor :memory_id
 
-          # Query parameter for view
+          # Selects which projection of a `memory` or `memory_version` the server returns.
+          # `basic` returns the object with `content` set to `null`; `full` populates
+          # `content`. When omitted, the default is endpoint-specific: retrieve operations
+          # default to `full`; list, create, and update operations default to `basic`.
+          # Listing with `view=full` caps `limit` at 20.
           sig do
             returns(
               T.nilable(
@@ -78,7 +82,11 @@ module Anthropic
           def self.new(
             memory_store_id:,
             memory_id:,
-            # Query parameter for view
+            # Selects which projection of a `memory` or `memory_version` the server returns.
+            # `basic` returns the object with `content` set to `null`; `full` populates
+            # `content`. When omitted, the default is endpoint-specific: retrieve operations
+            # default to `full`; list, create, and update operations default to `basic`.
+            # Listing with `view=full` caps `limit` at 20.
             view: nil,
             # Optional header to specify the beta version(s) you want to use.
             betas: nil,

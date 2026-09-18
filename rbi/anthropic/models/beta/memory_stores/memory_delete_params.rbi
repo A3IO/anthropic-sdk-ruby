@@ -22,7 +22,6 @@ module Anthropic
           sig { returns(String) }
           attr_accessor :memory_id
 
-          # Query parameter for expected_content_sha256
           sig { returns(T.nilable(String)) }
           attr_reader :expected_content_sha256
 
@@ -66,7 +65,6 @@ module Anthropic
           def self.new(
             memory_store_id:,
             memory_id:,
-            # Query parameter for expected_content_sha256
             expected_content_sha256: nil,
             # Optional header to specify the beta version(s) you want to use.
             betas: nil,

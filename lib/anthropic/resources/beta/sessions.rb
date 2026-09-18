@@ -65,7 +65,7 @@ module Anthropic
         #
         # @overload retrieve(session_id, betas: nil, workspace_id: nil, request_options: {})
         #
-        # @param session_id [String] Path parameter session_id
+        # @param session_id [String]
         #
         # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #
@@ -94,7 +94,7 @@ module Anthropic
         #
         # @overload update(session_id, agent: nil, budget: nil, metadata: nil, title: nil, vault_ids: nil, betas: nil, workspace_id: nil, request_options: {})
         #
-        # @param session_id [String] Path param: Path parameter session_id
+        # @param session_id [String] Path param
         #
         # @param agent [Anthropic::Models::Beta::BetaManagedAgentsSessionAgentUpdate] Body param: Mid-session agent configuration update. Only `tools` and `mcp_server
         #
@@ -215,7 +215,7 @@ module Anthropic
         #
         # @overload delete(session_id, betas: nil, workspace_id: nil, request_options: {})
         #
-        # @param session_id [String] Path parameter session_id
+        # @param session_id [String]
         #
         # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #
@@ -244,7 +244,7 @@ module Anthropic
         #
         # @overload archive(session_id, betas: nil, workspace_id: nil, request_options: {})
         #
-        # @param session_id [String] Path parameter session_id
+        # @param session_id [String]
         #
         # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #

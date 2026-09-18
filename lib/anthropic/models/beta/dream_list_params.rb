@@ -23,19 +23,16 @@ module Anthropic
         optional :created_at_lt, Time
 
         # @!attribute include_archived
-        #   Query parameter for include_archived
         #
         #   @return [Boolean, nil]
         optional :include_archived, Anthropic::Internal::Type::Boolean
 
         # @!attribute limit
-        #   Query parameter for limit
         #
         #   @return [Integer, nil]
         optional :limit, Integer
 
         # @!attribute page
-        #   Query parameter for page
         #
         #   @return [String, nil]
         optional :page, String
@@ -66,11 +63,11 @@ module Anthropic
         #
         #   @param created_at_lt [Time] Return dreams with `created_at` strictly before this timestamp (exclusive upper
         #
-        #   @param include_archived [Boolean] Query parameter for include_archived
+        #   @param include_archived [Boolean]
         #
-        #   @param limit [Integer] Query parameter for limit
+        #   @param limit [Integer]
         #
-        #   @param page [String] Query parameter for page
+        #   @param page [String]
         #
         #   @param statuses [Array<Symbol, Anthropic::Models::Beta::BetaDreamStatus>] Filter by lifecycle status. Repeat the parameter to match any of multiple status
         #

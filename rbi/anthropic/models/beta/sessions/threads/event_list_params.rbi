@@ -23,14 +23,12 @@ module Anthropic
             sig { returns(String) }
             attr_accessor :thread_id
 
-            # Query parameter for limit
             sig { returns(T.nilable(Integer)) }
             attr_reader :limit
 
             sig { params(limit: Integer).void }
             attr_writer :limit
 
-            # Query parameter for page
             sig { returns(T.nilable(String)) }
             attr_reader :page
 
@@ -76,9 +74,7 @@ module Anthropic
             def self.new(
               session_id:,
               thread_id:,
-              # Query parameter for limit
               limit: nil,
-              # Query parameter for page
               page: nil,
               # Optional header to specify the beta version(s) you want to use.
               betas: nil,

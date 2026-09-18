@@ -48,7 +48,7 @@ module Anthropic
         #
         # @overload retrieve(dream_id, betas: nil, workspace_id: nil, request_options: {})
         #
-        # @param dream_id [String] Path parameter dream_id
+        # @param dream_id [String]
         #
         # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #
@@ -81,11 +81,11 @@ module Anthropic
         #
         # @param created_at_lt [Time] Query param: Return dreams with `created_at` strictly before this timestamp (exc
         #
-        # @param include_archived [Boolean] Query param: Query parameter for include_archived
+        # @param include_archived [Boolean] Query param
         #
-        # @param limit [Integer] Query param: Query parameter for limit
+        # @param limit [Integer] Query param
         #
-        # @param page [String] Query param: Query parameter for page
+        # @param page [String] Query param
         #
         # @param statuses [Array<Symbol, Anthropic::Models::Beta::BetaDreamStatus>] Query param: Filter by lifecycle status. Repeat the parameter to match any of mu
         #
@@ -123,7 +123,7 @@ module Anthropic
         #
         # @overload archive(dream_id, betas: nil, workspace_id: nil, request_options: {})
         #
-        # @param dream_id [String] Path parameter dream_id
+        # @param dream_id [String]
         #
         # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #
@@ -152,7 +152,7 @@ module Anthropic
         #
         # @overload cancel(dream_id, betas: nil, workspace_id: nil, request_options: {})
         #
-        # @param dream_id [String] Path parameter dream_id
+        # @param dream_id [String]
         #
         # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #

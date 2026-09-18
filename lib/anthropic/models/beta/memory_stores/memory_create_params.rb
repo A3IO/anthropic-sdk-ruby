@@ -32,7 +32,11 @@ module Anthropic
           required :path, String
 
           # @!attribute view
-          #   Query parameter for view
+          #   Selects which projection of a `memory` or `memory_version` the server returns.
+          #   `basic` returns the object with `content` set to `null`; `full` populates
+          #   `content`. When omitted, the default is endpoint-specific: retrieve operations
+          #   default to `full`; list, create, and update operations default to `basic`.
+          #   Listing with `view=full` caps `limit` at 20.
           #
           #   @return [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView, nil]
           optional :view, enum: -> { Anthropic::Beta::MemoryStores::BetaManagedAgentsMemoryView }
@@ -58,7 +62,7 @@ module Anthropic
           #
           #   @param path [String] Hierarchical path for the new memory, e.g. `/projects/foo/notes.md`. Must start
           #
-          #   @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query parameter for view
+          #   @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Selects which projection of a `memory` or `memory_version` the server returns. `
           #
           #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
           #

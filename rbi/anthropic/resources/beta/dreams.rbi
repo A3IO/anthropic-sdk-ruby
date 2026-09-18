@@ -59,7 +59,6 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaDream)
         end
         def retrieve(
-          # Path parameter dream_id
           dream_id,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -95,11 +94,11 @@ module Anthropic
           # Query param: Return dreams with `created_at` strictly before this timestamp
           # (exclusive upper bound, RFC 3339). Unset applies no upper bound.
           created_at_lt: nil,
-          # Query param: Query parameter for include_archived
+          # Query param
           include_archived: nil,
-          # Query param: Query parameter for limit
+          # Query param
           limit: nil,
-          # Query param: Query parameter for page
+          # Query param
           page: nil,
           # Query param: Filter by lifecycle status. Repeat the parameter to match any of
           # multiple statuses. Empty applies no status filter.
@@ -127,7 +126,6 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaDream)
         end
         def archive(
-          # Path parameter dream_id
           dream_id,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -152,7 +150,6 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaDream)
         end
         def cancel(
-          # Path parameter dream_id
           dream_id,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,

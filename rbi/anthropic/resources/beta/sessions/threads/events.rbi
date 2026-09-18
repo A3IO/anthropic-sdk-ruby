@@ -24,13 +24,13 @@ module Anthropic
               )
             end
             def list(
-              # Path param: Path parameter thread_id
+              # Path param
               thread_id,
-              # Path param: Path parameter session_id
+              # Path param
               session_id:,
-              # Query param: Query parameter for limit
+              # Query param
               limit: nil,
-              # Query param: Query parameter for page
+              # Query param
               page: nil,
               # Header param: Optional header to specify the beta version(s) you want to use.
               betas: nil,
@@ -65,9 +65,9 @@ module Anthropic
               )
             end
             def stream_events(
-              # Path param: Path parameter thread_id
+              # Path param
               thread_id,
-              # Path param: Path parameter session_id
+              # Path param
               session_id:,
               # Query param: When set, this connection also receives streaming deltas
               # (`event_start`, `event_delta`) while an event is being produced, before the

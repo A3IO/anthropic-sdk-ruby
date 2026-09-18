@@ -13,11 +13,11 @@ module Anthropic
           #
           # @overload retrieve(memory_version_id, memory_store_id:, view: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_version_id [String] Path param: Path parameter memory_version_id
+          # @param memory_version_id [String] Path param
           #
-          # @param memory_store_id [String] Path param: Path parameter memory_store_id
+          # @param memory_store_id [String] Path param
           #
-          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Query parameter for view
+          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Selects which projection of a `memory` or `memory_version` the serv
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #
@@ -61,27 +61,27 @@ module Anthropic
           #
           # @overload list(memory_store_id, api_key_id: nil, created_at_gte: nil, created_at_lte: nil, limit: nil, memory_id: nil, operation: nil, page: nil, service_account_id: nil, session_id: nil, view: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_store_id [String] Path param: Path parameter memory_store_id
+          # @param memory_store_id [String] Path param
           #
-          # @param api_key_id [String] Query param: Query parameter for api_key_id
+          # @param api_key_id [String] Query param
           #
           # @param created_at_gte [Time] Query param: Return versions created at or after this time (inclusive).
           #
           # @param created_at_lte [Time] Query param: Return versions created at or before this time (inclusive).
           #
-          # @param limit [Integer] Query param: Query parameter for limit
+          # @param limit [Integer] Query param
           #
-          # @param memory_id [String] Query param: Query parameter for memory_id
+          # @param memory_id [String] Query param
           #
-          # @param operation [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryVersionOperation] Query param: Query parameter for operation
+          # @param operation [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryVersionOperation] Query param: The kind of mutation a `memory_version` records. Every non-no-op mu
           #
-          # @param page [String] Query param: Query parameter for page
+          # @param page [String] Query param
           #
-          # @param service_account_id [String] Query param: Query parameter for service_account_id
+          # @param service_account_id [String] Query param
           #
-          # @param session_id [String] Query param: Query parameter for session_id
+          # @param session_id [String] Query param
           #
-          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Query parameter for view
+          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Selects which projection of a `memory` or `memory_version` the serv
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #
@@ -133,9 +133,9 @@ module Anthropic
           #
           # @overload redact(memory_version_id, memory_store_id:, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_version_id [String] Path param: Path parameter memory_version_id
+          # @param memory_version_id [String] Path param
           #
-          # @param memory_store_id [String] Path param: Path parameter memory_store_id
+          # @param memory_store_id [String] Path param
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #

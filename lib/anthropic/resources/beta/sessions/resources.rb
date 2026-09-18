@@ -12,9 +12,9 @@ module Anthropic
           #
           # @overload retrieve(resource_id, session_id:, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param resource_id [String] Path param: Path parameter resource_id
+          # @param resource_id [String] Path param
           #
-          # @param session_id [String] Path param: Path parameter session_id
+          # @param session_id [String] Path param
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #
@@ -47,9 +47,9 @@ module Anthropic
           #
           # @overload update(resource_id, session_id:, authorization_token:, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param resource_id [String] Path param: Path parameter resource_id
+          # @param resource_id [String] Path param
           #
-          # @param session_id [String] Path param: Path parameter session_id
+          # @param session_id [String] Path param
           #
           # @param authorization_token [String] Body param: New authorization token for the resource. Currently only `github_rep
           #
@@ -86,7 +86,7 @@ module Anthropic
           #
           # @overload list(session_id, limit: nil, page: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param session_id [String] Path param: Path parameter session_id
+          # @param session_id [String] Path param
           #
           # @param limit [Integer] Query param: Maximum number of resources to return per page (max 1000). If omitt
           #
@@ -126,9 +126,9 @@ module Anthropic
           #
           # @overload delete(resource_id, session_id:, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param resource_id [String] Path param: Path parameter resource_id
+          # @param resource_id [String] Path param
           #
-          # @param session_id [String] Path param: Path parameter session_id
+          # @param session_id [String] Path param
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #
@@ -161,7 +161,7 @@ module Anthropic
           #
           # @overload add(session_id, file_id:, type:, mount_path: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param session_id [String] Path param: Path parameter session_id
+          # @param session_id [String] Path param
           #
           # @param file_id [String] Body param: ID of a previously uploaded file.
           #

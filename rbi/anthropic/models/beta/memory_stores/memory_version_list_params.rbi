@@ -19,7 +19,6 @@ module Anthropic
           sig { returns(String) }
           attr_accessor :memory_store_id
 
-          # Query parameter for api_key_id
           sig { returns(T.nilable(String)) }
           attr_reader :api_key_id
 
@@ -40,21 +39,20 @@ module Anthropic
           sig { params(created_at_lte: Time).void }
           attr_writer :created_at_lte
 
-          # Query parameter for limit
           sig { returns(T.nilable(Integer)) }
           attr_reader :limit
 
           sig { params(limit: Integer).void }
           attr_writer :limit
 
-          # Query parameter for memory_id
           sig { returns(T.nilable(String)) }
           attr_reader :memory_id
 
           sig { params(memory_id: String).void }
           attr_writer :memory_id
 
-          # Query parameter for operation
+          # The kind of mutation a `memory_version` records. Every non-no-op mutation to a
+          # memory appends exactly one version row with one of these values.
           sig do
             returns(
               T.nilable(
@@ -72,28 +70,29 @@ module Anthropic
           end
           attr_writer :operation
 
-          # Query parameter for page
           sig { returns(T.nilable(String)) }
           attr_reader :page
 
           sig { params(page: String).void }
           attr_writer :page
 
-          # Query parameter for service_account_id
           sig { returns(T.nilable(String)) }
           attr_reader :service_account_id
 
           sig { params(service_account_id: String).void }
           attr_writer :service_account_id
 
-          # Query parameter for session_id
           sig { returns(T.nilable(String)) }
           attr_reader :session_id
 
           sig { params(session_id: String).void }
           attr_writer :session_id
 
-          # Query parameter for view
+          # Selects which projection of a `memory` or `memory_version` the server returns.
+          # `basic` returns the object with `content` set to `null`; `full` populates
+          # `content`. When omitted, the default is endpoint-specific: retrieve operations
+          # default to `full`; list, create, and update operations default to `basic`.
+          # Listing with `view=full` caps `limit` at 20.
           sig do
             returns(
               T.nilable(
@@ -157,25 +156,24 @@ module Anthropic
           end
           def self.new(
             memory_store_id:,
-            # Query parameter for api_key_id
             api_key_id: nil,
             # Return versions created at or after this time (inclusive).
             created_at_gte: nil,
             # Return versions created at or before this time (inclusive).
             created_at_lte: nil,
-            # Query parameter for limit
             limit: nil,
-            # Query parameter for memory_id
             memory_id: nil,
-            # Query parameter for operation
+            # The kind of mutation a `memory_version` records. Every non-no-op mutation to a
+            # memory appends exactly one version row with one of these values.
             operation: nil,
-            # Query parameter for page
             page: nil,
-            # Query parameter for service_account_id
             service_account_id: nil,
-            # Query parameter for session_id
             session_id: nil,
-            # Query parameter for view
+            # Selects which projection of a `memory` or `memory_version` the server returns.
+            # `basic` returns the object with `content` set to `null`; `full` populates
+            # `content`. When omitted, the default is endpoint-specific: retrieve operations
+            # default to `full`; list, create, and update operations default to `basic`.
+            # Listing with `view=full` caps `limit` at 20.
             view: nil,
             # Optional header to specify the beta version(s) you want to use.
             betas: nil,
