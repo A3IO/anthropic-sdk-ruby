@@ -29,7 +29,24 @@ module Anthropic
         private_constant :RUN_TOOLS_STOP_REASONS, :RESUME_STOP_REASONS, :STOP_STOP_REASONS
 
         # @return [Anthropic::Models::Beta::MessageCreateParams]
-        attr_accessor :params
+        attr_reader :params
+
+        # @param params [Anthropic::Models::Beta::MessageCreateParams]
+        #
+        # @raise [ArgumentError] if `compaction` is set, if the messages are replaced while the
+        #   conversation is being compacted, or if a compaction edit is added while a compaction is due
+        def params=(params)
+          reject_compaction_param!(params)
+          if @compaction_phase == :in_flight && !params[:messages].equal?(current_messages)
+            raise ArgumentError.new(
+              "Message params can't be changed while the conversation is being compacted, because the " \
+              "compaction response replaces them. Make the change on the next iteration."
+            )
+          end
+          check_can_compact!(params) if @pending_compaction || @compaction_phase == :in_flight
+
+          @params = params
+        end
 
         # @return [Boolean]
         def finished? = @finished
@@ -39,17 +56,33 @@ module Anthropic
           self.params = {**params.to_h, messages: params[:messages].to_a + messages}
         end
 
+        # Compact the conversation before the model's next turn. Once the current turn has finished,
+        # including any tool calls, the runner asks the API for a summary and replaces its messages with
+        # the compaction response, which you get like any other message. Requires the
+        # `compact-2026-09-04` beta.
+        #
+        # @param compaction [Anthropic::Models::Beta::BetaCompactionConfig, Hash{Symbol=>Object}, nil]
+        #   the same config `messages.create(compaction:)` takes, `{type: :summarize}` when omitted
+        #
+        # @raise [ArgumentError] if `context_management` has a compaction edit
+        #
+        # @return [void]
+        def compact_before_next_turn(compaction = nil)
+          return unless @compaction_phase.nil?
+
+          check_can_compact!(params)
+          @pending_compaction = compaction || {type: :summarize}
+        end
+
         # @return [Array<Anthropic::Beta::BetaMessageParam>]
         private def current_messages = params&.[](:messages).to_a
 
         # @return [Anthropic::Models::BetaMessage, nil]
         def next_message
           message = nil
-          unless finished?
-            fold do
-              message = @client.beta.messages.create(with_helper_header(_1, StainlessHelperHeader::BETA_TOOL_RUNNER))
-              [true, message]
-            end
+          fold do
+            message = @client.beta.messages.create(with_helper_header(_1, StainlessHelperHeader::BETA_TOOL_RUNNER))
+            [true, message]
           end
           message
         end
@@ -93,13 +126,23 @@ module Anthropic
         #
         # @yieldparam [Array(Boolean, Anthropic::Models::Beta::MessageCreateParams)]
         private def fold(&blk)
-          return nil if finished?
+          @compaction_phase = nil if @compaction_phase == :handling
+          return nil if finished? && @pending_compaction.nil?
 
+          brk = false
           # rubocop:disable Metrics/BlockLength
           # rubocop:disable Style/CaseEquality
           loop do
+            break if finished?
             return if @max_iterations && @iteration_count >= @max_iterations
 
+            if @pending_compaction && !turn_paused?
+              brk = compact(@pending_compaction, &blk)
+              break if brk
+              next
+            end
+
+            reject_compaction_param!(params)
             tools = params[:tools].to_a.grep(Anthropic::Helpers::Tools::BaseTool)
             messages = current_messages
             brk, response = blk.call(params)
@@ -121,8 +164,7 @@ module Anthropic
               break
             end
 
-            tool_uses =
-              next_step == :run_tools ? response.content.grep(Anthropic::Beta::BetaToolUseBlock) : []
+            tool_uses = next_step == :run_tools ? client_tool_uses(response) : []
 
             # A `tool_removal` block only hints the model, so a call to a withdrawn tool can still
             # arrive; a name missing from this set routes down the same "not found" path as an
@@ -154,20 +196,7 @@ module Anthropic
               break
             end
 
-            content = response.content.map do
-              case _1
-              in Anthropic::Beta::BetaToolUseBlock
-                # `parsed` is only set for calls to a declared tool; any other call (e.g. to an
-                # unregistered tool) must replay the `input` the API sent, never a null.
-                input = _1.parsed.nil? ? _1.input : _1.parsed
-                raw = {**_1, input:}.except(:parsed)
-                Anthropic::Internal::Type::Converter.dump(Anthropic::Beta::BetaToolUseBlock, raw)
-              else
-                _1
-              end
-            end
-
-            messages << {role: :assistant, content:}
+            messages << assistant_turn(response)
             messages << {role: :user, content: mapped} unless mapped.empty?
             adopt_container(response)
 
@@ -177,6 +206,142 @@ module Anthropic
           end
           # rubocop:enable Style/CaseEquality
           # rubocop:enable Metrics/BlockLength
+
+          compact_after_final_turn(&blk) if finished? && !brk
+          nil
+        end
+
+        # @api private
+        #
+        # @param response [Anthropic::Models::BetaMessage]
+        #
+        # @return [Hash{Symbol=>Object}]
+        private def assistant_turn(response)
+          content = response.content.map do
+            case _1
+            # The class alone doesn't make a block a tool call, see `#client_tool_uses`.
+            in Anthropic::Beta::BetaToolUseBlock if block_type(_1) == :tool_use
+              # `parsed` is only set for calls to a declared tool; any other call (e.g. to an
+              # unregistered tool) must replay the `input` the API sent, never a null.
+              input = _1.parsed.nil? ? _1.input : _1.parsed
+              raw = {**_1, input:}.except(:parsed)
+              Anthropic::Internal::Type::Converter.dump(Anthropic::Beta::BetaToolUseBlock, raw)
+            else
+              _1
+            end
+          end
+
+          {role: :assistant, content:}
+        end
+
+        # @api private
+        #
+        # A block of a type this SDK version doesn't know is coerced to the closest model, which can
+        # be `BetaToolUseBlock`, so the class alone doesn't make a block a tool call.
+        #
+        # @param response [Anthropic::Models::BetaMessage]
+        #
+        # @return [Array<Anthropic::Beta::BetaToolUseBlock>]
+        private def client_tool_uses(response)
+          response.content.grep(Anthropic::Beta::BetaToolUseBlock).select { block_type(_1) == :tool_use }
+        end
+
+        # @api private
+        #
+        # @param block [Anthropic::Models::Beta::BetaContentBlock, Hash{Symbol=>Object}]
+        #
+        # @return [Symbol, nil]
+        private def block_type(block) = read_field(block, :type)&.to_sym
+
+        # @api private
+        #
+        # @param params [Anthropic::Models::Beta::MessageCreateParams]
+        private def reject_compaction_param!(params)
+          return if params[:compaction].nil?
+
+          raise ArgumentError.new(
+            "`compaction` cannot be set on a tool runner: every request in the loop would compact again. " \
+            "Call `#compact_before_next_turn` when the conversation should be compacted instead."
+          )
+        end
+
+        # @api private
+        #
+        # @param params [Anthropic::Models::Beta::MessageCreateParams]
+        private def check_can_compact!(params)
+          # The compaction request is sent without `context_management`, so the API can't reject this
+          # combination there: it would run and bill the compaction, then reject the next request,
+          # where the compaction response and the compaction edit meet.
+          edits = read_field(params[:context_management], :edits)
+          return unless Array(edits).any? { read_field(_1, :type).to_s.start_with?("compact_") }
+
+          raise ArgumentError.new(
+            "`#compact_before_next_turn` can't be used while `context_management` has a compaction edit, " \
+            "because the API doesn't accept a compaction block together with one. Remove the edit first."
+          )
+        end
+
+        # @api private
+        #
+        # The API can't compact a conversation that ends mid-turn, so a paused turn is resumed first.
+        #
+        # @return [Boolean]
+        private def turn_paused?
+          !@last_response.nil? && determine_next_step_from_stop_reason(@last_response.stop_reason) == :resume
+        end
+
+        # @api private
+        #
+        # @param compaction [Anthropic::Models::Beta::BetaCompactionConfig, Hash{Symbol=>Object}]
+        #
+        # @return [Boolean] whether the caller asked for a single message
+        private def compact(compaction, &blk)
+          check_can_compact!(params)
+          # The API refuses `compaction` alongside `context_management`; later requests keep it.
+          request = {**params.to_h, compaction:}.except(:context_management)
+          @pending_compaction = nil
+          @compaction_phase = :in_flight
+
+          brk, response = blk.call(request)
+
+          if response.content.any? { block_type(_1) == :compaction && !read_field(_1, :content).to_s.empty? }
+            # The response has to be sent back as it came, first, replacing the messages it summarizes.
+            @params = {**params.to_h, messages: [assistant_turn(response)]}
+          else
+            warn("[anthropic-ruby] Compaction produced no summary; keeping the conversation as it is.")
+          end
+          # `#next_message` hands the response over only now; its caller is looking at it until the
+          # runner is next advanced, which is when `#fold` clears this.
+          @compaction_phase = :handling if brk
+          brk
+        ensure
+          @compaction_phase = nil if @compaction_phase == :in_flight
+        end
+
+        # @api private
+        private def compact_after_final_turn(&blk)
+          return if @pending_compaction.nil?
+
+          # The loop never adds the final turn to the history, so it is added here for the compaction
+          # to cover it, and forgotten so that a later compaction doesn't add it again.
+          unless @last_response.nil?
+            if client_tool_uses(@last_response).any?
+              # A turn that was cut short can end with tool calls that are never run, and the API
+              # can't compact a conversation whose last turn has an unanswered tool call.
+              warn(
+                "[anthropic-ruby] The pending compaction was skipped because the last turn " \
+                "(stop_reason: #{@last_response.stop_reason.inspect}) ended with tool calls that " \
+                "were not run. Call `#compact_before_next_turn` again if you continue the conversation."
+              )
+              @pending_compaction = nil
+              return
+            end
+
+            current_messages << assistant_turn(@last_response)
+            @last_response = nil
+          end
+
+          compact(@pending_compaction, &blk)
         end
 
         # @api private
@@ -403,12 +568,15 @@ module Anthropic
         def initialize(client, params:, max_iterations: nil, compaction_control: nil)
           @client = client
           @params = params.to_h
+          reject_compaction_param!(@params)
           @finished = false
           @max_iterations = max_iterations
           @iteration_count = 0
           @compaction_control = compaction_control
           @compaction_warned = false
           @last_response = nil
+          @pending_compaction = nil
+          @compaction_phase = nil
         end
 
         private def with_helper_header(params, helper)

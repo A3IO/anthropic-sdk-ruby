@@ -454,6 +454,45 @@ runner.feed_messages({role: :user, content: "Be more confident"}) if needed
 all_messages = runner.run_until_finished
 ```
 
+#### `#compact_before_next_turn` - Compact the Conversation
+
+With the `compact-2026-09-04` beta you decide when a conversation is compacted: a request with the `compaction` param returns a single `compaction` block, which then replaces the messages it summarizes. In a tool runner, call `#compact_before_next_turn` and the runner does this for you:
+
+```ruby
+runner = client.beta.messages.tool_runner(
+  model: "claude-sonnet-5",
+  max_tokens: 1024,
+  betas: ["compact-2026-09-04"],
+  messages: [{role: "user", content: "Find every page that mentions rate limits."}],
+  tools: [search_docs]
+)
+
+runner.each_message do |message|
+  runner.compact_before_next_turn if message.usage.input_tokens > 100_000
+end
+```
+
+The call only schedules the compaction. Once the current turn has finished, including any tool calls, the runner requests a summary, replaces its messages with the compaction response the API returns, and carries on. A turn that was paused (`pause_turn`) is resumed and finished first. If the current turn is the last one, the runner compacts and then stops. If you call it before the first request, the compaction is the first request.
+
+You get the compaction response like any other message (`#each_message` and `#each_streaming` yield it, `#next_message` returns it), and it doesn't count towards `max_iterations`. It has `stop_reason: :compaction`, the summary is in `message.content.first.content`, and its `usage.input_tokens` is the size of the history that was just summarized. Calling `#compact_before_next_turn` while handling that message does nothing, so a threshold like the one above doesn't compact twice.
+
+`#compact_before_next_turn` takes the same config as the `compaction:` param of `messages.create`, for example to give your own summarization instructions:
+
+```ruby
+runner.compact_before_next_turn({type: :summarize, instructions: "Keep the page URLs found so far."})
+```
+
+A few things to know:
+
+- Calling it again before the compaction runs replaces the pending one.
+- The runner doesn't add the beta for you, so pass `betas: ["compact-2026-09-04"]`.
+- `context_management` is left out of the compaction request, because the API doesn't accept the two together, and is sent again afterwards. `#compact_before_next_turn` raises an `ArgumentError` if `context_management` has a `compact_*` edit, and so does adding one while a compaction is pending.
+- While you're handling the compaction response in an `#each_message` or `#each_streaming` block, `#feed_messages` and assigning `runner.params = …` with different `messages` raise an `ArgumentError`, because the compaction response is about to replace the messages. Other params can still be changed. To change the messages in a way the runner notices during a run, assign `runner.params = …` or use `#feed_messages`; editing the array in place is not detected while a compaction is in progress.
+- If the API returns no summary, the runner prints a warning and keeps the messages as they are.
+- If the run ends on a turn that was cut short with tool calls that never ran (`stop_reason: :max_tokens`, for example), the pending compaction is skipped with a warning. It is also skipped if the run stops at `max_iterations` or you `break` out of the block.
+- `#next_message` only returns the last message once the run has finished. Call `#compact_before_next_turn` and then `#next_message` once more to compact after it.
+- The `compaction` param itself can't be set on a tool runner, because every request in the loop would compact again.
+
 ## Tool Definition Options
 
 `doc` and `input_schema` declare a tool's `description` and `input_schema`, and its `name` is derived from the class name. Every other property of the [tool definition](https://platform.claude.com/docs/en/agents-and-tools/tool-use/implement-tool-use) — such as `strict`, `cache_control`, `defer_loading`, `allowed_callers`, `eager_input_streaming` or `input_examples` — is declared with `tool_options`. The options are sent whenever the tool is passed in `tools:`, whether to `create`, `stream` or the tool runner:

@@ -698,6 +698,40 @@ class Anthropic::Test::Helpers::ToolRunner::MessagesTest < Minitest::Test
     assert_match(/'get_tides' not found/, follow_up.dig(:messages, -1, :content, 0, :content))
   end
 
+  # A block type this SDK version does not model can be coerced to `BetaToolUseBlock`.
+  def test_unknown_block_type_is_not_run_as_a_tool_call
+    widget_use = {
+      type: "widget_use",
+      id: "widget_1",
+      name: "calculator",
+      input: {lhs: 1.0, rhs: 2.0, operator: "+"}
+    }
+    tool_use = {
+      type: "tool_use",
+      id: "tool_1",
+      name: "calculator",
+      input: {lhs: 10.0, rhs: 5.0, operator: "+"}
+    }
+    bodies = stub_responses_capturing_bodies(
+      {
+        status: 200,
+        headers: {"Content-Type" => "application/json"},
+        body: message_body(id: "msg_1", content: [widget_use, tool_use], stop_reason: "tool_use").to_json
+      },
+      text_response(id: "msg_2", text: "10 + 5 = 15")
+    )
+
+    @client.beta.messages.tool_runner(basic_params).each_message { _1 }
+
+    assert_equal([{lhs: 10.0, rhs: 5.0, operator: :+}], @calculator.call_history)
+    assert_pattern do
+      bodies.last[:messages].last(2) => [
+        {role: "assistant", content: [^widget_use, ^tool_use]},
+        {role: "user", content: [{type: "tool_result", tool_use_id: "tool_1"}]}
+      ]
+    end
+  end
+
   def calculator_tool_use_response(id:, tool_id:, container: nil)
     tool_use_response(
       id: id,
