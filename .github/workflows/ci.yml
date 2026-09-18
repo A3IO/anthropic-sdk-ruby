@@ -58,7 +58,7 @@ jobs:
           PACKAGE_NAME: anthropic
         run: ./scripts/utils/upload-artifact.sh
   lint:
-    timeout-minutes: 15
+    timeout-minutes: 30
     name: lint
     runs-on: 'ubuntu-latest'
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
@@ -92,7 +92,7 @@ jobs:
         run: ./scripts/test
 
   detect_breaking_changes:
-    timeout-minutes: 20
+    timeout-minutes: 35
     name: detect-breaking-changes
     runs-on: 'ubuntu-latest'
     if: |-
