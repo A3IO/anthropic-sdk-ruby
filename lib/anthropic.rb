@@ -899,6 +899,7 @@ require_relative "anthropic/models/beta/sessions/beta_managed_agents_agent_auto_
 require_relative "anthropic/models/beta/sessions/beta_managed_agents_agent_auto_evaluated_permission_ask"
 require_relative "anthropic/models/beta/sessions/beta_managed_agents_agent_auto_evaluated_permission_deny"
 require_relative "anthropic/models/beta/sessions/beta_managed_agents_agent_custom_tool_use_event"
+require_relative "anthropic/models/beta/sessions/beta_managed_agents_agent_evaluated_permission"
 require_relative "anthropic/models/beta/sessions/beta_managed_agents_agent_mcp_tool_result_event"
 require_relative "anthropic/models/beta/sessions/beta_managed_agents_agent_mcp_tool_use_event"
 require_relative "anthropic/models/beta/sessions/beta_managed_agents_agent_message_event"

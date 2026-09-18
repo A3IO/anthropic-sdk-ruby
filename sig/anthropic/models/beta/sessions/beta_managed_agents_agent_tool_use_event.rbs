@@ -9,7 +9,7 @@ module Anthropic
             name: String,
             processed_at: Time,
             type: Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::type_,
-            evaluated_permission: Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::evaluated_permission,
+            evaluated_permission: Anthropic::Models::Beta::Sessions::beta_managed_agents_agent_evaluated_permission,
             evaluation: Anthropic::Models::Beta::Sessions::beta_managed_agents_agent_tool_evaluation,
             session_thread_id: String?
           }
@@ -25,11 +25,11 @@ module Anthropic
 
           attr_accessor type: Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::type_
 
-          attr_reader evaluated_permission: Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::evaluated_permission?
+          attr_reader evaluated_permission: Anthropic::Models::Beta::Sessions::beta_managed_agents_agent_evaluated_permission?
 
           def evaluated_permission=: (
-            Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::evaluated_permission
-          ) -> Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::evaluated_permission
+            Anthropic::Models::Beta::Sessions::beta_managed_agents_agent_evaluated_permission
+          ) -> Anthropic::Models::Beta::Sessions::beta_managed_agents_agent_evaluated_permission
 
           attr_reader evaluation: Anthropic::Models::Beta::Sessions::beta_managed_agents_agent_tool_evaluation?
 
@@ -45,7 +45,7 @@ module Anthropic
             name: String,
             processed_at: Time,
             type: Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::type_,
-            ?evaluated_permission: Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::evaluated_permission,
+            ?evaluated_permission: Anthropic::Models::Beta::Sessions::beta_managed_agents_agent_evaluated_permission,
             ?evaluation: Anthropic::Models::Beta::Sessions::beta_managed_agents_agent_tool_evaluation,
             ?session_thread_id: String?
           ) -> void
@@ -56,7 +56,7 @@ module Anthropic
             name: String,
             processed_at: Time,
             type: Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::type_,
-            evaluated_permission: Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::evaluated_permission,
+            evaluated_permission: Anthropic::Models::Beta::Sessions::beta_managed_agents_agent_evaluated_permission,
             evaluation: Anthropic::Models::Beta::Sessions::beta_managed_agents_agent_tool_evaluation,
             session_thread_id: String?
           }
@@ -69,18 +69,6 @@ module Anthropic
             AGENT_TOOL_USE: :"agent.tool_use"
 
             def self?.values: -> ::Array[Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::type_]
-          end
-
-          type evaluated_permission = :allow | :ask | :deny
-
-          module EvaluatedPermission
-            extend Anthropic::Internal::Type::Enum
-
-            ALLOW: :allow
-            ASK: :ask
-            DENY: :deny
-
-            def self?.values: -> ::Array[Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::evaluated_permission]
           end
         end
       end
