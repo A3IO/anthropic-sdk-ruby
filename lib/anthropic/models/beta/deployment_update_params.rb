@@ -9,6 +9,7 @@ module Anthropic
         include Anthropic::Internal::Type::RequestParameters
 
         # @!attribute deployment_id
+        #   Unique identifier of the deployment to update.
         #
         #   @return [String]
         required :deployment_id, String
@@ -94,6 +95,12 @@ module Anthropic
         optional :betas, -> { Anthropic::Internal::Type::ArrayOf[union: Anthropic::AnthropicBeta] }
 
         # @!attribute workspace_id
+        #   Optional header to select the Workspace for this request. The value is a
+        #   Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+        #
+        #   Only needed for credentials that can act on more than one Workspace. A
+        #   credential that belongs to a specific Workspace may omit it; if sent, it must
+        #   match that Workspace.
         #
         #   @return [String, nil]
         optional :workspace_id, String
@@ -102,7 +109,7 @@ module Anthropic
         #   Some parameter documentations has been truncated, see
         #   {Anthropic::Models::Beta::DeploymentUpdateParams} for more details.
         #
-        #   @param deployment_id [String]
+        #   @param deployment_id [String] Unique identifier of the deployment to update.
         #
         #   @param agent [Anthropic::Models::Beta::BetaManagedAgentsAgentParams, String] Agent to deploy. Accepts the `agent` ID string, which re-pins to the latest vers
         #
@@ -126,7 +133,7 @@ module Anthropic
         #
         #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #
-        #   @param workspace_id [String]
+        #   @param workspace_id [String] Optional header to select the Workspace for this request. The value is a Workspa
         #
         #   @param request_options [Anthropic::RequestOptions, Hash{Symbol=>Object}]
 

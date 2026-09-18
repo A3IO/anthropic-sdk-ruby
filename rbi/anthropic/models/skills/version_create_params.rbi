@@ -28,6 +28,12 @@ module Anthropic
         sig { returns(T::Array[Anthropic::Internal::FileInput]) }
         attr_accessor :files
 
+        # Optional header to select the Workspace for this request. The value is a
+        # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+        #
+        # Only needed for credentials that can act on more than one Workspace. A
+        # credential that belongs to a specific Workspace may omit it; if sent, it must
+        # match that Workspace.
         sig { returns(T.nilable(String)) }
         attr_reader :workspace_id
 
@@ -52,6 +58,12 @@ module Anthropic
           # All files must be in the same top-level directory and must include a SKILL.md
           # file at the root of that directory.
           files:,
+          # Optional header to select the Workspace for this request. The value is a
+          # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+          #
+          # Only needed for credentials that can act on more than one Workspace. A
+          # credential that belongs to a specific Workspace may omit it; if sent, it must
+          # match that Workspace.
           workspace_id: nil,
           request_options: {}
         )

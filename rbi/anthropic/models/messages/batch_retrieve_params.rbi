@@ -19,6 +19,12 @@ module Anthropic
         sig { returns(String) }
         attr_accessor :message_batch_id
 
+        # Optional header to select the Workspace for this request. The value is a
+        # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+        #
+        # Only needed for credentials that can act on more than one Workspace. A
+        # credential that belongs to a specific Workspace may omit it; if sent, it must
+        # match that Workspace.
         sig { returns(T.nilable(String)) }
         attr_reader :workspace_id
 
@@ -35,6 +41,12 @@ module Anthropic
         def self.new(
           # ID of the Message Batch.
           message_batch_id:,
+          # Optional header to select the Workspace for this request. The value is a
+          # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+          #
+          # Only needed for credentials that can act on more than one Workspace. A
+          # credential that belongs to a specific Workspace may omit it; if sent, it must
+          # match that Workspace.
           workspace_id: nil,
           request_options: {}
         )

@@ -439,6 +439,12 @@ module Anthropic
       sig { params(user_profile_id: String).void }
       attr_writer :user_profile_id
 
+      # Optional header to select the Workspace for this request. The value is a
+      # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+      #
+      # Only needed for credentials that can act on more than one Workspace. A
+      # credential that belongs to a specific Workspace may omit it; if sent, it must
+      # match that Workspace.
       sig { returns(T.nilable(String)) }
       attr_reader :workspace_id
 
@@ -745,6 +751,12 @@ module Anthropic
         # The user profile ID to attribute this request to. Use when acting on behalf of a
         # party other than your organization. Requires the `user-profiles` beta header.
         user_profile_id: nil,
+        # Optional header to select the Workspace for this request. The value is a
+        # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+        #
+        # Only needed for credentials that can act on more than one Workspace. A
+        # credential that belongs to a specific Workspace may omit it; if sent, it must
+        # match that Workspace.
         workspace_id: nil,
         request_options: {}
       )
