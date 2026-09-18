@@ -80,8 +80,8 @@ module Anthropic
         required :context_management, -> { Anthropic::Beta::BetaContextManagementResponse }, nil?: true
 
         # @!attribute diagnostics
-        #   Response envelope for request-level diagnostics. Present (possibly null)
-        #   whenever the caller supplied `diagnostics` on the request.
+        #   Request-level diagnostics: why the prompt cache could not fully reuse the prefix
+        #   of the request named by `diagnostics.previous_message_id`.
         #
         #   @return [Anthropic::Models::Beta::BetaDiagnostics, nil]
         required :diagnostics, -> { Anthropic::Beta::BetaDiagnostics }, nil?: true
@@ -206,7 +206,7 @@ module Anthropic
         #
         #   @param context_management [Anthropic::Models::Beta::BetaContextManagementResponse, nil] Context management response.
         #
-        #   @param diagnostics [Anthropic::Models::Beta::BetaDiagnostics, nil] Response envelope for request-level diagnostics. Present (possibly
+        #   @param diagnostics [Anthropic::Models::Beta::BetaDiagnostics, nil] Request-level diagnostics: why the prompt cache could not fully reuse
         #
         #   @param model [Symbol, String, Anthropic::Models::Model] The model that will complete your prompt.
         #
