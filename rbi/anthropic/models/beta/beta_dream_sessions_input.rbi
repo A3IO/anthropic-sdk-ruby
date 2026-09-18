@@ -28,7 +28,7 @@ module Anthropic
         sig { returns(Anthropic::Beta::BetaDreamSessionsInput::Type::OrSymbol) }
         attr_accessor :type
 
-        # Input session transcripts the dream reads.
+        # The sessions that a dream reads, given as an entry in `inputs`.
         sig do
           params(
             session_ids: T::Array[String],

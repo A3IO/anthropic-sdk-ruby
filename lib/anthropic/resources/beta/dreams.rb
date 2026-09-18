@@ -99,9 +99,9 @@ module Anthropic
         #
         # @overload list(created_at_gt: nil, created_at_lt: nil, include_archived: nil, limit: nil, page: nil, statuses: nil, betas: nil, workspace_id: nil, request_options: {})
         #
-        # @param created_at_gt [Time] Query param: Return dreams with `created_at` strictly after this timestamp (excl
+        # @param created_at_gt [Time] Query param: Return only dreams created after this time (exclusive), in RFC 3339
         #
-        # @param created_at_lt [Time] Query param: Return dreams with `created_at` strictly before this timestamp (exc
+        # @param created_at_lt [Time] Query param: Return only dreams created before this time (exclusive), in RFC 333
         #
         # @param include_archived [Boolean] Query param: Whether to include archived dreams. Defaults to `false`.
         #
@@ -109,7 +109,7 @@ module Anthropic
         #
         # @param page [String] Query param: The cursor for the page to return, taken from `next_page` in a prev
         #
-        # @param statuses [Array<Symbol, Anthropic::Models::Beta::BetaDreamStatus>] Query param: Filter by lifecycle status. Repeat the parameter to match any of mu
+        # @param statuses [Array<Symbol, Anthropic::Models::Beta::BetaDreamStatus>] Query param: Return only dreams that have one of these statuses.
         #
         # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
         #

@@ -24,7 +24,7 @@ module Anthropic
         sig { returns(Anthropic::Beta::BetaDreamOutput::Type::TaggedSymbol) }
         attr_accessor :type
 
-        # An output memory store the dream writes consolidated memories into.
+        # The memory store that holds a dream's result, as an entry in `outputs`.
         sig do
           params(
             memory_store_id: String,

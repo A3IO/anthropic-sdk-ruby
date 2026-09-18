@@ -23,7 +23,7 @@ module Anthropic
         required :type, enum: -> { Anthropic::Beta::BetaDreamSessionsInput::Type }
 
         # @!method initialize(session_ids:, type:)
-        #   Input session transcripts the dream reads.
+        #   The sessions that a dream reads, given as an entry in `inputs`.
         #
         #   Some parameter documentations has been truncated, see
         #   {Anthropic::Models::Beta::BetaDreamSessionsInput} for more details.

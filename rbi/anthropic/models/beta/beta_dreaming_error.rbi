@@ -111,8 +111,8 @@ module Anthropic
         end
         def self.new(
           type:,
-          # Human-readable description of the conflict, naming the dream that holds the
-          # target store when the server can identify it.
+          # A human-readable explanation of why the memory store can't be used yet, with the
+          # ID of the dream that is using it when the server can identify it.
           message: nil
         )
         end

@@ -3,7 +3,14 @@
 module Anthropic
   module Models
     module Beta
-      # Lifecycle status of a Dream.
+      # Where a dream is in its lifecycle.
+      #
+      # `completed`, `failed`, and `canceled` are final: once a dream has one of these
+      # statuses, its status doesn't change again.
+      #
+      # See the
+      # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#lifecycle)
+      # for what each status means.
       module BetaDreamStatus
         extend Anthropic::Internal::Type::Enum
 
@@ -25,7 +32,9 @@ module Anthropic
         # If `outputs` references a memory store, that memory store keeps what the dream wrote before it stopped.
         FAILED = :failed
 
-        # The caller canceled the dream before it completed.
+        # A cancel request stopped the dream before it reached `completed` or `failed`.
+        #
+        # If `outputs` references a memory store, that memory store keeps what the dream wrote. `usage` can keep changing after the cancel.
         CANCELED = :canceled
 
         # @!method self.values

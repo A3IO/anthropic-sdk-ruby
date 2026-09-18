@@ -125,11 +125,11 @@ module Anthropic
           ).returns(Anthropic::Internal::PageCursor[Anthropic::Beta::BetaDream])
         end
         def list(
-          # Query param: Return dreams with `created_at` strictly after this timestamp
-          # (exclusive lower bound, RFC 3339). Unset applies no lower bound.
+          # Query param: Return only dreams created after this time (exclusive), in
+          # RFC 3339.
           created_at_gt: nil,
-          # Query param: Return dreams with `created_at` strictly before this timestamp
-          # (exclusive upper bound, RFC 3339). Unset applies no upper bound.
+          # Query param: Return only dreams created before this time (exclusive), in
+          # RFC 3339.
           created_at_lt: nil,
           # Query param: Whether to include archived dreams. Defaults to `false`.
           include_archived: nil,
@@ -141,8 +141,10 @@ module Anthropic
           #
           # Leave it out to get the first page.
           page: nil,
-          # Query param: Filter by lifecycle status. Repeat the parameter to match any of
-          # multiple statuses. Empty applies no status filter.
+          # Query param: Return only dreams that have one of these statuses.
+          #
+          # Repeat the parameter to give more than one status. Leave it out to return dreams
+          # of every status.
           statuses: nil,
           # Header param: Optional header to specify the beta version(s) you want to use.
           betas: nil,

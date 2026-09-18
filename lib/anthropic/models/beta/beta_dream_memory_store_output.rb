@@ -19,7 +19,7 @@ module Anthropic
         required :type, enum: -> { Anthropic::Beta::BetaDreamMemoryStoreOutput::Type }
 
         # @!method initialize(memory_store_id:, type:)
-        #   An output memory store the dream writes consolidated memories into.
+        #   The memory store that holds a dream's result, as an entry in `outputs`.
         #
         #   Some parameter documentations has been truncated, see
         #   {Anthropic::Models::Beta::BetaDreamMemoryStoreOutput} for more details.

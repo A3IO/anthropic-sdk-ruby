@@ -92,7 +92,7 @@ module Anthropic
         module Model
           extend Anthropic::Internal::Type::Union
 
-          # Model identifier and configuration applied to every pipeline stage.
+          # The object form of `model` in a request to create a dream.
           variant -> { Anthropic::Beta::BetaDreamModelConfigParam }
 
           variant String

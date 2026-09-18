@@ -5,7 +5,13 @@ module Anthropic
     module Beta
       class BetaDreamModelConfigParam < Anthropic::Internal::Type::BaseModel
         # @!attribute id
-        #   Model identifier, e.g. "claude-opus-5". 1-256 characters.
+        #   The ID of the model to run the dream with.
+        #
+        #   The ID can be 1 to 256 characters long.
+        #
+        #   The
+        #   [limits table in the Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#limits)
+        #   lists the supported models.
         #
         #   @return [String]
         required :id, String
@@ -19,12 +25,12 @@ module Anthropic
         optional :speed, enum: -> { Anthropic::Beta::BetaDreamModelConfigParam::Speed }, nil?: true
 
         # @!method initialize(id:, speed: nil)
-        #   Model identifier and configuration applied to every pipeline stage.
+        #   The object form of `model` in a request to create a dream.
         #
         #   Some parameter documentations has been truncated, see
         #   {Anthropic::Models::Beta::BetaDreamModelConfigParam} for more details.
         #
-        #   @param id [String] Model identifier, e.g. "claude-opus-5". 1-256 characters.
+        #   @param id [String] The ID of the model to run the dream with.
         #
         #   @param speed [Symbol, Anthropic::Models::Beta::BetaDreamModelConfigParam::Speed, nil] Inference speed mode. `fast` provides significantly faster output token generati
 
