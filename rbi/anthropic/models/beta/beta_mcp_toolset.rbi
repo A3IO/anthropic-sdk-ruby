@@ -49,6 +49,13 @@ module Anthropic
         end
         attr_writer :default_config
 
+        # The server's tool listing, pinned: when present, the server is not asked for its
+        # tools before sampling and exactly these entries, with `default_config` and
+        # `configs` applied, are the toolset's tools. Copy it from the `mcp_tool_listing`
+        # block of an earlier response.
+        sig { returns(T.nilable(T::Array[Anthropic::Beta::BetaMCPToolParam])) }
+        attr_accessor :tools
+
         # Configuration for a group of tools from an MCP server.
         #
         # Allows configuring enabled status and defer_loading for all tools from an MCP
@@ -63,6 +70,8 @@ module Anthropic
                 T::Hash[Symbol, Anthropic::Beta::BetaMCPToolConfig::OrHash]
               ),
             default_config: Anthropic::Beta::BetaMCPToolDefaultConfig::OrHash,
+            tools:
+              T.nilable(T::Array[Anthropic::Beta::BetaMCPToolParam::OrHash]),
             type: Symbol
           ).returns(T.attached_class)
         end
@@ -75,6 +84,11 @@ module Anthropic
           configs: nil,
           # Default configuration applied to all tools from this server
           default_config: nil,
+          # The server's tool listing, pinned: when present, the server is not asked for its
+          # tools before sampling and exactly these entries, with `default_config` and
+          # `configs` applied, are the toolset's tools. Copy it from the `mcp_tool_listing`
+          # block of an earlier response.
+          tools: nil,
           type: :mcp_toolset
         )
         end
@@ -88,7 +102,8 @@ module Anthropic
                 T.nilable(Anthropic::Beta::BetaCacheControlEphemeral),
               configs:
                 T.nilable(T::Hash[Symbol, Anthropic::Beta::BetaMCPToolConfig]),
-              default_config: Anthropic::Beta::BetaMCPToolDefaultConfig
+              default_config: Anthropic::Beta::BetaMCPToolDefaultConfig,
+              tools: T.nilable(T::Array[Anthropic::Beta::BetaMCPToolParam])
             }
           )
         end

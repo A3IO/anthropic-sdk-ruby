@@ -56,6 +56,45 @@ module Anthropic
           self.params = {**params.to_h, messages: params[:messages].to_a + messages}
         end
 
+        # @api public
+        #
+        # Sends the tools' definitions in `tool_addition` blocks with the next request, leaving
+        # `params[:tools]` and the prompt cache alone. A `BaseTool` can be called from that request
+        # on and replaces a same-name tool; a raw definition is never run here and stops a same-name
+        # tool from running. Needs the `inline-tools-2026-09-15` beta.
+        #
+        # @param tools [Array<Anthropic::Helpers::Tools::BaseTool, Anthropic::Models::Beta::BetaToolUnion, Hash{Symbol=>Object}>]
+        def add_tools(*tools)
+          # Converted in place, so the originals are kept apart to pair each with its definition.
+          request = {tools: tools.dup}
+          Anthropic::Helpers::Messages.distill_input_schema_models!(request, strict: nil)
+          tools.zip(request.fetch(:tools)) do |tool, definition|
+            block = {type: :tool_addition, tool: {type: :tool_definition, definition:}}
+            runnable = tool if tool.is_a?(Anthropic::Helpers::Tools::BaseTool)
+            @pending_tool_changes << {block:, tool: runnable}
+          end
+        end
+
+        # @api public
+        #
+        # Sends `tool_removal` blocks with the next request. The tools stop being run straight away,
+        # so a call to one gets the "not found" error result. Needs the `inline-tools-2026-09-15` beta.
+        #
+        # @param tools [Array<Anthropic::Helpers::Tools::BaseTool, String, Symbol>] the tools, or their names
+        def remove_tools(*tools)
+          tools.each do |tool|
+            name =
+              case tool
+              in Anthropic::Helpers::Tools::BaseTool
+                Anthropic::Helpers::Messages.tool_api_name(tool)
+              in String | Symbol
+                tool.to_s
+              end
+            @tool_overrides.store(name, nil)
+            @pending_tool_changes << {block: {type: :tool_removal, tool: {type: :tool_reference, name:}}}
+          end
+        end
+
         # Compact the conversation before the model's next turn. Once the current turn has finished,
         # including any tool calls, the runner asks the API for a summary and replaces its messages with
         # the compaction response, which you get like any other message. Requires the
@@ -136,6 +175,8 @@ module Anthropic
             break if finished?
             return if @max_iterations && @iteration_count >= @max_iterations
 
+            send_pending_tool_changes
+
             if @pending_compaction && !turn_paused?
               brk = compact(@pending_compaction, &blk)
               break if brk
@@ -169,15 +210,22 @@ module Anthropic
             # A `tool_removal` block only hints the model, so a call to a withdrawn tool can still
             # arrive; a name missing from this set routes down the same "not found" path as an
             # undeclared tool.
-            available = available_tool_names(tools, messages)
+            available = available_tool_names([*tools, *@tool_overrides.values.compact], messages)
 
             mapped =
               tool_uses.map do |tool_use|
                 resp = {type: :tool_result, tool_use_id: tool_use.id}
                 if available.include?(tool_use.name) &&
-                   (tool = tools.find { _1.class.model === tool_use.parsed })
+                   (tool = @tool_overrides.fetch(tool_use.name) do
+                     tools.find do
+                       _1.class.model === tool_use.parsed && Anthropic::Helpers::Messages.tool_api_name(_1) == tool_use.name
+                     end
+                   end)
                   begin
-                    raw = tool.call(tool_use.parsed)
+                    # `parsed` was read against `params[:tools]`, which an added tool is not in.
+                    input = tool_use.parsed
+                    input = Anthropic::Internal::Type::Converter.coerce(tool, tool_use.input) if @tool_overrides.key?(tool_use.name)
+                    raw = tool.call(input)
                     is_error = false
                   rescue StandardError => e
                     is_error = true
@@ -222,8 +270,9 @@ module Anthropic
             # The class alone doesn't make a block a tool call, see `#client_tool_uses`.
             in Anthropic::Beta::BetaToolUseBlock if block_type(_1) == :tool_use
               # `parsed` is only set for calls to a declared tool; any other call (e.g. to an
-              # unregistered tool) must replay the `input` the API sent, never a null.
-              input = _1.parsed.nil? ? _1.input : _1.parsed
+              # unregistered tool) must replay the `input` the API sent, never a null. So must a
+              # tool `add_tools` / `remove_tools` changed: `parsed` came from `params[:tools]`.
+              input = _1.parsed.nil? || @tool_overrides.key?(_1.name) ? _1.input : _1.parsed
               raw = {**_1, input:}.except(:parsed)
               Anthropic::Internal::Type::Converter.dump(Anthropic::Beta::BetaToolUseBlock, raw)
             else
@@ -305,6 +354,7 @@ module Anthropic
           brk, response = blk.call(request)
 
           if response.content.any? { block_type(_1) == :compaction && !read_field(_1, :content).to_s.empty? }
+            keep_removals_from_history
             # The response has to be sent back as it came, first, replacing the messages it summarizes.
             @params = {**params.to_h, messages: [assistant_turn(response)]}
           else
@@ -342,6 +392,30 @@ module Anthropic
           end
 
           compact(@pending_compaction, &blk)
+        end
+
+        # @api private
+        #
+        # A paused turn is sent back as it came, so nothing may follow it.
+        private def send_pending_tool_changes
+          return if @pending_tool_changes.empty? || @last_response&.stop_reason == :pause_turn
+
+          @pending_tool_changes.each do |change|
+            name = changed_tool_name(change.fetch(:block).fetch(:tool))
+            @tool_overrides.store(name, change[:tool]) unless name.nil?
+          end
+          current_messages << {role: :system, content: @pending_tool_changes.map { _1.fetch(:block) }}
+          @pending_tool_changes = []
+        end
+
+        # @api private
+        #
+        # A compaction response replaces the history, `tool_removal` blocks included, so what the
+        # history took away is taken out of the overrides first.
+        private def keep_removals_from_history
+          runnable = [*params[:tools].to_a.grep(Anthropic::Helpers::Tools::BaseTool), *@tool_overrides.values.compact]
+          names = runnable.map { Anthropic::Helpers::Messages.tool_api_name(_1) }
+          (names - available_tool_names(runnable, current_messages).to_a).each { @tool_overrides.store(_1, nil) }
         end
 
         # @api private
@@ -409,10 +483,10 @@ module Anthropic
         private def apply_tool_change(block, available)
           case read_field(block, :type)&.to_sym
           in :tool_removal
-            name = referenced_tool_name(read_field(block, :tool))
+            name = changed_tool_name(read_field(block, :tool))
             available.delete(name) unless name.nil?
           in :tool_addition
-            name = referenced_tool_name(read_field(block, :tool))
+            name = changed_tool_name(read_field(block, :tool))
             available.add(name) unless name.nil?
           else
             nil # non tool_removal / tool_addition blocks leave the set untouched
@@ -421,13 +495,16 @@ module Anthropic
 
         # @api private
         #
-        # @param ref [Anthropic::Beta::BetaToolChangeToolReference, Hash{Symbol=>Object}, nil]
+        # @param tool [Anthropic::Beta::BetaToolChangeToolReference, Anthropic::Beta::BetaToolChangeToolDefinitionParam, Hash{Symbol=>Object}, nil]
         #
         # @return [String, nil]
-        private def referenced_tool_name(ref)
-          case read_field(ref, :type)&.to_sym
+        private def changed_tool_name(tool)
+          case read_field(tool, :type)&.to_sym
           in :tool_reference
-            read_field(ref, :name).to_s
+            read_field(tool, :name).to_s
+          in :tool_definition
+            # Not every `tools[]` entry has a name (e.g. `mcp_toolset`); those never run here.
+            read_field(read_field(tool, :definition), :name)&.to_s
           else
             nil # `mcp_*` references run server-side; unknown types ignored (forward compatibility)
           end
@@ -575,6 +652,8 @@ module Anthropic
           @compaction_control = compaction_control
           @compaction_warned = false
           @last_response = nil
+          @pending_tool_changes = []
+          @tool_overrides = {}
           @pending_compaction = nil
           @compaction_phase = nil
         end

@@ -8,7 +8,8 @@ module Anthropic
           content: String?,
           encrypted_content: String?,
           type: :compaction,
-          signature: String?
+          signature: String?,
+          tool_changes: ::Array[Anthropic::Models::Beta::BetaCompactionBlock::tool_change]?
         }
 
       class BetaCompactionBlock < Anthropic::Internal::Type::BaseModel
@@ -20,10 +21,13 @@ module Anthropic
 
         attr_accessor signature: String?
 
+        attr_accessor tool_changes: ::Array[Anthropic::Models::Beta::BetaCompactionBlock::tool_change]?
+
         def initialize: (
           content: String?,
           encrypted_content: String?,
           ?signature: String?,
+          ?tool_changes: ::Array[Anthropic::Models::Beta::BetaCompactionBlock::tool_change]?,
           ?type: :compaction
         ) -> void
 
@@ -31,8 +35,46 @@ module Anthropic
           content: String?,
           encrypted_content: String?,
           type: :compaction,
-          signature: String?
+          signature: String?,
+          tool_changes: ::Array[Anthropic::Models::Beta::BetaCompactionBlock::tool_change]?
         }
+
+        type tool_change =
+          Anthropic::Beta::BetaResponseToolAdditionBlock
+          | Anthropic::Beta::BetaResponseToolRemovalBlock
+
+        module ToolChange
+          extend Anthropic::Internal::Type::Union
+
+          type type_ = :tool_addition | :tool_removal
+
+          module Type
+            extend Anthropic::Internal::Type::Enum
+
+            TOOL_ADDITION: :tool_addition
+            TOOL_REMOVAL: :tool_removal
+
+            def self?.values: -> ::Array[Anthropic::Models::Beta::BetaCompactionBlock::ToolChange::type_]
+          end
+
+          def self?.variants: -> ::Array[Anthropic::Models::Beta::BetaCompactionBlock::tool_change]
+
+          def self.new:
+            (
+              type: :tool_addition | "tool_addition",
+              tool: Anthropic::Models::Beta::BetaResponseToolAdditionBlock::tool
+            ) -> Anthropic::Beta::BetaResponseToolAdditionBlock
+            | (
+              type: :tool_removal | "tool_removal",
+              tool: Anthropic::Models::Beta::BetaResponseToolRemovalBlock::tool
+            ) -> Anthropic::Beta::BetaResponseToolRemovalBlock
+            | (
+              type: Anthropic::Models::Beta::BetaCompactionBlock::ToolChange::type_
+              | String,
+              tool: Anthropic::Models::Beta::BetaResponseToolAdditionBlock::tool
+              | Anthropic::Models::Beta::BetaResponseToolRemovalBlock::tool
+            ) -> Anthropic::Models::Beta::BetaCompactionBlock::tool_change
+        end
       end
     end
   end

@@ -1,0 +1,34 @@
+module Anthropic
+  module Models
+    class BetaMCPToolListingBlockParam = Beta::BetaMCPToolListingBlockParam
+
+    module Beta
+      type beta_mcp_tool_listing_block_param =
+        {
+          mcp_server_name: String,
+          tools: ::Array[Anthropic::Beta::BetaMCPToolParam],
+          type: :mcp_tool_listing
+        }
+
+      class BetaMCPToolListingBlockParam < Anthropic::Internal::Type::BaseModel
+        attr_accessor mcp_server_name: String
+
+        attr_accessor tools: ::Array[Anthropic::Beta::BetaMCPToolParam]
+
+        attr_accessor type: :mcp_tool_listing
+
+        def initialize: (
+          mcp_server_name: String,
+          tools: ::Array[Anthropic::Beta::BetaMCPToolParam],
+          ?type: :mcp_tool_listing
+        ) -> void
+
+        def to_hash: -> {
+          mcp_server_name: String,
+          tools: ::Array[Anthropic::Beta::BetaMCPToolParam],
+          type: :mcp_tool_listing
+        }
+      end
+    end
+  end
+end

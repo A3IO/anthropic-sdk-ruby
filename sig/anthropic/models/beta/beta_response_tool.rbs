@@ -1,0 +1,105 @@
+module Anthropic
+  module Models
+    class BetaResponseTool = Beta::BetaResponseTool
+
+    module Beta
+      type beta_response_tool =
+        {
+          input_schema: Anthropic::Beta::BetaResponseToolInputSchema,
+          name: String,
+          allowed_callers: ::Array[Anthropic::Models::Beta::BetaResponseTool::allowed_caller],
+          defer_loading: bool,
+          description: String,
+          eager_input_streaming: bool?,
+          input_examples: ::Array[::Hash[Symbol, top]],
+          strict: bool,
+          type: Anthropic::Models::Beta::BetaResponseTool::type_?
+        }
+
+      class BetaResponseTool < Anthropic::Internal::Type::BaseModel
+        attr_accessor input_schema: Anthropic::Beta::BetaResponseToolInputSchema
+
+        attr_accessor name: String
+
+        attr_reader allowed_callers: ::Array[Anthropic::Models::Beta::BetaResponseTool::allowed_caller]?
+
+        def allowed_callers=: (
+          ::Array[Anthropic::Models::Beta::BetaResponseTool::allowed_caller]
+        ) -> ::Array[Anthropic::Models::Beta::BetaResponseTool::allowed_caller]
+
+        attr_reader defer_loading: bool?
+
+        def defer_loading=: (bool) -> bool
+
+        attr_reader description: String?
+
+        def description=: (String) -> String
+
+        attr_accessor eager_input_streaming: bool?
+
+        attr_reader input_examples: ::Array[::Hash[Symbol, top]]?
+
+        def input_examples=: (
+          ::Array[::Hash[Symbol, top]]
+        ) -> ::Array[::Hash[Symbol, top]]
+
+        attr_reader strict: bool?
+
+        def strict=: (bool) -> bool
+
+        attr_accessor type: Anthropic::Models::Beta::BetaResponseTool::type_?
+
+        def initialize: (
+          input_schema: Anthropic::Beta::BetaResponseToolInputSchema,
+          name: String,
+          ?allowed_callers: ::Array[Anthropic::Models::Beta::BetaResponseTool::allowed_caller],
+          ?defer_loading: bool,
+          ?description: String,
+          ?eager_input_streaming: bool?,
+          ?input_examples: ::Array[::Hash[Symbol, top]],
+          ?strict: bool,
+          ?type: Anthropic::Models::Beta::BetaResponseTool::type_?
+        ) -> void
+
+        def to_hash: -> {
+          input_schema: Anthropic::Beta::BetaResponseToolInputSchema,
+          name: String,
+          allowed_callers: ::Array[Anthropic::Models::Beta::BetaResponseTool::allowed_caller],
+          defer_loading: bool,
+          description: String,
+          eager_input_streaming: bool?,
+          input_examples: ::Array[::Hash[Symbol, top]],
+          strict: bool,
+          type: Anthropic::Models::Beta::BetaResponseTool::type_?
+        }
+
+        type allowed_caller =
+          :direct
+          | :code_execution_20250825
+          | :code_execution_20260120
+          | :code_execution_20260521
+
+        module AllowedCaller
+          extend Anthropic::Internal::Type::Enum
+
+          DIRECT: :direct
+          CODE_EXECUTION_20250825: :code_execution_20250825
+          CODE_EXECUTION_20260120: :code_execution_20260120
+          CODE_EXECUTION_20260521: :code_execution_20260521
+
+          def self?.values: -> ::Array[Anthropic::Models::Beta::BetaResponseTool::allowed_caller]
+        end
+
+        type type_ = :custom
+
+        module Type
+          extend Anthropic::Internal::Type::Enum
+
+          CUSTOM: :custom
+
+          def self?.values: -> ::Array[Anthropic::Models::Beta::BetaResponseTool::type_]
+        end
+      end
+    end
+  end
+end

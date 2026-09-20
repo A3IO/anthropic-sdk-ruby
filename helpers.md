@@ -444,6 +444,45 @@ runner.each_message do |message|
 end
 ```
 
+#### `#add_tools` / `#remove_tools` - Add and Remove Tools Mid-Conversation
+
+Changing `tools:` in the middle of a conversation misses the prompt cache for everything sent so far. With the `inline-tools-2026-09-15` beta a tool change is sent as a message instead, and `#add_tools` and `#remove_tools` do that for you. `tools:` is sent exactly as you first passed it on every request.
+
+```ruby
+runner = client.beta.messages.tool_runner(
+  model: "claude-sonnet-5",
+  max_tokens: 1024,
+  betas: ["inline-tools-2026-09-15"],
+  messages: [{role: "user", content: "Find a slot for a 30 minute call with Sam next week."}],
+  tools: [GetTime.new]
+)
+
+find_free_slots = FindFreeSlots.new
+runner.each_message do |message|
+  runner.add_tools(find_free_slots) if calendar.just_connected?
+  runner.remove_tools(find_free_slots) if calendar.just_disconnected? # or by name: "find_free_slots"
+end
+```
+
+`#add_tools` takes one or more of what `tools:` holds, and sends the whole definition either way.
+
+- An `Anthropic::BaseTool` can be called from the request that carries its definition, and replaces a tool of the same name from then on; a call the model made before then still runs the old one.
+- A raw definition is sent as given and never run by the tool runner. That covers server tools such as `{type: "web_search_20250305", name: "web_search"}` and client tools with nothing to run behind them (a call to one gets the "not found" error result). It also stops a tool of the same name from running.
+- An `mcp_toolset` definition also needs its server in `mcp_servers:`, which `#add_tools` doesn't change.
+
+`#remove_tools` takes one or more tools, or their names. A removed tool stops being run straight away, so a call the model has already made to it in the message you're handling gets the "not found" error result. It stays removed until you pass it to `#add_tools` again. Removing a server tool only tells the model.
+
+A few things to know:
+
+- Changes made while you're handling a message go out together as one `role: :system` message right after that turn's tool results, in the order you made them. Changes made before the first request follow the initial messages.
+- After a paused turn (`pause_turn`) the turn is sent back as it came, and the changes go out with the request after that.
+- Changes still waiting when the run ends are never sent, also when `#compact_before_next_turn` compacts after that last turn.
+- A change made on the same turn as `#compact_before_next_turn` goes out with the compaction request, and the tools you added or removed stay that way for the tool runner after the compaction.
+- In the rare case where a compaction response comes back without `tool_changes` even though the summarized messages added or removed tools, the model goes back to the tools in `tools:` and the tool runner does not detect it. Call `#add_tools` / `#remove_tools` again after that compaction if you need the change restored.
+- The runner doesn't add the beta for you, so pass `betas: ["inline-tools-2026-09-15"]`.
+- Changing `tools:` through `#params` still works, but misses the prompt cache.
+- Use either these methods or `tool_addition` / `tool_removal` blocks you append yourself for a given tool, not both.
+
 #### `#run_until_finished` - Complete and Get All Messages
 
 Let the conversation finish, then process all messages at once:
@@ -527,6 +566,25 @@ end
 ```
 
 See [strict tool use](https://platform.claude.com/docs/en/agents-and-tools/tool-use/strict-tool-use) for what `strict: true` guarantees and the schema features it supports.
+
+## Tools Added Mid-Conversation
+
+With the `inline-tools-2026-09-15` beta, a `tool_addition` block in a `role: :system` message can define a tool by value. Its `definition` takes the same forms as an entry of `tools:`: it is sent as the same tool definition, and the tool's `tool_use` blocks get `parsed` the same way:
+
+```ruby
+message = client.beta.messages.create(
+  model: "claude-sonnet-5",
+  max_tokens: 1024,
+  betas: ["inline-tools-2026-09-15"],
+  tools: [GetWeather.new],
+  messages: [
+    {role: :user, content: "What's 15 * 7?"},
+    {role: :system, content: [{type: :tool_addition, tool: {type: :tool_definition, definition: Calculator.new}}]}
+  ]
+)
+```
+
+The tool runner does not call a tool defined this way; it only calls the tools passed in `tools:`.
 
 ## Examples
 

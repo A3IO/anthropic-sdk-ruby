@@ -57,7 +57,7 @@ printf("[user]: %s\n\n", question)
 runner = anthropic.beta.messages.tool_runner(
   max_tokens: 4096,
   messages: [{role: "user", content: question}],
-  model: "claude-opus-4-7",
+  model: "claude-opus-5-5",
   tools: Anthropic::Mcp.tools(mcp_tools, mcp_client),
   max_iterations: 10
 )

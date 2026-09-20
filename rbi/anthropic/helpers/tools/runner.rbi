@@ -23,6 +23,27 @@ module Anthropic
 
         sig do
           params(
+            tools:
+              T.any(
+                Anthropic::Helpers::Tools::BaseTool,
+                Anthropic::Beta::BetaToolUnion::Variants,
+                T::Hash[Symbol, T.anything]
+              )
+          ).void
+        end
+        def add_tools(*tools)
+        end
+
+        sig do
+          params(
+            tools: T.any(Anthropic::Helpers::Tools::BaseTool, String, Symbol)
+          ).void
+        end
+        def remove_tools(*tools)
+        end
+
+        sig do
+          params(
             compaction: T.nilable(Anthropic::Beta::BetaCompactionConfig::OrHash)
           ).void
         end

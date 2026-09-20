@@ -206,6 +206,13 @@ module Anthropic
         )
       COMPACT_2026_09_04 =
         T.let(:"compact-2026-09-04", Anthropic::AnthropicBeta::TaggedSymbol)
+      INLINE_TOOLS_2026_09_15 =
+        T.let(
+          :"inline-tools-2026-09-15",
+          Anthropic::AnthropicBeta::TaggedSymbol
+        )
+      MCP_CLIENT_2026_09_15 =
+        T.let(:"mcp-client-2026-09-15", Anthropic::AnthropicBeta::TaggedSymbol)
     end
   end
 end

@@ -11,6 +11,8 @@ module Anthropic
 
       variant const: -> { Anthropic::Models::Model::CLAUDE_FABLE_5_1 }
 
+      variant const: -> { Anthropic::Models::Model::CLAUDE_OPUS_5_5 }
+
       variant const: -> { Anthropic::Models::Model::CLAUDE_MYTHOS_5_1 }
 
       variant const: -> { Anthropic::Models::Model::CLAUDE_SONNET_5 }
@@ -56,6 +58,9 @@ module Anthropic
 
       # Frontier intelligence for ambitious tasks across coding, scientific discovery, and enterprise workflows
       CLAUDE_FABLE_5_1 = :"claude-fable-5-1"
+
+      # Powerful intelligence for coding, knowledge work, and long-running agents
+      CLAUDE_OPUS_5_5 = :"claude-opus-5-5"
 
       # Our most capable model for cybersecurity and biology research, available through trusted access programs
       CLAUDE_MYTHOS_5_1 = :"claude-mythos-5-1"

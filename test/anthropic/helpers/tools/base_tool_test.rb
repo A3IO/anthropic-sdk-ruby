@@ -83,6 +83,26 @@ class Anthropic::Test::Helpers::Tools::BaseToolTest < Minitest::Test
     )
   end
 
+  def test_tool_options_are_merged_into_a_tool_definition_added_by_value
+    added = {type: :tool_addition, tool: {type: :tool_definition, definition: GetWeather.new}}
+    referenced = {type: :tool_addition, tool: {type: :tool_reference, name: "plain_weather"}}
+    data = {messages: [{role: :user, content: "hi"}, {role: :system, content: [referenced, added]}]}
+    tools, = Anthropic::Helpers::Messages.distill_input_schema_models!(data, strict: nil)
+
+    assert_equal(["get_weather"], tools.keys)
+    assert_equal(
+      {
+        name: "get_weather",
+        description: "Get the current weather in a given location",
+        input_schema: GetWeatherInput.to_json_schema,
+        strict: true,
+        cache_control: {type: :ephemeral}
+      },
+      added.dig(:tool, :definition)
+    )
+    assert_equal({type: :tool_reference, name: "plain_weather"}, referenced.fetch(:tool))
+  end
+
   # The name sent to the API must stay the one responses are parsed and dispatched under, even if a
   # subclass computes its options instead of declaring them.
   def test_derived_definition_keys_cannot_be_shadowed

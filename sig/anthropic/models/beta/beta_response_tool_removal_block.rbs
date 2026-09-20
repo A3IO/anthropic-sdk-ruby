@@ -1,0 +1,74 @@
+module Anthropic
+  module Models
+    class BetaResponseToolRemovalBlock = Beta::BetaResponseToolRemovalBlock
+
+    module Beta
+      type beta_response_tool_removal_block =
+        {
+          tool: Anthropic::Models::Beta::BetaResponseToolRemovalBlock::tool,
+          type: :tool_removal
+        }
+
+      class BetaResponseToolRemovalBlock < Anthropic::Internal::Type::BaseModel
+        attr_accessor tool: Anthropic::Models::Beta::BetaResponseToolRemovalBlock::tool
+
+        attr_accessor type: :tool_removal
+
+        def initialize: (
+          tool: Anthropic::Models::Beta::BetaResponseToolRemovalBlock::tool,
+          ?type: :tool_removal
+        ) -> void
+
+        def to_hash: -> {
+          tool: Anthropic::Models::Beta::BetaResponseToolRemovalBlock::tool,
+          type: :tool_removal
+        }
+
+        type tool =
+          Anthropic::Beta::BetaResponseToolChangeToolReference
+          | Anthropic::Beta::BetaResponseToolChangeMCPToolReference
+          | Anthropic::Beta::BetaResponseToolChangeMCPToolsetReference
+
+        module Tool
+          extend Anthropic::Internal::Type::Union
+
+          type type_ =
+            :tool_reference | :mcp_tool_reference | :mcp_toolset_reference
+
+          module Type
+            extend Anthropic::Internal::Type::Enum
+
+            TOOL_REFERENCE: :tool_reference
+            MCP_TOOL_REFERENCE: :mcp_tool_reference
+            MCP_TOOLSET_REFERENCE: :mcp_toolset_reference
+
+            def self?.values: -> ::Array[Anthropic::Models::Beta::BetaResponseToolRemovalBlock::Tool::type_]
+          end
+
+          def self?.variants: -> ::Array[Anthropic::Models::Beta::BetaResponseToolRemovalBlock::tool]
+
+          def self.new:
+            (
+              type: :tool_reference | "tool_reference",
+              name: String
+            ) -> Anthropic::Beta::BetaResponseToolChangeToolReference
+            | (
+              type: :mcp_tool_reference | "mcp_tool_reference",
+              name: String,
+              server_name: String
+            ) -> Anthropic::Beta::BetaResponseToolChangeMCPToolReference
+            | (
+              type: :mcp_toolset_reference | "mcp_toolset_reference",
+              server_name: String
+            ) -> Anthropic::Beta::BetaResponseToolChangeMCPToolsetReference
+            | (
+              type: Anthropic::Models::Beta::BetaResponseToolRemovalBlock::Tool::type_
+              | String,
+              ?name: String,
+              ?server_name: String
+            ) -> Anthropic::Models::Beta::BetaResponseToolRemovalBlock::tool
+        end
+      end
+    end
+  end
+end

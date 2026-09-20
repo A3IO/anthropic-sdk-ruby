@@ -1,0 +1,55 @@
+# typed: strong
+
+module Anthropic
+  module Models
+    BetaResponseToolUnion = Beta::BetaResponseToolUnion
+
+    module Beta
+      module BetaResponseToolUnion
+        extend Anthropic::Internal::Type::Union
+
+        Variants =
+          T.type_alias do
+            T.any(
+              Anthropic::Beta::BetaResponseTool,
+              Anthropic::Beta::BetaToolBash20241022,
+              Anthropic::Beta::BetaToolBash20250124,
+              Anthropic::Beta::BetaCodeExecutionTool20250522,
+              Anthropic::Beta::BetaCodeExecutionTool20250825,
+              Anthropic::Beta::BetaCodeExecutionTool20260120,
+              Anthropic::Beta::BetaCodeExecutionTool20260521,
+              Anthropic::Beta::BetaBrowserToolset20260801,
+              Anthropic::Beta::BetaToolComputerUse20241022,
+              Anthropic::Beta::BetaMemoryTool20250818,
+              Anthropic::Beta::BetaToolComputerUse20250124,
+              Anthropic::Beta::BetaToolTextEditor20241022,
+              Anthropic::Beta::BetaToolComputerUse20251124,
+              Anthropic::Beta::BetaComputerToolset20260801,
+              Anthropic::Beta::BetaToolTextEditor20250124,
+              Anthropic::Beta::BetaToolTextEditor20250429,
+              Anthropic::Beta::BetaToolTextEditor20250728,
+              Anthropic::Beta::BetaWebSearchTool20250305,
+              Anthropic::Beta::BetaWebFetchTool20250910,
+              Anthropic::Beta::BetaWebSearchTool20260209,
+              Anthropic::Beta::BetaWebFetchTool20260209,
+              Anthropic::Beta::BetaWebFetchTool20260309,
+              Anthropic::Beta::BetaWebSearchTool20260318,
+              Anthropic::Beta::BetaWebFetchTool20260318,
+              Anthropic::Beta::BetaAdvisorTool20260301,
+              Anthropic::Beta::BetaToolSearchToolBm25_20251119,
+              Anthropic::Beta::BetaToolSearchToolRegex20251119,
+              Anthropic::Beta::BetaMCPToolset
+            )
+          end
+
+        sig do
+          override.returns(
+            T::Array[Anthropic::Beta::BetaResponseToolUnion::Variants]
+          )
+        end
+        def self.variants
+        end
+      end
+    end
+  end
+end

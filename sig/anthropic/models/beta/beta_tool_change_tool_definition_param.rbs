@@ -1,0 +1,29 @@
+module Anthropic
+  module Models
+    class BetaToolChangeToolDefinitionParam = Beta::BetaToolChangeToolDefinitionParam
+
+    module Beta
+      type beta_tool_change_tool_definition_param =
+        {
+          definition: Anthropic::Models::Beta::beta_tool_union,
+          type: :tool_definition
+        }
+
+      class BetaToolChangeToolDefinitionParam < Anthropic::Internal::Type::BaseModel
+        attr_accessor definition: Anthropic::Models::Beta::beta_tool_union
+
+        attr_accessor type: :tool_definition
+
+        def initialize: (
+          definition: Anthropic::Models::Beta::beta_tool_union,
+          ?type: :tool_definition
+        ) -> void
+
+        def to_hash: -> {
+          definition: Anthropic::Models::Beta::beta_tool_union,
+          type: :tool_definition
+        }
+      end
+    end
+  end
+end

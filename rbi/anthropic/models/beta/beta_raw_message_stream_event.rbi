@@ -127,7 +127,8 @@ module Anthropic
                 Anthropic::Beta::BetaMCPToolResultBlock::OrHash,
                 Anthropic::Beta::BetaContainerUploadBlock::OrHash,
                 Anthropic::Beta::BetaCompactionBlock::OrHash,
-                Anthropic::Beta::BetaFallbackBlock::OrHash
+                Anthropic::Beta::BetaFallbackBlock::OrHash,
+                Anthropic::Beta::BetaMCPToolListingBlock::OrHash
               ),
             index: Integer
           ).returns(Anthropic::Beta::BetaRawMessageStreamEvent::Variants)

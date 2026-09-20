@@ -1,0 +1,34 @@
+module Anthropic
+  module Models
+    class BetaResponseToolInputSchema = Beta::BetaResponseToolInputSchema
+
+    module Beta
+      type beta_response_tool_input_schema =
+        {
+          type: :object,
+          properties: ::Hash[Symbol, top]?,
+          required: ::Array[String]?
+        }
+
+      class BetaResponseToolInputSchema < Anthropic::Internal::Type::BaseModel
+        attr_accessor type: :object
+
+        attr_accessor properties: ::Hash[Symbol, top]?
+
+        attr_accessor required: ::Array[String]?
+
+        def initialize: (
+          ?properties: ::Hash[Symbol, top]?,
+          ?required: ::Array[String]?,
+          ?type: :object
+        ) -> void
+
+        def to_hash: -> {
+          type: :object,
+          properties: ::Hash[Symbol, top]?,
+          required: ::Array[String]?
+        }
+      end
+    end
+  end
+end

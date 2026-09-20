@@ -21,6 +21,7 @@ module Anthropic
         | Anthropic::Beta::BetaContainerUploadBlock
         | Anthropic::Beta::BetaCompactionBlock
         | Anthropic::Beta::BetaFallbackBlock
+        | Anthropic::Beta::BetaMCPToolListingBlock
 
       module BetaContentBlock
         extend Anthropic::Internal::Type::Union
@@ -43,6 +44,7 @@ module Anthropic
           | :container_upload
           | :compaction
           | :fallback
+          | :mcp_tool_listing
 
         module Type
           extend Anthropic::Internal::Type::Enum
@@ -64,6 +66,7 @@ module Anthropic
           CONTAINER_UPLOAD: :container_upload
           COMPACTION: :compaction
           FALLBACK: :fallback
+          MCP_TOOL_LISTING: :mcp_tool_listing
 
           def self?.values: -> ::Array[Anthropic::Models::Beta::BetaContentBlock::type_]
         end
@@ -160,7 +163,8 @@ module Anthropic
             type: :compaction | "compaction",
             content: String?,
             encrypted_content: String?,
-            ?signature: String?
+            ?signature: String?,
+            ?tool_changes: ::Array[Anthropic::Models::Beta::BetaCompactionBlock::tool_change]?
           ) -> Anthropic::Beta::BetaCompactionBlock
           | (
             type: :fallback | "fallback",
@@ -168,6 +172,11 @@ module Anthropic
             to: Anthropic::Beta::BetaFallbackInfo,
             trigger: Anthropic::Beta::BetaFallbackRefusalTrigger
           ) -> Anthropic::Beta::BetaFallbackBlock
+          | (
+            type: :mcp_tool_listing | "mcp_tool_listing",
+            mcp_server_name: String,
+            tools: ::Array[Anthropic::Beta::BetaMCPTool]
+          ) -> Anthropic::Beta::BetaMCPToolListingBlock
           | (
             type: Anthropic::Models::Beta::BetaContentBlock::type_ | String,
             ?citations: ::Array[Anthropic::Models::Beta::beta_text_citation]?,
@@ -198,9 +207,12 @@ module Anthropic
             ?is_error: bool,
             ?file_id: String,
             ?encrypted_content: String?,
+            ?tool_changes: ::Array[Anthropic::Models::Beta::BetaCompactionBlock::tool_change]?,
             ?from: Anthropic::Beta::BetaFallbackInfo,
             ?to: Anthropic::Beta::BetaFallbackInfo,
-            ?trigger: Anthropic::Beta::BetaFallbackRefusalTrigger
+            ?trigger: Anthropic::Beta::BetaFallbackRefusalTrigger,
+            ?mcp_server_name: String,
+            ?tools: ::Array[Anthropic::Beta::BetaMCPTool]
           ) -> Anthropic::Models::Beta::beta_content_block
       end
     end
