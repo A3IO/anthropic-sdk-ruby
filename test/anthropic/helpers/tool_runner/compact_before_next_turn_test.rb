@@ -185,6 +185,60 @@ class Anthropic::Test::Helpers::ToolRunner::CompactBeforeNextTurnTest < Minitest
     assert_equal(["compact-2026-09-04"] * 3, requests.map { _1.headers["Anthropic-Beta"] })
   end
 
+  def test_leaves_out_the_params_that_only_shape_a_reply
+    format = {type: :json_schema, schema: {type: :object}}
+    any_tool = Anthropic::Beta::BetaToolChoiceAny.new
+    typed_fallback = Anthropic::Beta::BetaFallbackParam.new(
+      model: "claude-haiku-4-5",
+      output_config: Anthropic::Beta::BetaOutputConfig.new(format_: format)
+    )
+    reply_only = [:stop_sequences, :tool_choice, :output_config, :output_format, :fallbacks]
+
+    [
+      [
+        {
+          stop_sequences: ["STOP"],
+          tool_choice: {type: :tool, name: "calculator"},
+          output_config: {effort: :low, format:}
+        },
+        {output_config: {effort: "low"}}
+      ],
+      [{stop_sequences: ["STOP"], tool_choice: any_tool, output_format: format}, {}],
+      [{tool_choice: {type: :auto}, output_config: {format:}}, {tool_choice: {type: "auto"}}],
+      [
+        {output_config: Anthropic::Beta::BetaOutputConfig.new(effort: :low, format_: format)},
+        {output_config: {effort: "low"}}
+      ],
+      [
+        {fallbacks: [{model: "claude-opus-4-1", output_config: {effort: :low, format:}}, typed_fallback]},
+        {fallbacks: [{model: "claude-opus-4-1", output_config: {effort: "low"}}, {model: "claude-haiku-4-5"}]}
+      ],
+      [{fallbacks: :default}, {fallbacks: "default"}]
+    ].each do |params, carried|
+      WebMock.reset!
+      requests = stub_responses(tool_use_response, compacted_response, text_response)
+
+      runner = @client.beta.messages.tool_runner(
+        {**basic_params, system_: "Be brief.", betas: ["compact-2026-09-04"], **params}
+      )
+      compact_on(runner, :tool_use)
+
+      first, compaction, after = bodies(requests)
+      assert_empty(params.keys - first.keys)
+      assert_equal(first.except(:messages), after.except(:messages))
+      assert_equal(carried, compaction.slice(*reply_only))
+      assert_pattern do
+        compaction => {
+          compaction: {type: "summarize"},
+          tools: [{name: "calculator"}],
+          system: "Be brief.",
+          max_tokens: 1024
+        }
+      end
+      assert_equal(["compact-2026-09-04"] * 3, requests.map { _1.headers["Anthropic-Beta"] })
+    end
+  end
+
   def test_before_the_first_request_is_the_first_request
     requests = stub_responses(compacted_response, text_response)
 

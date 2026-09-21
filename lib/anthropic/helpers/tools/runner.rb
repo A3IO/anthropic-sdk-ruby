@@ -346,8 +346,7 @@ module Anthropic
         # @return [Boolean] whether the caller asked for a single message
         private def compact(compaction, &blk)
           check_can_compact!(params)
-          # The API refuses `compaction` alongside `context_management`; later requests keep it.
-          request = {**params.to_h, compaction:}.except(:context_management)
+          request = {**without_compaction_incompatible_params(params), compaction:}
           @pending_compaction = nil
           @compaction_phase = :in_flight
 
@@ -366,6 +365,42 @@ module Anthropic
           brk
         ensure
           @compaction_phase = nil if @compaction_phase == :in_flight
+        end
+
+        # @api private
+        #
+        # A compaction request returns only the compaction block, never a reply, so the API rejects
+        # the params that only shape a reply. The runner's later requests keep them.
+        #
+        # @param params [Anthropic::Models::Beta::MessageCreateParams, Hash{Symbol=>Object}]
+        #
+        # @return [Hash{Symbol=>Object}]
+        private def without_compaction_incompatible_params(params)
+          kept = params.to_h.except(:context_management, :stop_sequences, :output_format)
+          forced_tool = [:any, :tool].include?(read_field(kept[:tool_choice], :type)&.to_sym)
+          kept = without_output_format(forced_tool ? kept.except(:tool_choice) : kept)
+          return kept unless kept[:fallbacks].is_a?(Array)
+
+          fallbacks = kept[:fallbacks].map do
+            fallback = Anthropic::Internal::Type::Converter.dump(Anthropic::Beta::BetaFallbackParam, _1)
+            without_output_format(fallback)
+          end
+          {**kept, fallbacks:}
+        end
+
+        # @api private
+        #
+        # @param params [Hash{Symbol=>Object}] a request's params, or one of its fallbacks'
+        #
+        # @return [Hash{Symbol=>Object}]
+        private def without_output_format(params)
+          # Read in its wire form: a typed `BetaOutputConfig` holds `format` under its Ruby name, `format_`.
+          dumped = Anthropic::Internal::Type::Converter.dump(
+            Anthropic::Beta::BetaOutputConfig,
+            params[:output_config]
+          )
+          output_config = dumped.to_h.except(:format)
+          output_config.empty? ? params.except(:output_config) : {**params, output_config:}
         end
 
         # @api private
