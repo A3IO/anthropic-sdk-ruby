@@ -127,9 +127,16 @@ end
 desc("Format everything")
 multitask(format: [:"format:rb", :"format:rbi", :"format:rbs"])
 
-desc("Typecheck `*.rbs`")
+desc("Typecheck `*.rbs`; use `STEEP_JOBS=<N>` to set the number of workers")
 multitask(:"typecheck:steep") do
-  sh(*%w[steep check])
+  # without `--jobs`, `steep` starts at most 2 workers when the `CI` environment variable is set
+  jobs = ENV["STEEP_JOBS"].to_i
+  unless jobs.positive?
+    require "concurrent/utility/processor_counter"
+    # capped: in a container this counts the host's cores, and each worker holds every `*.rbs` file in its own memory
+    jobs = [Concurrent.physical_processor_count, 16].min
+  end
+  sh(*%w[steep check --jobs], jobs.to_s)
 end
 
 directory(examples)
