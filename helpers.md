@@ -466,7 +466,7 @@ end
 
 `#add_tools` takes one or more of what `tools:` holds, and sends the whole definition either way.
 
-- An `Anthropic::BaseTool` can be called from the request that carries its definition, and replaces a tool of the same name from then on; a call the model made before then still runs the old one.
+- An `Anthropic::BaseTool` can be called from the request that carries its definition, and replaces a tool of the same name straight away: a call the model has already made in the message you're handling runs the new one.
 - A raw definition is sent as given and never run by the tool runner. That covers server tools such as `{type: "web_search_20250305", name: "web_search"}` and client tools with nothing to run behind them (a call to one gets the "not found" error result). It also stops a tool of the same name from running.
 - An `mcp_toolset` definition also needs its server in `mcp_servers:`, which `#add_tools` doesn't change.
 

@@ -59,9 +59,10 @@ module Anthropic
         # @api public
         #
         # Sends the tools' definitions in `tool_addition` blocks with the next request, leaving
-        # `params[:tools]` and the prompt cache alone. A `BaseTool` can be called from that request
-        # on and replaces a same-name tool; a raw definition is never run here and stops a same-name
-        # tool from running. Needs the `inline-tools-2026-09-15` beta.
+        # `params[:tools]` and the prompt cache alone. A `BaseTool` is run under its name straight away,
+        # replacing a same-name tool even for a call already in the message being handled; a raw
+        # definition is never run here and stops a same-name tool from running. Needs the
+        # `inline-tools-2026-09-15` beta.
         #
         # @param tools [Array<Anthropic::Helpers::Tools::BaseTool, Anthropic::Models::Beta::BetaToolUnion, Hash{Symbol=>Object}>]
         def add_tools(*tools)
@@ -71,7 +72,9 @@ module Anthropic
           tools.zip(request.fetch(:tools)) do |tool, definition|
             block = {type: :tool_addition, tool: {type: :tool_definition, definition:}}
             runnable = tool if tool.is_a?(Anthropic::Helpers::Tools::BaseTool)
-            @pending_tool_changes << {block:, tool: runnable}
+            name = changed_tool_name(block.fetch(:tool))
+            @tool_overrides.store(name, runnable) unless name.nil?
+            @pending_tool_changes << block
           end
         end
 
@@ -91,7 +94,7 @@ module Anthropic
                 tool.to_s
               end
             @tool_overrides.store(name, nil)
-            @pending_tool_changes << {block: {type: :tool_removal, tool: {type: :tool_reference, name:}}}
+            @pending_tool_changes << {type: :tool_removal, tool: {type: :tool_reference, name:}}
           end
         end
 
@@ -210,7 +213,7 @@ module Anthropic
             # A `tool_removal` block only hints the model, so a call to a withdrawn tool can still
             # arrive; a name missing from this set routes down the same "not found" path as an
             # undeclared tool.
-            available = available_tool_names([*tools, *@tool_overrides.values.compact], messages)
+            available = available_tool_names([*tools, *@tool_overrides.values.compact])
 
             mapped =
               tool_uses.map do |tool_use|
@@ -435,11 +438,7 @@ module Anthropic
         private def send_pending_tool_changes
           return if @pending_tool_changes.empty? || @last_response&.stop_reason == :pause_turn
 
-          @pending_tool_changes.each do |change|
-            name = changed_tool_name(change.fetch(:block).fetch(:tool))
-            @tool_overrides.store(name, change[:tool]) unless name.nil?
-          end
-          current_messages << {role: :system, content: @pending_tool_changes.map { _1.fetch(:block) }}
+          current_messages << {role: :system, content: @pending_tool_changes}
           @pending_tool_changes = []
         end
 
@@ -450,7 +449,7 @@ module Anthropic
         private def keep_removals_from_history
           runnable = [*params[:tools].to_a.grep(Anthropic::Helpers::Tools::BaseTool), *@tool_overrides.values.compact]
           names = runnable.map { Anthropic::Helpers::Messages.tool_api_name(_1) }
-          (names - available_tool_names(runnable, current_messages).to_a).each { @tool_overrides.store(_1, nil) }
+          (names - available_tool_names(runnable).to_a).each { @tool_overrides.store(_1, nil) }
         end
 
         # @api private
@@ -493,16 +492,15 @@ module Anthropic
         #
         # Replays `tool_removal` / `tool_addition` blocks from `role: :system` messages to
         # find which tool names are still offered to the model. MCP references are
-        # server-executed and never dispatched here, so they are ignored.
+        # server-executed and never dispatched here, so they are ignored. The overrides already
+        # hold the changes waiting to be sent, so those count as the history's last message.
         #
         # @param tools [Array<Anthropic::Helpers::Tools::BaseTool>]
         #
-        # @param messages [Array<Anthropic::Beta::BetaMessageParam, Hash{Symbol=>Object}>]
-        #
         # @return [Set<String>]
-        private def available_tool_names(tools, messages)
+        private def available_tool_names(tools)
           available = Set.new(tools.map { Anthropic::Helpers::Messages.tool_api_name(_1) })
-          messages.each do |message|
+          [*current_messages, {role: :system, content: @pending_tool_changes}].each do |message|
             next unless read_field(message, :role)&.to_sym == :system
 
             Array(read_field(message, :content)).each { apply_tool_change(_1, available) }

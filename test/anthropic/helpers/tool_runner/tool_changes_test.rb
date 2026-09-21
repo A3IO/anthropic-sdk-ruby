@@ -194,16 +194,34 @@ class Anthropic::Test::Helpers::ToolRunner::ToolChangesTest < Minitest::Test
     drive(
       runner,
       "msg_1" => -> { runner.remove_tools("get_weather") },
-      "msg_2" => lambda {
-        runner.params[:messages].delete_if { _1[:role] == :system }
-        runner.add_tools(@get_weather)
-      }
+      "msg_2" => -> { runner.params[:messages].delete_if { _1[:role] == :system } },
+      "msg_3" => -> { runner.add_tools(@get_weather) }
     )
 
     assert_equal(["get_weather"], @calls)
     assert_not_found(tool_result(bodies[2], "tool_1"), "get_weather")
     assert_not_found(tool_result(bodies[2], "tool_2"), "get_weather")
     assert_pattern { tool_result(bodies[3], "tool_3") => {is_error: false, content: "Sunny in Paris"} }
+  end
+
+  def test_a_removed_tool_added_again_answers_a_call_already_in_the_turn
+    bodies = stub_responses(
+      response("msg_1", [call_tool("tool_1", "get_weather")]),
+      response("msg_2", [call_tool("tool_2", "get_weather")]),
+      final_response("msg_3")
+    )
+
+    runner = new_runner
+    drive(
+      runner,
+      "msg_1" => -> { runner.remove_tools("get_weather") },
+      "msg_2" => -> { runner.add_tools(@get_weather) }
+    )
+
+    assert_pattern { bodies[1][:messages].last => {role: "system", content: [^(removal("get_weather"))]} }
+    assert_not_found(tool_result(bodies[2], "tool_1"), "get_weather")
+    assert_pattern { tool_result(bodies[2], "tool_2") => {is_error: false, content: "Sunny in Paris"} }
+    assert_equal(["get_weather"], @calls)
   end
 
   def test_changes_in_one_turn_go_out_together_in_call_order_and_are_not_collapsed
@@ -239,7 +257,7 @@ class Anthropic::Test::Helpers::ToolRunner::ToolChangesTest < Minitest::Test
     assert_pattern { tool_result(bodies[2], "tool_3") => {is_error: false, content: "Sunny in Paris"} }
   end
 
-  def test_add_tools_replaces_a_tool_of_the_same_name_from_the_request_that_carries_it
+  def test_add_tools_replaces_a_tool_of_the_same_name_straight_away_even_for_a_call_already_in_the_turn
     stub_responses(
       response("msg_1", [call_tool("tool_1", "get_weather")]),
       response("msg_2", [call_tool("tool_2", "get_weather")]),
@@ -249,7 +267,44 @@ class Anthropic::Test::Helpers::ToolRunner::ToolChangesTest < Minitest::Test
     runner = new_runner(tools: [GetWeather.new(@calls, "old")])
     drive(runner, "msg_1" => -> { runner.add_tools(GetWeather.new(@calls, "new")) })
 
-    assert_equal(%w[old new], @calls)
+    assert_equal(%w[new new], @calls)
+  end
+
+  class LocationInput < Anthropic::BaseModel
+    required :location, String
+  end
+
+  module ByLocation
+    class GetWeather < Anthropic::BaseTool
+      doc "Get the current weather at a given location."
+      input_schema LocationInput
+
+      def parse(value)
+        raise ArgumentError.new("location: expected a string") unless value[:location].is_a?(String)
+
+        value
+      end
+
+      def call(input) = "Raining in #{input.location}"
+    end
+  end
+
+  def test_a_call_already_in_the_turn_gets_the_input_error_of_the_tool_added_under_its_name
+    bodies = stub_responses(response("msg_1", [call_tool("tool_1", "get_weather")]), final_response("msg_2"))
+
+    runner = new_runner
+    drive(runner, "msg_1" => -> { runner.add_tools(ByLocation::GetWeather.new) })
+
+    assert_empty(@calls)
+    assert_pattern do
+      tool_result(bodies[1], "tool_1") => {is_error: true, content: "location: expected a string"}
+    end
+    assert_pattern do
+      bodies[1][:messages].last => {
+        role: "system",
+        content: [{type: "tool_addition", tool: {definition: {input_schema: {required: ["location"]}}}}]
+      }
+    end
   end
 
   def test_a_raw_definition_is_sent_as_given_and_never_run_even_over_a_tool_of_the_same_name
@@ -263,10 +318,11 @@ class Anthropic::Test::Helpers::ToolRunner::ToolChangesTest < Minitest::Test
     runner = new_runner
     drive(runner, "msg_1" => -> { runner.add_tools(get_weather, WEB_SEARCH) })
 
-    assert_equal(["get_weather"], @calls)
+    assert_empty(@calls)
     assert_pattern do
       bodies[1][:messages].last => {role: "system", content: [^(addition(get_weather)), ^(addition(WEB_SEARCH))]}
     end
+    assert_not_found(tool_result(bodies[1], "tool_1"), "get_weather")
     assert_not_found(tool_result(bodies[2], "tool_2"), "get_weather")
   end
 
@@ -366,6 +422,35 @@ class Anthropic::Test::Helpers::ToolRunner::ToolChangesTest < Minitest::Test
     assert_empty(@calls)
     assert_equal([{role: "assistant", content: COMPACTION}], bodies[1][:messages])
     assert_not_found(tool_result(bodies[2], "tool_1"), "get_weather")
+  end
+
+  def test_a_removed_tool_added_again_while_handling_the_compaction_response_is_run_after_it
+    bodies = stub_responses(
+      response("msg_1", [call_tool("tool_1", "get_weather")]),
+      response("msg_2", COMPACTION, stop_reason: "compaction"),
+      response("msg_3", [call_tool("tool_2", "get_weather")]),
+      final_response("msg_4")
+    )
+
+    runner = new_compacting_runner
+    drive(
+      runner,
+      "msg_1" => lambda {
+        runner.remove_tools("get_weather")
+        runner.compact_before_next_turn
+      },
+      "msg_2" => -> { runner.add_tools(@get_weather) }
+    )
+
+    assert_pattern { bodies[1][:messages].last => {role: "system", content: [^(removal("get_weather"))]} }
+    assert_pattern do
+      bodies[2][:messages] => [
+        {role: "assistant", content: COMPACTION},
+        {role: "system", content: [{type: "tool_addition", tool: {definition: {name: "get_weather"}}}]}
+      ]
+    end
+    assert_pattern { tool_result(bodies[3], "tool_2") => {is_error: false, content: "Sunny in Paris"} }
+    assert_equal(["get_weather"], @calls)
   end
 
   def test_a_compaction_after_the_final_turn_does_not_send_pending_changes
