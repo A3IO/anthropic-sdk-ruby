@@ -51,7 +51,6 @@ module Anthropic
           sig { params(created_at_lte: Time).void }
           attr_writer :created_at_lte
 
-          # Query parameter for limit
           sig { returns(T.nilable(Integer)) }
           attr_reader :limit
 
@@ -108,6 +107,12 @@ module Anthropic
           end
           attr_writer :betas
 
+          # Optional header to select the Workspace for this request. The value is a
+          # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+          #
+          # Only needed for credentials that can act on more than one Workspace. A
+          # credential that belongs to a specific Workspace may omit it; if sent, it must
+          # match that Workspace.
           sig { returns(T.nilable(String)) }
           attr_reader :workspace_id
 
@@ -146,7 +151,6 @@ module Anthropic
             # Return events created at or before this time (inclusive). Compared against the
             # event's `processed_at` value.
             created_at_lte: nil,
-            # Query parameter for limit
             limit: nil,
             # Sort direction for results, ordered by the event's `processed_at`. Defaults to
             # `asc` (chronological).
@@ -158,6 +162,12 @@ module Anthropic
             types: nil,
             # Optional header to specify the beta version(s) you want to use.
             betas: nil,
+            # Optional header to select the Workspace for this request. The value is a
+            # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+            #
+            # Only needed for credentials that can act on more than one Workspace. A
+            # credential that belongs to a specific Workspace may omit it; if sent, it must
+            # match that Workspace.
             workspace_id: nil,
             request_options: {}
           )

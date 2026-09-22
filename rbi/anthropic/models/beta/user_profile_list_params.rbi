@@ -15,14 +15,15 @@ module Anthropic
             )
           end
 
-        # Query parameter for limit
+        # The maximum number of user profiles to return, from 1 to 100. Defaults to 20.
         sig { returns(T.nilable(Integer)) }
         attr_reader :limit
 
         sig { params(limit: Integer).void }
         attr_writer :limit
 
-        # Query parameter for order
+        # The sort direction, applied to the field that `order_by` selects. Defaults to
+        # `desc`.
         sig do
           returns(
             T.nilable(Anthropic::Beta::UserProfileListParams::Order::OrSymbol)
@@ -37,7 +38,8 @@ module Anthropic
         end
         attr_writer :order
 
-        # Query parameter for order_by
+        # The field to sort user profiles by, in the direction that `order` sets. Defaults
+        # to `created_at`.
         sig do
           returns(
             T.nilable(Anthropic::Beta::UserProfileListParams::OrderBy::OrSymbol)
@@ -52,7 +54,10 @@ module Anthropic
         end
         attr_writer :order_by
 
-        # Query parameter for page
+        # The cursor for the page to return, taken from `next_page` in a previous
+        # response.
+        #
+        # Leave it out to get the first page.
         sig { returns(T.nilable(String)) }
         attr_reader :page
 
@@ -76,6 +81,12 @@ module Anthropic
         end
         attr_writer :betas
 
+        # Optional header to select the Workspace for this request. The value is a
+        # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+        #
+        # Only needed for credentials that can act on more than one Workspace. A
+        # credential that belongs to a specific Workspace may omit it; if sent, it must
+        # match that Workspace.
         sig { returns(T.nilable(String)) }
         attr_reader :workspace_id
 
@@ -94,16 +105,27 @@ module Anthropic
           ).returns(T.attached_class)
         end
         def self.new(
-          # Query parameter for limit
+          # The maximum number of user profiles to return, from 1 to 100. Defaults to 20.
           limit: nil,
-          # Query parameter for order
+          # The sort direction, applied to the field that `order_by` selects. Defaults to
+          # `desc`.
           order: nil,
-          # Query parameter for order_by
+          # The field to sort user profiles by, in the direction that `order` sets. Defaults
+          # to `created_at`.
           order_by: nil,
-          # Query parameter for page
+          # The cursor for the page to return, taken from `next_page` in a previous
+          # response.
+          #
+          # Leave it out to get the first page.
           page: nil,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
+          # Optional header to select the Workspace for this request. The value is a
+          # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+          #
+          # Only needed for credentials that can act on more than one Workspace. A
+          # credential that belongs to a specific Workspace may omit it; if sent, it must
+          # match that Workspace.
           workspace_id: nil,
           request_options: {}
         )
@@ -127,7 +149,8 @@ module Anthropic
         def to_hash
         end
 
-        # Query parameter for order
+        # The sort direction, applied to the field that `order_by` selects. Defaults to
+        # `desc`.
         module Order
           extend Anthropic::Internal::Type::Enum
 
@@ -137,11 +160,14 @@ module Anthropic
             end
           OrSymbol = T.type_alias { T.any(Symbol, String) }
 
+          # Oldest first when `order_by` is `created_at`, or names in ascending order when `order_by` is `name`.
           ASC =
             T.let(
               :asc,
               Anthropic::Beta::UserProfileListParams::Order::TaggedSymbol
             )
+
+          # Newest first when `order_by` is `created_at`, or names in descending order when `order_by` is `name`. This is the default.
           DESC =
             T.let(
               :desc,
@@ -159,7 +185,8 @@ module Anthropic
           end
         end
 
-        # Query parameter for order_by
+        # The field to sort user profiles by, in the direction that `order` sets. Defaults
+        # to `created_at`.
         module OrderBy
           extend Anthropic::Internal::Type::Enum
 
@@ -169,11 +196,14 @@ module Anthropic
             end
           OrSymbol = T.type_alias { T.any(Symbol, String) }
 
+          # Sort by when each user profile was created. This is the default.
           CREATED_AT =
             T.let(
               :created_at,
               Anthropic::Beta::UserProfileListParams::OrderBy::TaggedSymbol
             )
+
+          # Sort by `name`, ignoring the case of ASCII letters. Profiles without a name come last in either direction.
           NAME =
             T.let(
               :name,

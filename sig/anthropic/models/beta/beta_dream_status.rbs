@@ -27,7 +27,9 @@ module Anthropic
         # If `outputs` references a memory store, that memory store keeps what the dream wrote before it stopped.
         FAILED: :failed
 
-        # The caller canceled the dream before it completed.
+        # A cancel request stopped the dream before it reached `completed` or `failed`.
+        #
+        # If `outputs` references a memory store, that memory store keeps what the dream wrote. `usage` can keep changing after the cancel.
         CANCELED: :canceled
 
         def self?.values: -> ::Array[Anthropic::Models::Beta::beta_dream_status]

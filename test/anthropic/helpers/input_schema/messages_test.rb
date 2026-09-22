@@ -287,6 +287,102 @@ module Anthropic
           assert_instance_of(GetWeatherInput, tool_use.parsed)
           assert_equal("Paris", tool_use.parsed.location)
         end
+
+        def tool_addition(definition)
+          {role: :system, content: [{type: :tool_addition, tool: {type: :tool_definition, definition:}}]}
+        end
+
+        def sent_definitions(request)
+          JSON.parse(request.body, symbolize_names: true).fetch(:messages).filter_map do
+            _1.dig(:content, 0, :tool, :definition) if _1.fetch(:role) == "system"
+          end
+        end
+
+        # What the same tools are sent as in `tools:`.
+        def as_tools_entries(*tools)
+          data = {tools:}
+          Anthropic::Helpers::Messages.distill_input_schema_models!(data, strict: nil)
+          JSON.parse(data.fetch(:tools).to_json, symbolize_names: true)
+        end
+
+        def test_create_with_tools_added_by_value
+          response_body = {
+            id: "msg_123",
+            type: "message",
+            role: "assistant",
+            content: [
+              {type: "tool_use", id: "tool_1", name: "get_weather", input: {location: "Paris"}},
+              {type: "tool_use", id: "tool_2", name: "calculator", input: {operation: "add", a: 1.0, b: 2.0}},
+              {type: "tool_use", id: "tool_3", name: "weather_getter", input: {location: "Rome"}},
+              {type: "tool_use", id: "tool_4", name: "raw_tool", input: {value: "test"}}
+            ],
+            usage: {input_tokens: 10, output_tokens: 20}
+          }
+          stub_request(:post, "http://localhost/v1/messages?beta=true")
+            .to_return(
+              status: 200,
+              body: response_body.to_json,
+              headers: {"content-type" => "application/json"}
+            )
+
+          weather = GetWeather.new
+          calculator = Calculator.new
+          tool_hash = {name: "weather_getter", input_schema: GetWeatherInput, strict: true}
+          raw_tool = {name: "raw_tool", input_schema: {type: "object", properties: {value: {type: "string"}}}}
+          messages = [
+            {role: "user", content: "Weather and sums?"},
+            tool_addition(weather),
+            Anthropic::Beta::BetaMessageParam.new(
+              role: :system,
+              content: [
+                Anthropic::Beta::BetaRequestToolAdditionBlock.new(
+                  tool: Anthropic::Beta::BetaToolChangeToolDefinitionParam.new(definition: calculator)
+                )
+              ]
+            ),
+            {
+              role: "system",
+              content: [{type: "tool_addition", tool: {type: "tool_definition", definition: tool_hash}}]
+            },
+            tool_addition(raw_tool)
+          ]
+
+          message = @client.beta.messages.create(model: "claude-opus-4-6", max_tokens: 100, messages:)
+
+          assert_requested(:post, "http://localhost/v1/messages?beta=true") do
+            assert_equal(as_tools_entries(weather, calculator, tool_hash, raw_tool), sent_definitions(_1))
+          end
+          assert_same(weather, messages.dig(1, :content, 0, :tool, :definition))
+          assert_same(GetWeatherInput, messages.dig(3, :content, 0, :tool, :definition, :input_schema))
+
+          weather_use, calculator_use, getter_use, raw_use = message.content
+          assert_instance_of(GetWeatherInput, weather_use.parsed)
+          assert_equal("Paris", weather_use.parsed.location)
+          assert_instance_of(CalculatorInput, calculator_use.parsed)
+          assert_equal(:add, calculator_use.parsed.operation)
+          assert_instance_of(GetWeatherInput, getter_use.parsed)
+          assert_equal("Rome", getter_use.parsed.location)
+          assert_nil(raw_use.parsed)
+        end
+
+        def test_count_tokens_with_tool_added_by_value
+          stub_request(:post, "http://localhost/v1/messages/count_tokens?beta=true")
+            .to_return(
+              status: 200,
+              body: {input_tokens: 10}.to_json,
+              headers: {"content-type" => "application/json"}
+            )
+
+          weather = GetWeather.new
+          @client.beta.messages.count_tokens(
+            model: "claude-opus-4-6",
+            messages: [{role: "user", content: "Weather?"}, tool_addition(weather)]
+          )
+
+          assert_requested(:post, "http://localhost/v1/messages/count_tokens?beta=true") do
+            assert_equal(as_tools_entries(weather), sent_definitions(_1))
+          end
+        end
       end
     end
   end

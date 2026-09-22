@@ -5,7 +5,8 @@ module Anthropic
     module Beta
       class BetaDreamModelConfig < Anthropic::Internal::Type::BaseModel
         # @!attribute id
-        #   Model identifier, e.g. "claude-opus-5". 1-256 characters.
+        #   The ID of the model that runs the dream, as given in the request that created
+        #   it.
         #
         #   @return [String]
         required :id, String
@@ -19,13 +20,15 @@ module Anthropic
         optional :speed, enum: -> { Anthropic::Beta::BetaDreamModelConfig::Speed }
 
         # @!method initialize(id:, speed: nil)
-        #   Model identifier and configuration applied to every pipeline stage. Same wire
-        #   shape as the Agents API ModelConfig.
+        #   The model that runs a dream, from the request that created it.
+        #
+        #   The dream uses this model for all of its work. The response always gives the
+        #   model as an object, even if the request gave only a model ID.
         #
         #   Some parameter documentations has been truncated, see
         #   {Anthropic::Models::Beta::BetaDreamModelConfig} for more details.
         #
-        #   @param id [String] Model identifier, e.g. "claude-opus-5". 1-256 characters.
+        #   @param id [String] The ID of the model that runs the dream, as given in the request that created it
         #
         #   @param speed [Symbol, Anthropic::Models::Beta::BetaDreamModelConfig::Speed] Inference speed mode. `fast` provides significantly faster output token generati
 

@@ -33,12 +33,16 @@ module Anthropic
           Anthropic::Beta::BetaToolChangeToolReference
           | Anthropic::Beta::BetaToolChangeMCPToolReference
           | Anthropic::Beta::BetaToolChangeMCPToolsetReference
+          | Anthropic::Beta::BetaToolChangeToolDefinitionParam
 
         module Tool
           extend Anthropic::Internal::Type::Union
 
           type type_ =
-            :tool_reference | :mcp_tool_reference | :mcp_toolset_reference
+            :tool_reference
+            | :mcp_tool_reference
+            | :mcp_toolset_reference
+            | :tool_definition
 
           module Type
             extend Anthropic::Internal::Type::Enum
@@ -46,6 +50,7 @@ module Anthropic
             TOOL_REFERENCE: :tool_reference
             MCP_TOOL_REFERENCE: :mcp_tool_reference
             MCP_TOOLSET_REFERENCE: :mcp_toolset_reference
+            TOOL_DEFINITION: :tool_definition
 
             def self?.values: -> ::Array[Anthropic::Models::Beta::BetaRequestToolAdditionBlock::Tool::type_]
           end
@@ -67,10 +72,15 @@ module Anthropic
               server_name: String
             ) -> Anthropic::Beta::BetaToolChangeMCPToolsetReference
             | (
+              type: :tool_definition | "tool_definition",
+              definition: Anthropic::Models::Beta::beta_tool_union
+            ) -> Anthropic::Beta::BetaToolChangeToolDefinitionParam
+            | (
               type: Anthropic::Models::Beta::BetaRequestToolAdditionBlock::Tool::type_
               | String,
               ?name: String,
-              ?server_name: String
+              ?server_name: String,
+              ?definition: Anthropic::Models::Beta::beta_tool_union
             ) -> Anthropic::Models::Beta::BetaRequestToolAdditionBlock::tool
         end
       end

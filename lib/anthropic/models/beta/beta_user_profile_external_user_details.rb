@@ -91,8 +91,13 @@ module Anthropic
         module AccountStatus
           extend Anthropic::Internal::Type::Enum
 
+          # The platform has neither restricted nor barred the account of the entity that the user profile represents.
           ACTIVE = :active
+
+          # The platform has restricted the account of the entity that the user profile represents and may restore it.
           SUSPENDED = :suspended
+
+          # The platform has barred the account of the entity that the user profile represents.
           BLOCKED = :blocked
 
           # @!method self.values

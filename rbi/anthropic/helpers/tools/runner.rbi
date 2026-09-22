@@ -21,6 +21,35 @@ module Anthropic
         def feed_messages(*messages)
         end
 
+        sig do
+          params(
+            tools:
+              T.any(
+                Anthropic::Helpers::Tools::BaseTool,
+                Anthropic::Beta::BetaToolUnion::Variants,
+                T::Hash[Symbol, T.anything]
+              )
+          ).void
+        end
+        def add_tools(*tools)
+        end
+
+        sig do
+          params(
+            tools: T.any(Anthropic::Helpers::Tools::BaseTool, String, Symbol)
+          ).void
+        end
+        def remove_tools(*tools)
+        end
+
+        sig do
+          params(
+            compaction: T.nilable(Anthropic::Beta::BetaCompactionConfig::OrHash)
+          ).void
+        end
+        def compact_before_next_turn(compaction = nil)
+        end
+
         sig { returns(Anthropic::Models::BetaMessage) }
         def next_message
         end

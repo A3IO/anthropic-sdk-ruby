@@ -13,11 +13,11 @@ module Anthropic
           #
           # @overload retrieve(memory_version_id, memory_store_id:, view: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_version_id [String] Path param: Path parameter memory_version_id
+          # @param memory_version_id [String] Path param: The ID of the memory version to retrieve (`memver_...`).
           #
-          # @param memory_store_id [String] Path param: Path parameter memory_store_id
+          # @param memory_store_id [String] Path param: The ID of the memory store that holds the version (`memstore_...`).
           #
-          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Query parameter for view
+          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Selects which projection of a `memory` or `memory_version` the serv
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #
@@ -61,27 +61,28 @@ module Anthropic
           #
           # @overload list(memory_store_id, api_key_id: nil, created_at_gte: nil, created_at_lte: nil, limit: nil, memory_id: nil, operation: nil, page: nil, service_account_id: nil, session_id: nil, view: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_store_id [String] Path param: Path parameter memory_store_id
+          # @param memory_store_id [String] Path param: The ID of the memory store whose version history to list
+          # (`memstore\_
           #
-          # @param api_key_id [String] Query param: Query parameter for api_key_id
+          # @param api_key_id [String] Query param: Return only versions written with the API key that has this ID.
           #
           # @param created_at_gte [Time] Query param: Return versions created at or after this time (inclusive).
           #
           # @param created_at_lte [Time] Query param: Return versions created at or before this time (inclusive).
           #
-          # @param limit [Integer] Query param: Query parameter for limit
+          # @param limit [Integer] Query param: The maximum number of versions to return per page. Defaults to 20.
           #
-          # @param memory_id [String] Query param: Query parameter for memory_id
+          # @param memory_id [String] Query param: Return only versions of the memory with this ID (`mem_...`).
           #
-          # @param operation [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryVersionOperation] Query param: Query parameter for operation
+          # @param operation [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryVersionOperation] Query param: Return only versions that record this kind of change.
           #
-          # @param page [String] Query param: Query parameter for page
+          # @param page [String] Query param: The `next_page` value from a previous response, to get the next pag
           #
-          # @param service_account_id [String] Query param: Query parameter for service_account_id
+          # @param service_account_id [String] Query param: Return only versions written by the service account with this ID (`
           #
-          # @param session_id [String] Query param: Query parameter for session_id
+          # @param session_id [String] Query param: Return only versions written by the session with this ID.
           #
-          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Query parameter for view
+          # @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query param: Selects which projection of a `memory` or `memory_version` the serv
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #
@@ -133,9 +134,9 @@ module Anthropic
           #
           # @overload redact(memory_version_id, memory_store_id:, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param memory_version_id [String] Path param: Path parameter memory_version_id
+          # @param memory_version_id [String] Path param: The ID of the memory version to redact (`memver_...`).
           #
-          # @param memory_store_id [String] Path param: Path parameter memory_store_id
+          # @param memory_store_id [String] Path param: The ID of the memory store that holds the version (`memstore_...`).
           #
           # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
           #

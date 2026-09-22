@@ -97,6 +97,13 @@ module Anthropic
         sig { returns(T.nilable(String)) }
         attr_accessor :name
 
+        # A record of an entity that the platform serves through the API, such as an
+        # end-user of the platform's product or a company that the platform resells Claude
+        # access to.
+        #
+        # A Messages, Message Batches or token counting request can send a profile's `id`
+        # in the `anthropic-user-profile-id` header to attribute the request to that
+        # entity.
         sig do
           params(
             id: String,
@@ -217,11 +224,14 @@ module Anthropic
             end
           OrSymbol = T.type_alias { T.any(Symbol, String) }
 
+          # The user profile represents an individual end-user of a product that the platform builds on the API. New profiles get this value by default.
           APPLICATION =
             T.let(
               :application,
               Anthropic::Beta::BetaUserProfile::AccessType::TaggedSymbol
             )
+
+          # The user profile represents a company that the platform resells Claude access to.
           PASSTHROUGH =
             T.let(
               :passthrough,

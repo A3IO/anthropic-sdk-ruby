@@ -108,7 +108,7 @@ class Anthropic::Test::Resources::Beta::Sessions::EventsTest < Anthropic::Test::
         mcp_server_name: String,
         name: String,
         processed_at: Time,
-        evaluated_permission: Anthropic::Beta::Sessions::BetaManagedAgentsAgentMCPToolUseEvent::EvaluatedPermission | nil,
+        evaluated_permission: Anthropic::Beta::Sessions::BetaManagedAgentsAgentEvaluatedPermission | nil,
         evaluation: Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolEvaluation | nil,
         session_thread_id: String | nil
       }
@@ -126,7 +126,7 @@ class Anthropic::Test::Resources::Beta::Sessions::EventsTest < Anthropic::Test::
         input: ^(Anthropic::Internal::Type::HashOf[Anthropic::Internal::Type::Unknown]),
         name: String,
         processed_at: Time,
-        evaluated_permission: Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission | nil,
+        evaluated_permission: Anthropic::Beta::Sessions::BetaManagedAgentsAgentEvaluatedPermission | nil,
         evaluation: Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolEvaluation | nil,
         session_thread_id: String | nil
       }

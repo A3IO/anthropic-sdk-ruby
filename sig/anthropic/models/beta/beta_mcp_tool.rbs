@@ -1,0 +1,32 @@
+module Anthropic
+  module Models
+    class BetaMCPTool = Beta::BetaMCPTool
+
+    module Beta
+      type beta_mcp_tool =
+        { input_schema: ::Hash[Symbol, top], name: String, description: String }
+
+      class BetaMCPTool < Anthropic::Internal::Type::BaseModel
+        attr_accessor input_schema: ::Hash[Symbol, top]
+
+        attr_accessor name: String
+
+        attr_reader description: String?
+
+        def description=: (String) -> String
+
+        def initialize: (
+          input_schema: ::Hash[Symbol, top],
+          name: String,
+          ?description: String
+        ) -> void
+
+        def to_hash: -> {
+          input_schema: ::Hash[Symbol, top],
+          name: String,
+          description: String
+        }
+      end
+    end
+  end
+end

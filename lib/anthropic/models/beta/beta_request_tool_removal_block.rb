@@ -23,8 +23,9 @@ module Anthropic
         # @!method initialize(tool:, cache_control: nil, type: :tool_removal)
         #   Mid-conversation directive to withdraw a tool.
         #
-        #   `tool` references a tool (or MCP toolset) by name from the request's `tools`; it
-        #   is no longer offered to the model from this point in the conversation onward.
+        #   `tool` references a tool (or MCP toolset) by name: one declared in the request's
+        #   `tools` or defined earlier in `messages`. It is no longer offered to the model
+        #   from this point in the conversation onward.
         #
         #   @param tool [Anthropic::Models::Beta::BetaToolChangeToolReference, Anthropic::Models::Beta::BetaToolChangeMCPToolReference, Anthropic::Models::Beta::BetaToolChangeMCPToolsetReference]
         #
@@ -38,9 +39,10 @@ module Anthropic
 
           discriminator :type
 
-          # Reference to a single tool the caller declared directly in
-          # ``tools[]``. Does not accept the composed ``{server}_{name}`` form the
-          # server assigns to MCP-resolved tools — use ``mcp_tool_reference`` or
+          # Reference to a single tool, by the name the model uses to call it: a
+          # tool declared in ``tools`` or defined by an earlier ``tool_addition``
+          # block. Does not accept the composed ``{server}_{name}`` form the server
+          # assigns to MCP-resolved tools; use ``mcp_tool_reference`` or
           # ``mcp_toolset_reference`` for those.
           variant :tool_reference, -> { Anthropic::Beta::BetaToolChangeToolReference }
 

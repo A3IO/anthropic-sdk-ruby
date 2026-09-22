@@ -15,45 +15,48 @@ module Anthropic
             )
           end
 
-        # Return dreams with `created_at` strictly after this timestamp (exclusive lower
-        # bound, RFC 3339). Unset applies no lower bound.
+        # Return only dreams created after this time (exclusive), in RFC 3339.
         sig { returns(T.nilable(Time)) }
         attr_reader :created_at_gt
 
         sig { params(created_at_gt: Time).void }
         attr_writer :created_at_gt
 
-        # Return dreams with `created_at` strictly before this timestamp (exclusive upper
-        # bound, RFC 3339). Unset applies no upper bound.
+        # Return only dreams created before this time (exclusive), in RFC 3339.
         sig { returns(T.nilable(Time)) }
         attr_reader :created_at_lt
 
         sig { params(created_at_lt: Time).void }
         attr_writer :created_at_lt
 
-        # Query parameter for include_archived
+        # Whether to include archived dreams. Defaults to `false`.
         sig { returns(T.nilable(T::Boolean)) }
         attr_reader :include_archived
 
         sig { params(include_archived: T::Boolean).void }
         attr_writer :include_archived
 
-        # Query parameter for limit
+        # The maximum number of dreams to return, from 1 to 100. Defaults to 20.
         sig { returns(T.nilable(Integer)) }
         attr_reader :limit
 
         sig { params(limit: Integer).void }
         attr_writer :limit
 
-        # Query parameter for page
+        # The cursor for the page to return, taken from `next_page` in a previous
+        # response.
+        #
+        # Leave it out to get the first page.
         sig { returns(T.nilable(String)) }
         attr_reader :page
 
         sig { params(page: String).void }
         attr_writer :page
 
-        # Filter by lifecycle status. Repeat the parameter to match any of multiple
-        # statuses. Empty applies no status filter.
+        # Return only dreams that have one of these statuses.
+        #
+        # Repeat the parameter to give more than one status. Leave it out to return dreams
+        # of every status.
         sig do
           returns(
             T.nilable(T::Array[Anthropic::Beta::BetaDreamStatus::OrSymbol])
@@ -85,6 +88,12 @@ module Anthropic
         end
         attr_writer :betas
 
+        # Optional header to select the Workspace for this request. The value is a
+        # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+        #
+        # Only needed for credentials that can act on more than one Workspace. A
+        # credential that belongs to a specific Workspace may omit it; if sent, it must
+        # match that Workspace.
         sig { returns(T.nilable(String)) }
         attr_reader :workspace_id
 
@@ -105,23 +114,32 @@ module Anthropic
           ).returns(T.attached_class)
         end
         def self.new(
-          # Return dreams with `created_at` strictly after this timestamp (exclusive lower
-          # bound, RFC 3339). Unset applies no lower bound.
+          # Return only dreams created after this time (exclusive), in RFC 3339.
           created_at_gt: nil,
-          # Return dreams with `created_at` strictly before this timestamp (exclusive upper
-          # bound, RFC 3339). Unset applies no upper bound.
+          # Return only dreams created before this time (exclusive), in RFC 3339.
           created_at_lt: nil,
-          # Query parameter for include_archived
+          # Whether to include archived dreams. Defaults to `false`.
           include_archived: nil,
-          # Query parameter for limit
+          # The maximum number of dreams to return, from 1 to 100. Defaults to 20.
           limit: nil,
-          # Query parameter for page
+          # The cursor for the page to return, taken from `next_page` in a previous
+          # response.
+          #
+          # Leave it out to get the first page.
           page: nil,
-          # Filter by lifecycle status. Repeat the parameter to match any of multiple
-          # statuses. Empty applies no status filter.
+          # Return only dreams that have one of these statuses.
+          #
+          # Repeat the parameter to give more than one status. Leave it out to return dreams
+          # of every status.
           statuses: nil,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
+          # Optional header to select the Workspace for this request. The value is a
+          # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+          #
+          # Only needed for credentials that can act on more than one Workspace. A
+          # credential that belongs to a specific Workspace may omit it; if sent, it must
+          # match that Workspace.
           workspace_id: nil,
           request_options: {}
         )

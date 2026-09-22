@@ -20,7 +20,7 @@ module Anthropic
             ).returns(Anthropic::Beta::MemoryStores::BetaManagedAgentsMemory)
           end
           def create(
-            # Path param: Path parameter memory_store_id
+            # Path param: The ID of the memory store to create the memory in (`memstore_...`).
             memory_store_id,
             # Body param: UTF-8 text content for the new memory. Maximum 100 kB (102,400
             # bytes). Required; pass `""` explicitly to create an empty memory.
@@ -31,7 +31,11 @@ module Anthropic
             # format characters, or the Unicode line and paragraph separators (U+2028,
             # U+2029), and must be NFC-normalized. Paths are case-sensitive.
             path:,
-            # Query param: Query parameter for view
+            # Query param: Selects which projection of a `memory` or `memory_version` the
+            # server returns. `basic` returns the object with `content` set to `null`; `full`
+            # populates `content`. When omitted, the default is endpoint-specific: retrieve
+            # operations default to `full`; list, create, and update operations default to
+            # `basic`. Listing with `view=full` caps `limit` at 20.
             view: nil,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,
@@ -60,11 +64,15 @@ module Anthropic
             ).returns(Anthropic::Beta::MemoryStores::BetaManagedAgentsMemory)
           end
           def retrieve(
-            # Path param: Path parameter memory_id
+            # Path param: The ID of the memory to retrieve (`mem_...`).
             memory_id,
-            # Path param: Path parameter memory_store_id
+            # Path param: The ID of the memory store that holds the memory (`memstore_...`).
             memory_store_id:,
-            # Query param: Query parameter for view
+            # Query param: Selects which projection of a `memory` or `memory_version` the
+            # server returns. `basic` returns the object with `content` set to `null`; `full`
+            # populates `content`. When omitted, the default is endpoint-specific: retrieve
+            # operations default to `full`; list, create, and update operations default to
+            # `basic`. Listing with `view=full` caps `limit` at 20.
             view: nil,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,
@@ -97,11 +105,15 @@ module Anthropic
             ).returns(Anthropic::Beta::MemoryStores::BetaManagedAgentsMemory)
           end
           def update(
-            # Path param: Path parameter memory_id
+            # Path param: The ID of the memory to update (`mem_...`).
             memory_id,
-            # Path param: Path parameter memory_store_id
+            # Path param: The ID of the memory store that holds the memory (`memstore_...`).
             memory_store_id:,
-            # Query param: Query parameter for view
+            # Query param: Selects which projection of a `memory` or `memory_version` the
+            # server returns. `basic` returns the object with `content` set to `null`; `full`
+            # populates `content`. When omitted, the default is endpoint-specific: retrieve
+            # operations default to `full`; list, create, and update operations default to
+            # `basic`. Listing with `view=full` caps `limit` at 20.
             view: nil,
             # Body param: New UTF-8 text content for the memory. Maximum 100 kB (102,400
             # bytes). Omit to leave the content unchanged (e.g., for a rename-only update).
@@ -154,7 +166,7 @@ module Anthropic
             )
           end
           def list(
-            # Path param: Path parameter memory_store_id
+            # Path param: The ID of the memory store to list memories from (`memstore_...`).
             memory_store_id,
             # Query param: `0` (or omitted) returns all descendants below `path_prefix`
             # (recursive). `1` returns immediate children only; deeper entries roll up as
@@ -204,11 +216,16 @@ module Anthropic
             )
           end
           def delete(
-            # Path param: Path parameter memory_id
+            # Path param: The ID of the memory to delete (`mem_...`).
             memory_id,
-            # Path param: Path parameter memory_store_id
+            # Path param: The ID of the memory store that holds the memory (`memstore_...`).
             memory_store_id:,
-            # Query param: Query parameter for expected_content_sha256
+            # Query param: Delete the memory only if its current `content_sha256` equals this
+            # value, given as 64 lowercase hexadecimal characters. Omit it to delete
+            # unconditionally.
+            #
+            # If the hashes differ, the request fails with HTTP status 409 and nothing is
+            # deleted.
             expected_content_sha256: nil,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,

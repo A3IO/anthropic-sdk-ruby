@@ -30,6 +30,8 @@ module Anthropic
         sig { returns(String) }
         attr_accessor :url
 
+        # A URL to give to the entity that a user profile represents, so that the entity
+        # can enroll for a trust grant.
         sig do
           params(
             expires_at: Time,

@@ -10,17 +10,23 @@ module Anthropic
           include Anthropic::Internal::Type::RequestParameters
 
           # @!attribute memory_store_id
+          #   The ID of the memory store that holds the memory (`memstore_...`).
           #
           #   @return [String]
           required :memory_store_id, String
 
           # @!attribute memory_id
+          #   The ID of the memory to update (`mem_...`).
           #
           #   @return [String]
           required :memory_id, String
 
           # @!attribute view
-          #   Query parameter for view
+          #   Selects which projection of a `memory` or `memory_version` the server returns.
+          #   `basic` returns the object with `content` set to `null`; `full` populates
+          #   `content`. When omitted, the default is endpoint-specific: retrieve operations
+          #   default to `full`; list, create, and update operations default to `basic`.
+          #   Listing with `view=full` caps `limit` at 20.
           #
           #   @return [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView, nil]
           optional :view, enum: -> { Anthropic::Beta::MemoryStores::BetaManagedAgentsMemoryView }
@@ -61,6 +67,12 @@ module Anthropic
           optional :betas, -> { Anthropic::Internal::Type::ArrayOf[union: Anthropic::AnthropicBeta] }
 
           # @!attribute workspace_id
+          #   Optional header to select the Workspace for this request. The value is a
+          #   Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+          #
+          #   Only needed for credentials that can act on more than one Workspace. A
+          #   credential that belongs to a specific Workspace may omit it; if sent, it must
+          #   match that Workspace.
           #
           #   @return [String, nil]
           optional :workspace_id, String
@@ -69,11 +81,11 @@ module Anthropic
           #   Some parameter documentations has been truncated, see
           #   {Anthropic::Models::Beta::MemoryStores::MemoryUpdateParams} for more details.
           #
-          #   @param memory_store_id [String]
+          #   @param memory_store_id [String] The ID of the memory store that holds the memory (`memstore_...`).
           #
-          #   @param memory_id [String]
+          #   @param memory_id [String] The ID of the memory to update (`mem_...`).
           #
-          #   @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Query parameter for view
+          #   @param view [Symbol, Anthropic::Models::Beta::MemoryStores::BetaManagedAgentsMemoryView] Selects which projection of a `memory` or `memory_version` the server returns. `
           #
           #   @param content [String, nil] New UTF-8 text content for the memory. Maximum 100 kB (102,400 bytes). Omit to l
           #
@@ -83,7 +95,7 @@ module Anthropic
           #
           #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
           #
-          #   @param workspace_id [String]
+          #   @param workspace_id [String] Optional header to select the Workspace for this request. The value is a Workspa
           #
           #   @param request_options [Anthropic::RequestOptions, Hash{Symbol=>Object}]
         end

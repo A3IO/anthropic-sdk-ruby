@@ -13,8 +13,7 @@ module Anthropic
           required :id, String
 
           # @!attribute agent
-          #   The resolved agent a session thread runs: a saved-agent snapshot, the platform
-          #   advisor entry, or an inline-defined (ephemeral) agent snapshot.
+          #   The resolved agent a `session_thread` runs.
           #
           #   @return [Anthropic::Models::Beta::BetaManagedAgentsSessionThreadAgent, Anthropic::Models::Beta::BetaManagedAgentsAdvisor]
           required :agent, union: -> { Anthropic::Beta::Sessions::BetaManagedAgentsSessionThread::Agent }
@@ -76,13 +75,9 @@ module Anthropic
           #   An execution thread within a `session`. Each session has one primary thread plus
           #   zero or more child threads spawned by the coordinator.
           #
-          #   Some parameter documentations has been truncated, see
-          #   {Anthropic::Models::Beta::Sessions::BetaManagedAgentsSessionThread} for more
-          #   details.
-          #
           #   @param id [String] Unique identifier for this thread.
           #
-          #   @param agent [Anthropic::Models::Beta::BetaManagedAgentsSessionThreadAgent, Anthropic::Models::Beta::BetaManagedAgentsAdvisor] The resolved agent a session thread runs: a saved-agent snapshot, the platform a
+          #   @param agent [Anthropic::Models::Beta::BetaManagedAgentsSessionThreadAgent, Anthropic::Models::Beta::BetaManagedAgentsAdvisor] The resolved agent a `session_thread` runs.
           #
           #   @param archived_at [Time, nil] A timestamp in RFC 3339 format
           #
@@ -102,8 +97,7 @@ module Anthropic
           #
           #   @param usage [Anthropic::Models::Beta::Sessions::BetaManagedAgentsSessionThreadUsage, nil] Cumulative token usage for a session thread across all turns.
 
-          # The resolved agent a session thread runs: a saved-agent snapshot, the platform
-          # advisor entry, or an inline-defined (ephemeral) agent snapshot.
+          # The resolved agent a `session_thread` runs.
           #
           # @see Anthropic::Models::Beta::Sessions::BetaManagedAgentsSessionThread#agent
           module Agent

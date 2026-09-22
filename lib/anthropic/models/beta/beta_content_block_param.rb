@@ -67,19 +67,29 @@ module Anthropic
         # treats these as no-ops. Empty string content is not allowed.
         variant :compaction, -> { Anthropic::Beta::BetaCompactionBlockParam }
 
-        # Mid-conversation directive to surface a declared tool.
+        # Mid-conversation directive to make a tool available.
         #
-        # ``tool`` references a tool (or MCP toolset) by name from the request's
-        # ``tools``; it is offered to the model from this point in the
-        # conversation onward.
+        # ``tool`` is a reference to a tool (or MCP toolset) declared in the
+        # request's ``tools``. Under the ``inline-tools-2026-09-15`` beta it may
+        # instead be a reference to a tool defined earlier in ``messages``, or a
+        # ``tool_definition`` object that carries an inline tool definition in
+        # ``definition`` (the same object a ``tools`` entry holds). An ``mcp_toolset``
+        # definition also requires the ``mcp-client-2026-09-15`` beta. The tool is
+        # offered to the model from this point in the conversation onward.
         variant :tool_addition, -> { Anthropic::Beta::BetaRequestToolAdditionBlock }
 
         # Mid-conversation directive to withdraw a tool.
         #
-        # ``tool`` references a tool (or MCP toolset) by name from the request's
-        # ``tools``; it is no longer offered to the model from this point in the
-        # conversation onward.
+        # ``tool`` references a tool (or MCP toolset) by name: one declared in the
+        # request's ``tools`` or defined earlier in ``messages``. It is no longer
+        # offered to the model from this point in the conversation onward.
         variant :tool_removal, -> { Anthropic::Beta::BetaRequestToolRemovalBlock }
+
+        # The tool listing an MCP server returned while an earlier response was
+        # produced, as that response carried it. Send the assistant message back
+        # unchanged, this block included, and the server uses this listing for the
+        # matching `mcp_toolset` instead of asking the MCP server again.
+        variant :mcp_tool_listing, -> { Anthropic::Beta::BetaMCPToolListingBlockParam }
 
         # A `fallback` block echoed back from a prior response.
         #
@@ -121,6 +131,7 @@ module Anthropic
           COMPACTION = :compaction
           TOOL_ADDITION = :tool_addition
           TOOL_REMOVAL = :tool_removal
+          MCP_TOOL_LISTING = :mcp_tool_listing
           FALLBACK = :fallback
 
           # @!method self.values
@@ -128,7 +139,7 @@ module Anthropic
         end
 
         # @!method self.variants
-        #   @return [Array(Anthropic::Models::Beta::BetaTextBlockParam, Anthropic::Models::Beta::BetaImageBlockParam, Anthropic::Models::Beta::BetaRequestDocumentBlock, Anthropic::Models::Beta::BetaSearchResultBlockParam, Anthropic::Models::Beta::BetaThinkingBlockParam, Anthropic::Models::Beta::BetaRedactedThinkingBlockParam, Anthropic::Models::Beta::BetaToolUseBlockParam, Anthropic::Models::Beta::BetaToolResultBlockParam, Anthropic::Models::Beta::BetaServerToolUseBlockParam, Anthropic::Models::Beta::BetaWebSearchToolResultBlockParam, Anthropic::Models::Beta::BetaWebFetchToolResultBlockParam, Anthropic::Models::Beta::BetaAdvisorToolResultBlockParam, Anthropic::Models::Beta::BetaCodeExecutionToolResultBlockParam, Anthropic::Models::Beta::BetaBashCodeExecutionToolResultBlockParam, Anthropic::Models::Beta::BetaTextEditorCodeExecutionToolResultBlockParam, Anthropic::Models::Beta::BetaToolSearchToolResultBlockParam, Anthropic::Models::Beta::BetaMCPToolUseBlockParam, Anthropic::Models::Beta::BetaRequestMCPToolResultBlockParam, Anthropic::Models::Beta::BetaContainerUploadBlockParam, Anthropic::Models::Beta::BetaCompactionBlockParam, Anthropic::Models::Beta::BetaRequestToolAdditionBlock, Anthropic::Models::Beta::BetaRequestToolRemovalBlock, Anthropic::Models::Beta::BetaFallbackBlockParam)]
+        #   @return [Array(Anthropic::Models::Beta::BetaTextBlockParam, Anthropic::Models::Beta::BetaImageBlockParam, Anthropic::Models::Beta::BetaRequestDocumentBlock, Anthropic::Models::Beta::BetaSearchResultBlockParam, Anthropic::Models::Beta::BetaThinkingBlockParam, Anthropic::Models::Beta::BetaRedactedThinkingBlockParam, Anthropic::Models::Beta::BetaToolUseBlockParam, Anthropic::Models::Beta::BetaToolResultBlockParam, Anthropic::Models::Beta::BetaServerToolUseBlockParam, Anthropic::Models::Beta::BetaWebSearchToolResultBlockParam, Anthropic::Models::Beta::BetaWebFetchToolResultBlockParam, Anthropic::Models::Beta::BetaAdvisorToolResultBlockParam, Anthropic::Models::Beta::BetaCodeExecutionToolResultBlockParam, Anthropic::Models::Beta::BetaBashCodeExecutionToolResultBlockParam, Anthropic::Models::Beta::BetaTextEditorCodeExecutionToolResultBlockParam, Anthropic::Models::Beta::BetaToolSearchToolResultBlockParam, Anthropic::Models::Beta::BetaMCPToolUseBlockParam, Anthropic::Models::Beta::BetaRequestMCPToolResultBlockParam, Anthropic::Models::Beta::BetaContainerUploadBlockParam, Anthropic::Models::Beta::BetaCompactionBlockParam, Anthropic::Models::Beta::BetaRequestToolAdditionBlock, Anthropic::Models::Beta::BetaRequestToolRemovalBlock, Anthropic::Models::Beta::BetaMCPToolListingBlockParam, Anthropic::Models::Beta::BetaFallbackBlockParam)]
 
         # Creates a new instance of the variant class whose `type` matches the given
         # value, passing the remaining arguments to its constructor.
@@ -182,7 +193,13 @@ module Anthropic
         #
         #   @option args [String, nil] :encrypted_content Opaque metadata from prior compaction, to be round-tripped verbatim
         #
-        #   @option args [Anthropic::Models::Beta::BetaToolChangeToolReference, Anthropic::Models::Beta::BetaToolChangeMCPToolReference, Anthropic::Models::Beta::BetaToolChangeMCPToolsetReference] :tool
+        #   @option args [Array<Anthropic::Models::Beta::BetaRequestToolAdditionBlock, Anthropic::Models::Beta::BetaRequestToolRemovalBlock>, nil] :tool_changes The tool changes of the compacted range, as the server returned them on this blo
+        #
+        #   @option args [Anthropic::Models::Beta::BetaToolChangeToolReference, Anthropic::Models::Beta::BetaToolChangeMCPToolReference, Anthropic::Models::Beta::BetaToolChangeMCPToolsetReference, Anthropic::Models::Beta::BetaToolChangeToolDefinitionParam, Anthropic::Models::Beta::BetaToolChangeToolReference, Anthropic::Models::Beta::BetaToolChangeMCPToolReference, Anthropic::Models::Beta::BetaToolChangeMCPToolsetReference] :tool
+        #
+        #   @option args [String] :mcp_server_name The name of the MCP server this listing came from, as `mcp_servers` declares it.
+        #
+        #   @option args [Array<Anthropic::Models::Beta::BetaMCPToolParam>] :tools The server's tools, exactly as the response listed them.
         #
         #   @option args [Anthropic::Models::Beta::BetaFallbackInfoParam] :from Identifies one hop of a fallback transition.
         #
@@ -191,7 +208,7 @@ module Anthropic
         #   @option args [Object] :trigger The response block's `trigger`, echoed verbatim. Accepted and ignored by the ser
         #
         # @raise [ArgumentError]
-        # @return [Anthropic::Models::Beta::BetaTextBlockParam, Anthropic::Models::Beta::BetaImageBlockParam, Anthropic::Models::Beta::BetaRequestDocumentBlock, Anthropic::Models::Beta::BetaSearchResultBlockParam, Anthropic::Models::Beta::BetaThinkingBlockParam, Anthropic::Models::Beta::BetaRedactedThinkingBlockParam, Anthropic::Models::Beta::BetaToolUseBlockParam, Anthropic::Models::Beta::BetaToolResultBlockParam, Anthropic::Models::Beta::BetaServerToolUseBlockParam, Anthropic::Models::Beta::BetaWebSearchToolResultBlockParam, Anthropic::Models::Beta::BetaWebFetchToolResultBlockParam, Anthropic::Models::Beta::BetaAdvisorToolResultBlockParam, Anthropic::Models::Beta::BetaCodeExecutionToolResultBlockParam, Anthropic::Models::Beta::BetaBashCodeExecutionToolResultBlockParam, Anthropic::Models::Beta::BetaTextEditorCodeExecutionToolResultBlockParam, Anthropic::Models::Beta::BetaToolSearchToolResultBlockParam, Anthropic::Models::Beta::BetaMCPToolUseBlockParam, Anthropic::Models::Beta::BetaRequestMCPToolResultBlockParam, Anthropic::Models::Beta::BetaContainerUploadBlockParam, Anthropic::Models::Beta::BetaCompactionBlockParam, Anthropic::Models::Beta::BetaRequestToolAdditionBlock, Anthropic::Models::Beta::BetaRequestToolRemovalBlock, Anthropic::Models::Beta::BetaFallbackBlockParam]
+        # @return [Anthropic::Models::Beta::BetaTextBlockParam, Anthropic::Models::Beta::BetaImageBlockParam, Anthropic::Models::Beta::BetaRequestDocumentBlock, Anthropic::Models::Beta::BetaSearchResultBlockParam, Anthropic::Models::Beta::BetaThinkingBlockParam, Anthropic::Models::Beta::BetaRedactedThinkingBlockParam, Anthropic::Models::Beta::BetaToolUseBlockParam, Anthropic::Models::Beta::BetaToolResultBlockParam, Anthropic::Models::Beta::BetaServerToolUseBlockParam, Anthropic::Models::Beta::BetaWebSearchToolResultBlockParam, Anthropic::Models::Beta::BetaWebFetchToolResultBlockParam, Anthropic::Models::Beta::BetaAdvisorToolResultBlockParam, Anthropic::Models::Beta::BetaCodeExecutionToolResultBlockParam, Anthropic::Models::Beta::BetaBashCodeExecutionToolResultBlockParam, Anthropic::Models::Beta::BetaTextEditorCodeExecutionToolResultBlockParam, Anthropic::Models::Beta::BetaToolSearchToolResultBlockParam, Anthropic::Models::Beta::BetaMCPToolUseBlockParam, Anthropic::Models::Beta::BetaRequestMCPToolResultBlockParam, Anthropic::Models::Beta::BetaContainerUploadBlockParam, Anthropic::Models::Beta::BetaCompactionBlockParam, Anthropic::Models::Beta::BetaRequestToolAdditionBlock, Anthropic::Models::Beta::BetaRequestToolRemovalBlock, Anthropic::Models::Beta::BetaMCPToolListingBlockParam, Anthropic::Models::Beta::BetaFallbackBlockParam]
         def self.new(type:, **args)
           case type.to_sym
           when :text
@@ -238,6 +255,8 @@ module Anthropic
             Anthropic::Beta::BetaRequestToolAdditionBlock.new(**args)
           when :tool_removal
             Anthropic::Beta::BetaRequestToolRemovalBlock.new(**args)
+          when :mcp_tool_listing
+            Anthropic::Beta::BetaMCPToolListingBlockParam.new(**args)
           when :fallback
             Anthropic::Beta::BetaFallbackBlockParam.new(**args)
           else

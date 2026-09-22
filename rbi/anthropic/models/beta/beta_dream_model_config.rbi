@@ -14,7 +14,8 @@ module Anthropic
             )
           end
 
-        # Model identifier, e.g. "claude-opus-5". 1-256 characters.
+        # The ID of the model that runs the dream, as given in the request that created
+        # it.
         sig { returns(String) }
         attr_accessor :id
 
@@ -37,8 +38,10 @@ module Anthropic
         end
         attr_writer :speed
 
-        # Model identifier and configuration applied to every pipeline stage. Same wire
-        # shape as the Agents API ModelConfig.
+        # The model that runs a dream, from the request that created it.
+        #
+        # The dream uses this model for all of its work. The response always gives the
+        # model as an object, even if the request gave only a model ID.
         sig do
           params(
             id: String,
@@ -46,7 +49,8 @@ module Anthropic
           ).returns(T.attached_class)
         end
         def self.new(
-          # Model identifier, e.g. "claude-opus-5". 1-256 characters.
+          # The ID of the model that runs the dream, as given in the request that created
+          # it.
           id:,
           # Inference speed mode. `fast` provides significantly faster output token
           # generation at premium pricing. Not all models support `fast`; invalid

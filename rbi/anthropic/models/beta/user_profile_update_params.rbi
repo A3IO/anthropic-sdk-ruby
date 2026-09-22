@@ -15,6 +15,7 @@ module Anthropic
             )
           end
 
+        # The ID of the user profile to update (`uprof_...`).
         sig { returns(String) }
         attr_accessor :user_profile_id
 
@@ -97,6 +98,12 @@ module Anthropic
         end
         attr_writer :betas
 
+        # Optional header to select the Workspace for this request. The value is a
+        # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+        #
+        # Only needed for credentials that can act on more than one Workspace. A
+        # credential that belongs to a specific Workspace may omit it; if sent, it must
+        # match that Workspace.
         sig { returns(T.nilable(String)) }
         attr_reader :workspace_id
 
@@ -122,6 +129,7 @@ module Anthropic
           ).returns(T.attached_class)
         end
         def self.new(
+          # The ID of the user profile to update (`uprof_...`).
           user_profile_id:,
           # How the platform uses the API on behalf of the entity this profile represents.
           # `application`: the platform sells a product that uses the API behind the scenes,
@@ -151,6 +159,12 @@ module Anthropic
           name: nil,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
+          # Optional header to select the Workspace for this request. The value is a
+          # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+          #
+          # Only needed for credentials that can act on more than one Workspace. A
+          # credential that belongs to a specific Workspace may omit it; if sent, it must
+          # match that Workspace.
           workspace_id: nil,
           request_options: {}
         )
@@ -197,11 +211,14 @@ module Anthropic
             end
           OrSymbol = T.type_alias { T.any(Symbol, String) }
 
+          # The user profile represents an individual end-user of a product that the platform builds on the API. New profiles get this value by default.
           APPLICATION =
             T.let(
               :application,
               Anthropic::Beta::UserProfileUpdateParams::AccessType::TaggedSymbol
             )
+
+          # The user profile represents a company that the platform resells Claude access to.
           PASSTHROUGH =
             T.let(
               :passthrough,

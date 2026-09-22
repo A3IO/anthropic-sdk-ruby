@@ -9,40 +9,43 @@ module Anthropic
         include Anthropic::Internal::Type::RequestParameters
 
         # @!attribute created_at_gt
-        #   Return dreams with `created_at` strictly after this timestamp (exclusive lower
-        #   bound, RFC 3339). Unset applies no lower bound.
+        #   Return only dreams created after this time (exclusive), in RFC 3339.
         #
         #   @return [Time, nil]
         optional :created_at_gt, Time
 
         # @!attribute created_at_lt
-        #   Return dreams with `created_at` strictly before this timestamp (exclusive upper
-        #   bound, RFC 3339). Unset applies no upper bound.
+        #   Return only dreams created before this time (exclusive), in RFC 3339.
         #
         #   @return [Time, nil]
         optional :created_at_lt, Time
 
         # @!attribute include_archived
-        #   Query parameter for include_archived
+        #   Whether to include archived dreams. Defaults to `false`.
         #
         #   @return [Boolean, nil]
         optional :include_archived, Anthropic::Internal::Type::Boolean
 
         # @!attribute limit
-        #   Query parameter for limit
+        #   The maximum number of dreams to return, from 1 to 100. Defaults to 20.
         #
         #   @return [Integer, nil]
         optional :limit, Integer
 
         # @!attribute page
-        #   Query parameter for page
+        #   The cursor for the page to return, taken from `next_page` in a previous
+        #   response.
+        #
+        #   Leave it out to get the first page.
         #
         #   @return [String, nil]
         optional :page, String
 
         # @!attribute statuses
-        #   Filter by lifecycle status. Repeat the parameter to match any of multiple
-        #   statuses. Empty applies no status filter.
+        #   Return only dreams that have one of these statuses.
+        #
+        #   Repeat the parameter to give more than one status. Leave it out to return dreams
+        #   of every status.
         #
         #   @return [Array<Symbol, Anthropic::Models::Beta::BetaDreamStatus>, nil]
         optional :statuses, -> { Anthropic::Internal::Type::ArrayOf[enum: Anthropic::Beta::BetaDreamStatus] }
@@ -54,6 +57,12 @@ module Anthropic
         optional :betas, -> { Anthropic::Internal::Type::ArrayOf[union: Anthropic::AnthropicBeta] }
 
         # @!attribute workspace_id
+        #   Optional header to select the Workspace for this request. The value is a
+        #   Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+        #
+        #   Only needed for credentials that can act on more than one Workspace. A
+        #   credential that belongs to a specific Workspace may omit it; if sent, it must
+        #   match that Workspace.
         #
         #   @return [String, nil]
         optional :workspace_id, String
@@ -62,21 +71,21 @@ module Anthropic
         #   Some parameter documentations has been truncated, see
         #   {Anthropic::Models::Beta::DreamListParams} for more details.
         #
-        #   @param created_at_gt [Time] Return dreams with `created_at` strictly after this timestamp (exclusive lower b
+        #   @param created_at_gt [Time] Return only dreams created after this time (exclusive), in RFC 3339.
         #
-        #   @param created_at_lt [Time] Return dreams with `created_at` strictly before this timestamp (exclusive upper
+        #   @param created_at_lt [Time] Return only dreams created before this time (exclusive), in RFC 3339.
         #
-        #   @param include_archived [Boolean] Query parameter for include_archived
+        #   @param include_archived [Boolean] Whether to include archived dreams. Defaults to `false`.
         #
-        #   @param limit [Integer] Query parameter for limit
+        #   @param limit [Integer] The maximum number of dreams to return, from 1 to 100. Defaults to 20.
         #
-        #   @param page [String] Query parameter for page
+        #   @param page [String] The cursor for the page to return, taken from `next_page` in a previous response
         #
-        #   @param statuses [Array<Symbol, Anthropic::Models::Beta::BetaDreamStatus>] Filter by lifecycle status. Repeat the parameter to match any of multiple status
+        #   @param statuses [Array<Symbol, Anthropic::Models::Beta::BetaDreamStatus>] Return only dreams that have one of these statuses.
         #
         #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #
-        #   @param workspace_id [String]
+        #   @param workspace_id [String] Optional header to select the Workspace for this request. The value is a Workspa
         #
         #   @param request_options [Anthropic::RequestOptions, Hash{Symbol=>Object}]
       end

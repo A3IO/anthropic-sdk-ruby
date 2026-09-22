@@ -26,6 +26,7 @@ module Anthropic
         | Anthropic::Beta::BetaCompactionBlockParam
         | Anthropic::Beta::BetaRequestToolAdditionBlock
         | Anthropic::Beta::BetaRequestToolRemovalBlock
+        | Anthropic::Beta::BetaMCPToolListingBlockParam
         | Anthropic::Beta::BetaFallbackBlockParam
 
       module BetaContentBlockParam
@@ -54,6 +55,7 @@ module Anthropic
           | :compaction
           | :tool_addition
           | :tool_removal
+          | :mcp_tool_listing
           | :fallback
 
         module Type
@@ -81,6 +83,7 @@ module Anthropic
           COMPACTION: :compaction
           TOOL_ADDITION: :tool_addition
           TOOL_REMOVAL: :tool_removal
+          MCP_TOOL_LISTING: :mcp_tool_listing
           FALLBACK: :fallback
 
           def self?.values: -> ::Array[Anthropic::Models::Beta::BetaContentBlockParam::type_]
@@ -222,7 +225,8 @@ module Anthropic
             ?cache_control: Anthropic::Beta::BetaCacheControlEphemeral?,
             ?content: String?,
             ?encrypted_content: String?,
-            ?signature: String?
+            ?signature: String?,
+            ?tool_changes: ::Array[Anthropic::Models::Beta::BetaCompactionBlockParam::tool_change]?
           ) -> Anthropic::Beta::BetaCompactionBlockParam
           | (
             type: :tool_addition | "tool_addition",
@@ -234,6 +238,11 @@ module Anthropic
             tool: Anthropic::Models::Beta::BetaRequestToolRemovalBlock::tool,
             ?cache_control: Anthropic::Beta::BetaCacheControlEphemeral?
           ) -> Anthropic::Beta::BetaRequestToolRemovalBlock
+          | (
+            type: :mcp_tool_listing | "mcp_tool_listing",
+            mcp_server_name: String,
+            tools: ::Array[Anthropic::Beta::BetaMCPToolParam]
+          ) -> Anthropic::Beta::BetaMCPToolListingBlockParam
           | (
             type: :fallback | "fallback",
             from: Anthropic::Beta::BetaFallbackInfoParam,
@@ -282,8 +291,11 @@ module Anthropic
             ?server_name: String,
             ?file_id: String,
             ?encrypted_content: String?,
+            ?tool_changes: ::Array[Anthropic::Models::Beta::BetaCompactionBlockParam::tool_change]?,
             ?tool: Anthropic::Models::Beta::BetaRequestToolAdditionBlock::tool
             | Anthropic::Models::Beta::BetaRequestToolRemovalBlock::tool,
+            ?mcp_server_name: String,
+            ?tools: ::Array[Anthropic::Beta::BetaMCPToolParam],
             ?from: Anthropic::Beta::BetaFallbackInfoParam,
             ?to: Anthropic::Beta::BetaFallbackInfoParam,
             ?trigger: top

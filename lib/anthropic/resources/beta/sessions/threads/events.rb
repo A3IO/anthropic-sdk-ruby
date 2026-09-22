@@ -13,13 +13,13 @@ module Anthropic
             #
             # @overload list(thread_id, session_id:, limit: nil, page: nil, betas: nil, workspace_id: nil, request_options: {})
             #
-            # @param thread_id [String] Path param: Path parameter thread_id
+            # @param thread_id [String] Path param
             #
-            # @param session_id [String] Path param: Path parameter session_id
+            # @param session_id [String] Path param
             #
-            # @param limit [Integer] Query param: Query parameter for limit
+            # @param limit [Integer] Query param
             #
-            # @param page [String] Query param: Query parameter for page
+            # @param page [String] Query param
             #
             # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
             #
@@ -60,9 +60,9 @@ module Anthropic
             #
             # @overload stream_events(thread_id, session_id:, event_deltas: nil, betas: nil, workspace_id: nil, request_options: {})
             #
-            # @param thread_id [String] Path param: Path parameter thread_id
+            # @param thread_id [String] Path param
             #
-            # @param session_id [String] Path param: Path parameter session_id
+            # @param session_id [String] Path param
             #
             # @param event_deltas [Array<Symbol, Anthropic::Models::Beta::BetaManagedAgentsDeltaType>] Query param: When set, this connection also receives streaming deltas (`event_st
             #

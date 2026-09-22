@@ -20,24 +20,39 @@ module Anthropic
           end
           attr_accessor :type
 
+          # The ID of the memory that blocked the write (`mem_...`), or an empty string if
+          # that memory can't be identified.
+          #
+          # Retry the request when it is empty.
           sig { returns(T.nilable(String)) }
           attr_reader :conflicting_memory_id
 
           sig { params(conflicting_memory_id: String).void }
           attr_writer :conflicting_memory_id
 
+          # The path that blocked the write: the requested path, or the path of a memory
+          # that is an ancestor or descendant of it.
           sig { returns(T.nilable(String)) }
           attr_reader :conflicting_path
 
           sig { params(conflicting_path: String).void }
           attr_writer :conflicting_path
 
+          # A human-readable explanation of the conflict. To handle the error in code, use
+          # `conflicting_path` and `conflicting_memory_id` instead.
           sig { returns(T.nilable(String)) }
           attr_reader :message
 
           sig { params(message: String).void }
           attr_writer :message
 
+          # The error returned with HTTP status 409 when a create or rename targets a path
+          # that another memory uses, or a path that overlaps another memory's path.
+          #
+          # Two paths overlap when one is an ancestor of the other, such as `/notes` and
+          # `/notes/todo.md`. To free the path, rename or delete the memory that
+          # `conflicting_memory_id` references, then retry. To change that memory instead of
+          # creating a new one, update it.
           sig do
             params(
               type:
@@ -49,8 +64,16 @@ module Anthropic
           end
           def self.new(
             type:,
+            # The ID of the memory that blocked the write (`mem_...`), or an empty string if
+            # that memory can't be identified.
+            #
+            # Retry the request when it is empty.
             conflicting_memory_id: nil,
+            # The path that blocked the write: the requested path, or the path of a memory
+            # that is an ancestor or descendant of it.
             conflicting_path: nil,
+            # A human-readable explanation of the conflict. To handle the error in code, use
+            # `conflicting_path` and `conflicting_memory_id` instead.
             message: nil
           )
           end

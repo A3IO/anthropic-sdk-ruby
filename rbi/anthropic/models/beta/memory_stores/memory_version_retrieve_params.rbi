@@ -16,13 +16,19 @@ module Anthropic
               )
             end
 
+          # The ID of the memory store that holds the version (`memstore_...`).
           sig { returns(String) }
           attr_accessor :memory_store_id
 
+          # The ID of the memory version to retrieve (`memver_...`).
           sig { returns(String) }
           attr_accessor :memory_version_id
 
-          # Query parameter for view
+          # Selects which projection of a `memory` or `memory_version` the server returns.
+          # `basic` returns the object with `content` set to `null`; `full` populates
+          # `content`. When omitted, the default is endpoint-specific: retrieve operations
+          # default to `full`; list, create, and update operations default to `basic`.
+          # Listing with `view=full` caps `limit` at 20.
           sig do
             returns(
               T.nilable(
@@ -57,6 +63,12 @@ module Anthropic
           end
           attr_writer :betas
 
+          # Optional header to select the Workspace for this request. The value is a
+          # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+          #
+          # Only needed for credentials that can act on more than one Workspace. A
+          # credential that belongs to a specific Workspace may omit it; if sent, it must
+          # match that Workspace.
           sig { returns(T.nilable(String)) }
           attr_reader :workspace_id
 
@@ -76,12 +88,24 @@ module Anthropic
             ).returns(T.attached_class)
           end
           def self.new(
+            # The ID of the memory store that holds the version (`memstore_...`).
             memory_store_id:,
+            # The ID of the memory version to retrieve (`memver_...`).
             memory_version_id:,
-            # Query parameter for view
+            # Selects which projection of a `memory` or `memory_version` the server returns.
+            # `basic` returns the object with `content` set to `null`; `full` populates
+            # `content`. When omitted, the default is endpoint-specific: retrieve operations
+            # default to `full`; list, create, and update operations default to `basic`.
+            # Listing with `view=full` caps `limit` at 20.
             view: nil,
             # Optional header to specify the beta version(s) you want to use.
             betas: nil,
+            # Optional header to select the Workspace for this request. The value is a
+            # Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+            #
+            # Only needed for credentials that can act on more than one Workspace. A
+            # credential that belongs to a specific Workspace may omit it; if sent, it must
+            # match that Workspace.
             workspace_id: nil,
             request_options: {}
           )

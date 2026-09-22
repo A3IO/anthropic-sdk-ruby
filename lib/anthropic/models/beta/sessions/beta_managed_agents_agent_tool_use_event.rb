@@ -37,9 +37,9 @@ module Anthropic
           # @!attribute evaluated_permission
           #   AgentEvaluatedPermission enum
           #
-          #   @return [Symbol, Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission, nil]
+          #   @return [Symbol, Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentEvaluatedPermission, nil]
           optional :evaluated_permission,
-                   enum: -> { Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission }
+                   enum: -> { Anthropic::Beta::Sessions::BetaManagedAgentsAgentEvaluatedPermission }
 
           # @!attribute evaluation
           #   Names the resolved permission_policy that produced evaluated_permission, and
@@ -76,7 +76,7 @@ module Anthropic
           #
           #   @param type [Symbol, Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::Type]
           #
-          #   @param evaluated_permission [Symbol, Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission] AgentEvaluatedPermission enum
+          #   @param evaluated_permission [Symbol, Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentEvaluatedPermission] AgentEvaluatedPermission enum
           #
           #   @param evaluation [Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolEvaluationAlwaysAllow, Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolEvaluationAlwaysAsk, Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolEvaluationAuto] Names the resolved permission_policy that produced evaluated_permission, and und
           #
@@ -87,20 +87,6 @@ module Anthropic
             extend Anthropic::Internal::Type::Enum
 
             AGENT_TOOL_USE = :"agent.tool_use"
-
-            # @!method self.values
-            #   @return [Array<Symbol>]
-          end
-
-          # AgentEvaluatedPermission enum
-          #
-          # @see Anthropic::Models::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent#evaluated_permission
-          module EvaluatedPermission
-            extend Anthropic::Internal::Type::Enum
-
-            ALLOW = :allow
-            ASK = :ask
-            DENY = :deny
 
             # @!method self.values
             #   @return [Array<Symbol>]

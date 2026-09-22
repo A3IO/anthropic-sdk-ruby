@@ -320,10 +320,7 @@ module Anthropic
               name: String,
               mcp_server_name: String,
               evaluated_permission:
-                T.any(
-                  Anthropic::Beta::Sessions::BetaManagedAgentsAgentMCPToolUseEvent::EvaluatedPermission::OrSymbol,
-                  Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission::OrSymbol
-                ),
+                Anthropic::Beta::Sessions::BetaManagedAgentsAgentEvaluatedPermission::OrSymbol,
               evaluation:
                 T.any(
                   Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolEvaluationAlwaysAllow::OrHash,

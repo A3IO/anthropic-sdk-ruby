@@ -9,7 +9,8 @@ module Anthropic
           type: :mcp_toolset,
           cache_control: Anthropic::Beta::BetaCacheControlEphemeral?,
           configs: ::Hash[Symbol, Anthropic::Beta::BetaMCPToolConfig]?,
-          default_config: Anthropic::Beta::BetaMCPToolDefaultConfig
+          default_config: Anthropic::Beta::BetaMCPToolDefaultConfig,
+          tools: ::Array[Anthropic::Beta::BetaMCPToolParam]?
         }
 
       class BetaMCPToolset < Anthropic::Internal::Type::BaseModel
@@ -27,11 +28,14 @@ module Anthropic
           Anthropic::Beta::BetaMCPToolDefaultConfig
         ) -> Anthropic::Beta::BetaMCPToolDefaultConfig
 
+        attr_accessor tools: ::Array[Anthropic::Beta::BetaMCPToolParam]?
+
         def initialize: (
           mcp_server_name: String,
           ?cache_control: Anthropic::Beta::BetaCacheControlEphemeral?,
           ?configs: ::Hash[Symbol, Anthropic::Beta::BetaMCPToolConfig]?,
           ?default_config: Anthropic::Beta::BetaMCPToolDefaultConfig,
+          ?tools: ::Array[Anthropic::Beta::BetaMCPToolParam]?,
           ?type: :mcp_toolset
         ) -> void
 
@@ -40,7 +44,8 @@ module Anthropic
           type: :mcp_toolset,
           cache_control: Anthropic::Beta::BetaCacheControlEphemeral?,
           configs: ::Hash[Symbol, Anthropic::Beta::BetaMCPToolConfig]?,
-          default_config: Anthropic::Beta::BetaMCPToolDefaultConfig
+          default_config: Anthropic::Beta::BetaMCPToolDefaultConfig,
+          tools: ::Array[Anthropic::Beta::BetaMCPToolParam]?
         }
       end
     end

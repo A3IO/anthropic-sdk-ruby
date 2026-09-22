@@ -370,6 +370,63 @@ module Anthropic
           assert_equal(1, final_message.content.length)
           assert_equal(:tool_use, final_message.content[0].type)
         end
+
+        def test_stream_with_tool_added_by_value
+          @response_body = sse_response(
+            {
+              type: "message_start",
+              message: {
+                id: "msg_123",
+                type: "message",
+                role: "assistant",
+                content: [],
+                usage: {input_tokens: 10, output_tokens: 0}
+              }
+            },
+            {
+              type: "content_block_start",
+              index: 0,
+              content_block: {type: "tool_use", id: "tool_456", name: "weather_getter", input: {}}
+            },
+            {
+              type: "content_block_delta",
+              index: 0,
+              delta: {type: "input_json_delta", partial_json: '{"location":"Paris"}'}
+            },
+            {type: "content_block_stop", index: 0},
+            {
+              type: "message_delta",
+              delta: {stop_reason: "tool_use", stop_sequence: nil},
+              usage: {output_tokens: 15}
+            },
+            {type: "message_stop"}
+          )
+          stub_request(:post, "http://localhost/v1/messages?beta=true")
+            .to_return(
+              status: 200,
+              body: ->(_) { @response_body },
+              headers: {"content-type" => "text/event-stream"}
+            )
+
+          definition = {name: "weather_getter", input_schema: GetWeatherInput}
+          stream = @client.beta.messages.stream(
+            model: "claude-opus-4-6",
+            max_tokens: 100,
+            messages: [
+              {role: "user", content: "Weather?"},
+              {role: :system, content: [{type: :tool_addition, tool: {type: :tool_definition, definition:}}]}
+            ]
+          )
+
+          tool_use = stream.accumulated_message.content.first
+          assert_instance_of(GetWeatherInput, tool_use.parsed)
+          assert_equal("Paris", tool_use.parsed.location)
+          sent_as = {name: "weather_getter", input_schema: GetWeatherInput.to_json_schema}
+          assert_requested(:post, "http://localhost/v1/messages?beta=true") do
+            sent = JSON.parse(_1.body, symbolize_names: true).dig(:messages, 1, :content, 0, :tool, :definition)
+            assert_equal(JSON.parse(sent_as.to_json, symbolize_names: true), sent)
+          end
+        end
       end
     end
   end

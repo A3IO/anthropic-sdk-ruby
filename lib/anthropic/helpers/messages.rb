@@ -35,54 +35,29 @@ module Anthropic
 
           case data
           in {tools: Array => tool_array}
-            # rubocop:disable Metrics/BlockLength
-            mapped = tool_array.map do |tool|
-              case tool
-              # Runnable tool instance (an `Anthropic::BaseTool` subclass, hand-written or helper-built):
-              in Anthropic::Helpers::Tools::BaseTool
-                name = tool_api_name(tool)
-                # Helper-built tools (e.g. MCP) declare an explicit `tool_name` and only send the
-                # description they were given; hand-written tools fall back to their name.
-                description = tool.class.doc_string
-                description ||= name unless tool.class.tool_name
-                tools.store(name, tool)
-                input_schema = Anthropic::Helpers::InputSchema::JsonSchemaConverter.to_json_schema(tool)
-                # On a clash the derived keys win, so nothing in `tool_options` can shadow them.
-                definition =
-                  {name:, description:, input_schema:}
-                  .merge(tool.class.tool_options) { |_key, derived, _option| derived }
-                  .compact
-                definition.tap { _1.update(strict:) if strict }
-              # Input schema class used directly as a tool:
-              in Anthropic::Helpers::InputSchema::JsonSchemaConverter
-                name = model_name(tool.name)
+            tool_array.replace(tool_array.map { tool_to_param(_1, tools:, strict:) })
+          else
+          end
 
-                description =
-                  case tool
-                  in Class if tool <= Anthropic::Helpers::InputSchema::BaseModel
-                    tool.doc_string || name
+          # A `tool_addition` block defines a tool by value, in the shape of a `tools` entry.
+          case data
+          in {messages: Array => messages}
+            messages.each do |message|
+              case message
+              in {role: :system | "system", content: Array => blocks}
+                blocks.each do |block|
+                  case block
+                  in {
+                    type: :tool_addition | "tool_addition",
+                    tool: {type: :tool_definition | "tool_definition", definition:} => tool
+                  }
+                    tool.store(:definition, tool_to_param(definition, tools:, strict:))
                   else
-                    name
                   end
-
-                tools.store(name, tool)
-                input_schema = Anthropic::Helpers::InputSchema::JsonSchemaConverter.to_json_schema(tool)
-                {name:, description:, input_schema:}.tap { _1.update(strict:) if strict }
-              # Tool with explicit name/description and BaseModel as input_schema:
-              in {name: String => name,
-                  input_schema: Anthropic::Helpers::InputSchema::JsonSchemaConverter => tool,
-                  **rest}
-                tools.store(name, tool)
-                input_schema = Anthropic::Helpers::InputSchema::JsonSchemaConverter.to_json_schema(tool)
-                rest.merge(name:, input_schema:).tap { _1.update(strict:) if strict }
+                end
               else
-                # Any other format (pass through unchanged)
-                # This includes raw JSON schemas and any other tool definitions.
-                tool
               end
             end
-            # rubocop:enable Metrics/BlockLength
-            tool_array.replace(mapped)
           else
           end
 
@@ -210,6 +185,64 @@ module Anthropic
         # @param data [Hash{Symbol=>Object}]
         private def inject_structured_output_beta_header!(data)
           data[:betas] = data[:betas].to_a.dup.push("structured-outputs-2025-12-15").uniq
+        end
+
+        # @api private
+        #
+        # Convert one tool in any of the forms the helpers accept into a plain tool definition,
+        # recording under its name what `tool_use.input` is parsed back into.
+        #
+        # @param tool [Object]
+        #
+        # @param tools [Hash{String=>Class}]
+        #
+        # @param strict [Boolean, nil]
+        #
+        # @return [Object]
+        private def tool_to_param(tool, tools:, strict:)
+          case tool
+          # Runnable tool instance (an `Anthropic::BaseTool` subclass, hand-written or helper-built):
+          in Anthropic::Helpers::Tools::BaseTool
+            name = tool_api_name(tool)
+            # Helper-built tools (e.g. MCP) declare an explicit `tool_name` and only send the
+            # description they were given; hand-written tools fall back to their name.
+            description = tool.class.doc_string
+            description ||= name unless tool.class.tool_name
+            tools.store(name, tool)
+            input_schema = Anthropic::Helpers::InputSchema::JsonSchemaConverter.to_json_schema(tool)
+            # On a clash the derived keys win, so nothing in `tool_options` can shadow them.
+            definition =
+              {name:, description:, input_schema:}
+              .merge(tool.class.tool_options) { |_key, derived, _option| derived }
+              .compact
+            definition.tap { _1.update(strict:) if strict }
+          # Input schema class used directly as a tool:
+          in Anthropic::Helpers::InputSchema::JsonSchemaConverter
+            name = model_name(tool.name)
+
+            description =
+              case tool
+              in Class if tool <= Anthropic::Helpers::InputSchema::BaseModel
+                tool.doc_string || name
+              else
+                name
+              end
+
+            tools.store(name, tool)
+            input_schema = Anthropic::Helpers::InputSchema::JsonSchemaConverter.to_json_schema(tool)
+            {name:, description:, input_schema:}.tap { _1.update(strict:) if strict }
+          # Tool with explicit name/description and BaseModel as input_schema:
+          in {name: String => name,
+              input_schema: Anthropic::Helpers::InputSchema::JsonSchemaConverter => model,
+              **rest}
+            tools.store(name, model)
+            input_schema = Anthropic::Helpers::InputSchema::JsonSchemaConverter.to_json_schema(model)
+            rest.merge(name:, input_schema:).tap { _1.update(strict:) if strict }
+          else
+            # Any other format (pass through unchanged)
+            # This includes raw JSON schemas and any other tool definitions.
+            tool
+          end
         end
 
         # @api private

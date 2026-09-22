@@ -24,6 +24,9 @@ module Anthropic
         required :url, String
 
         # @!method initialize(expires_at:, type:, url:)
+        #   A URL to give to the entity that a user profile represents, so that the entity
+        #   can enroll for a trust grant.
+        #
         #   @param expires_at [Time] A timestamp in RFC 3339 format
         #
         #   @param type [Symbol, Anthropic::Models::Beta::BetaUserProfileEnrollmentURL::Type] Object type. Always `enrollment_url`.

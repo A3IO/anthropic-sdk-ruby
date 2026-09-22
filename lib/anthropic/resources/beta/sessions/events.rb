@@ -12,7 +12,7 @@ module Anthropic
           #
           # @overload list(session_id, created_at_gt: nil, created_at_gte: nil, created_at_lt: nil, created_at_lte: nil, limit: nil, order: nil, page: nil, types: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param session_id [String] Path param: Path parameter session_id
+          # @param session_id [String] Path param
           #
           # @param created_at_gt [Time] Query param: Return events created after this time (exclusive). Compared against
           #
@@ -22,7 +22,7 @@ module Anthropic
           #
           # @param created_at_lte [Time] Query param: Return events created at or before this time (inclusive). Compared
           #
-          # @param limit [Integer] Query param: Query parameter for limit
+          # @param limit [Integer] Query param
           #
           # @param order [Symbol, Anthropic::Models::Beta::Sessions::EventListParams::Order] Query param: Sort direction for results, ordered by the event's `processed_at`.
           #
@@ -79,7 +79,7 @@ module Anthropic
           #
           # @overload send_(session_id, events:, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param session_id [String] Path param: Path parameter session_id
+          # @param session_id [String] Path param
           #
           # @param events [Array<Anthropic::Models::Beta::Sessions::BetaManagedAgentsUserMessageEventParams, Anthropic::Models::Beta::Sessions::BetaManagedAgentsUserInterruptEventParams, Anthropic::Models::Beta::Sessions::BetaManagedAgentsUserToolConfirmationEventParams, Anthropic::Models::Beta::Sessions::BetaManagedAgentsUserCustomToolResultEventParams, Anthropic::Models::Beta::Sessions::BetaManagedAgentsUserDefineOutcomeEventParams, Anthropic::Models::Beta::Sessions::BetaManagedAgentsUserToolResultEventParams, Anthropic::Models::Beta::Sessions::BetaManagedAgentsSystemMessageEventParams>] Body param: Events to send to the `session`.
           #
@@ -112,7 +112,7 @@ module Anthropic
           #
           # @overload stream_events(session_id, event_deltas: nil, betas: nil, workspace_id: nil, request_options: {})
           #
-          # @param session_id [String] Path param: Path parameter session_id
+          # @param session_id [String] Path param
           #
           # @param event_deltas [Array<Symbol, Anthropic::Models::Beta::BetaManagedAgentsDeltaType>] Query param: When set, this connection also receives streaming deltas (`event_st
           #

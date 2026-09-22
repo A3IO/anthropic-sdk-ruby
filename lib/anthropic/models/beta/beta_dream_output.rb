@@ -5,6 +5,10 @@ module Anthropic
     module Beta
       class BetaDreamOutput < Anthropic::Internal::Type::BaseModel
         # @!attribute memory_store_id
+        #   The ID of the memory store that the dream writes its result to (`memstore_...`).
+        #
+        #   With `output_behavior` set to `create_new`, this is a new memory store. With
+        #   `update_existing`, it is the input memory store.
         #
         #   @return [String]
         required :memory_store_id, String
@@ -15,9 +19,13 @@ module Anthropic
         required :type, enum: -> { Anthropic::Beta::BetaDreamOutput::Type }
 
         # @!method initialize(memory_store_id:, type:)
-        #   An output memory store the dream writes consolidated memories into.
+        #   The memory store that holds a dream's result, as an entry in `outputs`.
         #
-        #   @param memory_store_id [String]
+        #   Some parameter documentations has been truncated, see
+        #   {Anthropic::Models::Beta::BetaDreamOutput} for more details.
+        #
+        #   @param memory_store_id [String] The ID of the memory store that the dream writes its result to (`memstore_...`).
+        #
         #   @param type [Symbol, Anthropic::Models::Beta::BetaDreamOutput::Type]
 
         # @see Anthropic::Models::Beta::BetaDreamOutput#type

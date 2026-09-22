@@ -70,7 +70,7 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaUserProfile)
         end
         def retrieve(
-          # Path parameter user_profile_id
+          # The ID of the user profile to get (`uprof_...`).
           user_profile_id,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -105,7 +105,7 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaUserProfile)
         end
         def update(
-          # Path param: Path parameter user_profile_id
+          # Path param: The ID of the user profile to update (`uprof_...`).
           user_profile_id,
           # Body param: How the platform uses the API on behalf of the entity this profile
           # represents. `application`: the platform sells a product that uses the API behind
@@ -161,13 +161,19 @@ module Anthropic
           )
         end
         def list(
-          # Query param: Query parameter for limit
+          # Query param: The maximum number of user profiles to return, from 1 to 100.
+          # Defaults to 20.
           limit: nil,
-          # Query param: Query parameter for order
+          # Query param: The sort direction, applied to the field that `order_by` selects.
+          # Defaults to `desc`.
           order: nil,
-          # Query param: Query parameter for order_by
+          # Query param: The field to sort user profiles by, in the direction that `order`
+          # sets. Defaults to `created_at`.
           order_by: nil,
-          # Query param: Query parameter for page
+          # Query param: The cursor for the page to return, taken from `next_page` in a
+          # previous response.
+          #
+          # Leave it out to get the first page.
           page: nil,
           # Header param: Optional header to specify the beta version(s) you want to use.
           betas: nil,
@@ -192,7 +198,7 @@ module Anthropic
           ).returns(Anthropic::Beta::BetaUserProfileEnrollmentURL)
         end
         def create_enrollment_url(
-          # Path parameter user_profile_id
+          # The ID of the user profile to create an enrollment URL for (`uprof_...`).
           user_profile_id,
           # Optional header to specify the beta version(s) you want to use.
           betas: nil,

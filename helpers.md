@@ -444,6 +444,45 @@ runner.each_message do |message|
 end
 ```
 
+#### `#add_tools` / `#remove_tools` - Add and Remove Tools Mid-Conversation
+
+Changing `tools:` in the middle of a conversation misses the prompt cache for everything sent so far. With the `inline-tools-2026-09-15` beta a tool change is sent as a message instead, and `#add_tools` and `#remove_tools` do that for you. `tools:` is sent exactly as you first passed it on every request.
+
+```ruby
+runner = client.beta.messages.tool_runner(
+  model: "claude-sonnet-5",
+  max_tokens: 1024,
+  betas: ["inline-tools-2026-09-15"],
+  messages: [{role: "user", content: "Find a slot for a 30 minute call with Sam next week."}],
+  tools: [GetTime.new]
+)
+
+find_free_slots = FindFreeSlots.new
+runner.each_message do |message|
+  runner.add_tools(find_free_slots) if calendar.just_connected?
+  runner.remove_tools(find_free_slots) if calendar.just_disconnected? # or by name: "find_free_slots"
+end
+```
+
+`#add_tools` takes one or more of what `tools:` holds, and sends the whole definition either way.
+
+- An `Anthropic::BaseTool` can be called from the request that carries its definition, and replaces a tool of the same name straight away: a call the model has already made in the message you're handling runs the new one.
+- A raw definition is sent as given and never run by the tool runner. That covers server tools such as `{type: "web_search_20250305", name: "web_search"}` and client tools with nothing to run behind them (a call to one gets the "not found" error result). It also stops a tool of the same name from running.
+- An `mcp_toolset` definition also needs its server in `mcp_servers:`, which `#add_tools` doesn't change.
+
+`#remove_tools` takes one or more tools, or their names. A removed tool stops being run straight away, so a call the model has already made to it in the message you're handling gets the "not found" error result. It stays removed until you pass it to `#add_tools` again. Removing a server tool only tells the model.
+
+A few things to know:
+
+- Changes made while you're handling a message go out together as one `role: :system` message right after that turn's tool results, in the order you made them. Changes made before the first request follow the initial messages.
+- After a paused turn (`pause_turn`) the turn is sent back as it came, and the changes go out with the request after that.
+- Changes still waiting when the run ends are never sent, also when `#compact_before_next_turn` compacts after that last turn.
+- A change made on the same turn as `#compact_before_next_turn` goes out with the compaction request, and the tools you added or removed stay that way for the tool runner after the compaction.
+- In the rare case where a compaction response comes back without `tool_changes` even though the summarized messages added or removed tools, the model goes back to the tools in `tools:` and the tool runner does not detect it. Call `#add_tools` / `#remove_tools` again after that compaction if you need the change restored.
+- The runner doesn't add the beta for you, so pass `betas: ["inline-tools-2026-09-15"]`.
+- Changing `tools:` through `#params` still works, but misses the prompt cache.
+- Use either these methods or `tool_addition` / `tool_removal` blocks you append yourself for a given tool, not both.
+
 #### `#run_until_finished` - Complete and Get All Messages
 
 Let the conversation finish, then process all messages at once:
@@ -453,6 +492,45 @@ first_msg = runner.next_message
 runner.feed_messages({role: :user, content: "Be more confident"}) if needed
 all_messages = runner.run_until_finished
 ```
+
+#### `#compact_before_next_turn` - Compact the Conversation
+
+With the `compact-2026-09-04` beta you decide when a conversation is compacted: a request with the `compaction` param returns a single `compaction` block, which then replaces the messages it summarizes. In a tool runner, call `#compact_before_next_turn` and the runner does this for you:
+
+```ruby
+runner = client.beta.messages.tool_runner(
+  model: "claude-sonnet-5",
+  max_tokens: 1024,
+  betas: ["compact-2026-09-04"],
+  messages: [{role: "user", content: "Find every page that mentions rate limits."}],
+  tools: [search_docs]
+)
+
+runner.each_message do |message|
+  runner.compact_before_next_turn if message.usage.input_tokens > 100_000
+end
+```
+
+The call only schedules the compaction. Once the current turn has finished, including any tool calls, the runner requests a summary, replaces its messages with the compaction response the API returns, and carries on. A turn that was paused (`pause_turn`) is resumed and finished first. If the current turn is the last one, the runner compacts and then stops. If you call it before the first request, the compaction is the first request.
+
+You get the compaction response like any other message (`#each_message` and `#each_streaming` yield it, `#next_message` returns it), and it doesn't count towards `max_iterations`. It has `stop_reason: :compaction`, the summary is in `message.content.first.content`, and its top-level `usage.input_tokens` and `usage.output_tokens` are 0: what the compaction cost is in `usage.iterations`. Calling `#compact_before_next_turn` while handling that message does nothing, so a threshold like the one above doesn't compact twice.
+
+`#compact_before_next_turn` takes the same config as the `compaction:` param of `messages.create`, for example to give your own summarization instructions:
+
+```ruby
+runner.compact_before_next_turn({type: :summarize, instructions: "Keep the page URLs found so far."})
+```
+
+A few things to know:
+
+- Calling it again before the compaction runs replaces the pending one.
+- The runner doesn't add the beta for you, so pass `betas: ["compact-2026-09-04"]`.
+- `context_management`, `stop_sequences`, a `tool_choice` that forces a tool (`any` or `tool`) and the output format (`output_config[:format]`, also in each entry of `fallbacks`, or the deprecated `output_format`) are left out of the compaction request, because the API doesn't accept them together with `compaction`, and are sent again afterwards. `#compact_before_next_turn` raises an `ArgumentError` if `context_management` has a `compact_*` edit, and so does adding one while a compaction is pending.
+- While you're handling the compaction response in an `#each_message` or `#each_streaming` block, `#feed_messages` and assigning `runner.params = …` with different `messages` raise an `ArgumentError`, because the compaction response is about to replace the messages. Other params can still be changed. To change the messages in a way the runner notices during a run, assign `runner.params = …` or use `#feed_messages`; editing the array in place is not detected while a compaction is in progress.
+- If the API returns no summary, the runner prints a warning and keeps the messages as they are.
+- If the run ends on a turn that was cut short with tool calls that never ran (`stop_reason: :max_tokens`, for example), the pending compaction is skipped with a warning. It is also skipped if the run stops at `max_iterations` or you `break` out of the block.
+- `#next_message` only returns the last message once the run has finished. Call `#compact_before_next_turn` and then `#next_message` once more to compact after it.
+- The `compaction` param itself can't be set on a tool runner, because every request in the loop would compact again.
 
 ## Tool Definition Options
 
@@ -488,6 +566,25 @@ end
 ```
 
 See [strict tool use](https://platform.claude.com/docs/en/agents-and-tools/tool-use/strict-tool-use) for what `strict: true` guarantees and the schema features it supports.
+
+## Tools Added Mid-Conversation
+
+With the `inline-tools-2026-09-15` beta, a `tool_addition` block in a `role: :system` message can define a tool by value. Its `definition` takes the same forms as an entry of `tools:`: it is sent as the same tool definition, and the tool's `tool_use` blocks get `parsed` the same way:
+
+```ruby
+message = client.beta.messages.create(
+  model: "claude-sonnet-5",
+  max_tokens: 1024,
+  betas: ["inline-tools-2026-09-15"],
+  tools: [GetWeather.new],
+  messages: [
+    {role: :user, content: "What's 15 * 7?"},
+    {role: :system, content: [{type: :tool_addition, tool: {type: :tool_definition, definition: Calculator.new}}]}
+  ]
+)
+```
+
+The tool runner does not call a tool defined this way; it only calls the tools passed in `tools:`.
 
 ## Examples
 

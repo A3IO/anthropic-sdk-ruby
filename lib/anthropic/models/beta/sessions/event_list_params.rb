@@ -43,7 +43,6 @@ module Anthropic
           optional :created_at_lte, Time
 
           # @!attribute limit
-          #   Query parameter for limit
           #
           #   @return [Integer, nil]
           optional :limit, Integer
@@ -75,6 +74,12 @@ module Anthropic
           optional :betas, -> { Anthropic::Internal::Type::ArrayOf[union: Anthropic::AnthropicBeta] }
 
           # @!attribute workspace_id
+          #   Optional header to select the Workspace for this request. The value is a
+          #   Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+          #
+          #   Only needed for credentials that can act on more than one Workspace. A
+          #   credential that belongs to a specific Workspace may omit it; if sent, it must
+          #   match that Workspace.
           #
           #   @return [String, nil]
           optional :workspace_id, String
@@ -93,7 +98,7 @@ module Anthropic
           #
           #   @param created_at_lte [Time] Return events created at or before this time (inclusive). Compared against the e
           #
-          #   @param limit [Integer] Query parameter for limit
+          #   @param limit [Integer]
           #
           #   @param order [Symbol, Anthropic::Models::Beta::Sessions::EventListParams::Order] Sort direction for results, ordered by the event's `processed_at`. Defaults to `
           #
@@ -103,7 +108,7 @@ module Anthropic
           #
           #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
           #
-          #   @param workspace_id [String]
+          #   @param workspace_id [String] Optional header to select the Workspace for this request. The value is a Workspa
           #
           #   @param request_options [Anthropic::RequestOptions, Hash{Symbol=>Object}]
 

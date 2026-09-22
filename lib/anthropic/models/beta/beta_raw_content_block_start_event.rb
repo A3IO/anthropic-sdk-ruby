@@ -6,7 +6,7 @@ module Anthropic
       class BetaRawContentBlockStartEvent < Anthropic::Internal::Type::BaseModel
         # @!attribute content_block
         #
-        #   @return [Anthropic::Models::Beta::BetaTextBlock, Anthropic::Models::Beta::BetaThinkingBlock, Anthropic::Models::Beta::BetaRedactedThinkingBlock, Anthropic::Models::Beta::BetaToolUseBlock, Anthropic::Models::Beta::BetaServerToolUseBlock, Anthropic::Models::Beta::BetaWebSearchToolResultBlock, Anthropic::Models::Beta::BetaWebFetchToolResultBlock, Anthropic::Models::Beta::BetaAdvisorToolResultBlock, Anthropic::Models::Beta::BetaCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaBashCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaTextEditorCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaToolSearchToolResultBlock, Anthropic::Models::Beta::BetaMCPToolUseBlock, Anthropic::Models::Beta::BetaMCPToolResultBlock, Anthropic::Models::Beta::BetaContainerUploadBlock, Anthropic::Models::Beta::BetaCompactionBlock, Anthropic::Models::Beta::BetaFallbackBlock]
+        #   @return [Anthropic::Models::Beta::BetaTextBlock, Anthropic::Models::Beta::BetaThinkingBlock, Anthropic::Models::Beta::BetaRedactedThinkingBlock, Anthropic::Models::Beta::BetaToolUseBlock, Anthropic::Models::Beta::BetaServerToolUseBlock, Anthropic::Models::Beta::BetaWebSearchToolResultBlock, Anthropic::Models::Beta::BetaWebFetchToolResultBlock, Anthropic::Models::Beta::BetaAdvisorToolResultBlock, Anthropic::Models::Beta::BetaCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaBashCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaTextEditorCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaToolSearchToolResultBlock, Anthropic::Models::Beta::BetaMCPToolUseBlock, Anthropic::Models::Beta::BetaMCPToolResultBlock, Anthropic::Models::Beta::BetaContainerUploadBlock, Anthropic::Models::Beta::BetaCompactionBlock, Anthropic::Models::Beta::BetaFallbackBlock, Anthropic::Models::Beta::BetaMCPToolListingBlock]
         required :content_block, union: -> { Anthropic::Beta::BetaRawContentBlockStartEvent::ContentBlock }
 
         # @!attribute index
@@ -20,7 +20,7 @@ module Anthropic
         required :type, const: :content_block_start
 
         # @!method initialize(content_block:, index:, type: :content_block_start)
-        #   @param content_block [Anthropic::Models::Beta::BetaTextBlock, Anthropic::Models::Beta::BetaThinkingBlock, Anthropic::Models::Beta::BetaRedactedThinkingBlock, Anthropic::Models::Beta::BetaToolUseBlock, Anthropic::Models::Beta::BetaServerToolUseBlock, Anthropic::Models::Beta::BetaWebSearchToolResultBlock, Anthropic::Models::Beta::BetaWebFetchToolResultBlock, Anthropic::Models::Beta::BetaAdvisorToolResultBlock, Anthropic::Models::Beta::BetaCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaBashCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaTextEditorCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaToolSearchToolResultBlock, Anthropic::Models::Beta::BetaMCPToolUseBlock, Anthropic::Models::Beta::BetaMCPToolResultBlock, Anthropic::Models::Beta::BetaContainerUploadBlock, Anthropic::Models::Beta::BetaCompactionBlock, Anthropic::Models::Beta::BetaFallbackBlock]
+        #   @param content_block [Anthropic::Models::Beta::BetaTextBlock, Anthropic::Models::Beta::BetaThinkingBlock, Anthropic::Models::Beta::BetaRedactedThinkingBlock, Anthropic::Models::Beta::BetaToolUseBlock, Anthropic::Models::Beta::BetaServerToolUseBlock, Anthropic::Models::Beta::BetaWebSearchToolResultBlock, Anthropic::Models::Beta::BetaWebFetchToolResultBlock, Anthropic::Models::Beta::BetaAdvisorToolResultBlock, Anthropic::Models::Beta::BetaCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaBashCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaTextEditorCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaToolSearchToolResultBlock, Anthropic::Models::Beta::BetaMCPToolUseBlock, Anthropic::Models::Beta::BetaMCPToolResultBlock, Anthropic::Models::Beta::BetaContainerUploadBlock, Anthropic::Models::Beta::BetaCompactionBlock, Anthropic::Models::Beta::BetaFallbackBlock, Anthropic::Models::Beta::BetaMCPToolListingBlock]
         #   @param index [Integer]
         #   @param type [Symbol, :content_block_start]
 
@@ -82,6 +82,12 @@ module Anthropic
           # pair and carries no deltas.
           variant :fallback, -> { Anthropic::Beta::BetaFallbackBlock }
 
+          # The tool listing the server fetched from an MCP server while producing
+          # this response. Send the assistant message back unchanged, this block
+          # included, so later requests use this listing instead of asking the MCP
+          # server again.
+          variant :mcp_tool_listing, -> { Anthropic::Beta::BetaMCPToolListingBlock }
+
           module Type
             extend Anthropic::Internal::Type::Enum
 
@@ -102,13 +108,14 @@ module Anthropic
             CONTAINER_UPLOAD = :container_upload
             COMPACTION = :compaction
             FALLBACK = :fallback
+            MCP_TOOL_LISTING = :mcp_tool_listing
 
             # @!method self.values
             #   @return [Array<Symbol>]
           end
 
           # @!method self.variants
-          #   @return [Array(Anthropic::Models::Beta::BetaTextBlock, Anthropic::Models::Beta::BetaThinkingBlock, Anthropic::Models::Beta::BetaRedactedThinkingBlock, Anthropic::Models::Beta::BetaToolUseBlock, Anthropic::Models::Beta::BetaServerToolUseBlock, Anthropic::Models::Beta::BetaWebSearchToolResultBlock, Anthropic::Models::Beta::BetaWebFetchToolResultBlock, Anthropic::Models::Beta::BetaAdvisorToolResultBlock, Anthropic::Models::Beta::BetaCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaBashCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaTextEditorCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaToolSearchToolResultBlock, Anthropic::Models::Beta::BetaMCPToolUseBlock, Anthropic::Models::Beta::BetaMCPToolResultBlock, Anthropic::Models::Beta::BetaContainerUploadBlock, Anthropic::Models::Beta::BetaCompactionBlock, Anthropic::Models::Beta::BetaFallbackBlock)]
+          #   @return [Array(Anthropic::Models::Beta::BetaTextBlock, Anthropic::Models::Beta::BetaThinkingBlock, Anthropic::Models::Beta::BetaRedactedThinkingBlock, Anthropic::Models::Beta::BetaToolUseBlock, Anthropic::Models::Beta::BetaServerToolUseBlock, Anthropic::Models::Beta::BetaWebSearchToolResultBlock, Anthropic::Models::Beta::BetaWebFetchToolResultBlock, Anthropic::Models::Beta::BetaAdvisorToolResultBlock, Anthropic::Models::Beta::BetaCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaBashCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaTextEditorCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaToolSearchToolResultBlock, Anthropic::Models::Beta::BetaMCPToolUseBlock, Anthropic::Models::Beta::BetaMCPToolResultBlock, Anthropic::Models::Beta::BetaContainerUploadBlock, Anthropic::Models::Beta::BetaCompactionBlock, Anthropic::Models::Beta::BetaFallbackBlock, Anthropic::Models::Beta::BetaMCPToolListingBlock)]
 
           # Creates a new instance of the variant class whose `type` matches the given
           # value, passing the remaining arguments to its constructor.
@@ -153,14 +160,20 @@ module Anthropic
           #
           #   @option args [String, nil] :encrypted_content Opaque metadata from prior compaction, to be round-tripped verbatim
           #
+          #   @option args [Array<Anthropic::Models::Beta::BetaResponseToolAdditionBlock, Anthropic::Models::Beta::BetaResponseToolRemovalBlock>, nil] :tool_changes The tool changes of the compacted range: the `tool_addition` and `tool_removal`
+          #
           #   @option args [Anthropic::Models::Beta::BetaFallbackInfo] :from The model whose output ends at this point — the model that declined at this hop.
           #
           #   @option args [Anthropic::Models::Beta::BetaFallbackInfo] :to The fallback model producing the content that follows this block. Its `model` is
           #
           #   @option args [Anthropic::Models::Beta::BetaFallbackRefusalTrigger] :trigger What caused the `from` model to hand over at this hop.
           #
+          #   @option args [String] :mcp_server_name
+          #
+          #   @option args [Array<Anthropic::Models::Beta::BetaMCPTool>] :tools
+          #
           # @raise [ArgumentError]
-          # @return [Anthropic::Models::Beta::BetaTextBlock, Anthropic::Models::Beta::BetaThinkingBlock, Anthropic::Models::Beta::BetaRedactedThinkingBlock, Anthropic::Models::Beta::BetaToolUseBlock, Anthropic::Models::Beta::BetaServerToolUseBlock, Anthropic::Models::Beta::BetaWebSearchToolResultBlock, Anthropic::Models::Beta::BetaWebFetchToolResultBlock, Anthropic::Models::Beta::BetaAdvisorToolResultBlock, Anthropic::Models::Beta::BetaCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaBashCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaTextEditorCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaToolSearchToolResultBlock, Anthropic::Models::Beta::BetaMCPToolUseBlock, Anthropic::Models::Beta::BetaMCPToolResultBlock, Anthropic::Models::Beta::BetaContainerUploadBlock, Anthropic::Models::Beta::BetaCompactionBlock, Anthropic::Models::Beta::BetaFallbackBlock]
+          # @return [Anthropic::Models::Beta::BetaTextBlock, Anthropic::Models::Beta::BetaThinkingBlock, Anthropic::Models::Beta::BetaRedactedThinkingBlock, Anthropic::Models::Beta::BetaToolUseBlock, Anthropic::Models::Beta::BetaServerToolUseBlock, Anthropic::Models::Beta::BetaWebSearchToolResultBlock, Anthropic::Models::Beta::BetaWebFetchToolResultBlock, Anthropic::Models::Beta::BetaAdvisorToolResultBlock, Anthropic::Models::Beta::BetaCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaBashCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaTextEditorCodeExecutionToolResultBlock, Anthropic::Models::Beta::BetaToolSearchToolResultBlock, Anthropic::Models::Beta::BetaMCPToolUseBlock, Anthropic::Models::Beta::BetaMCPToolResultBlock, Anthropic::Models::Beta::BetaContainerUploadBlock, Anthropic::Models::Beta::BetaCompactionBlock, Anthropic::Models::Beta::BetaFallbackBlock, Anthropic::Models::Beta::BetaMCPToolListingBlock]
           def self.new(type:, **args)
             case type.to_sym
             when :text
@@ -197,6 +210,8 @@ module Anthropic
               Anthropic::Beta::BetaCompactionBlock.new(**args)
             when :fallback
               Anthropic::Beta::BetaFallbackBlock.new(**args)
+            when :mcp_tool_listing
+              Anthropic::Beta::BetaMCPToolListingBlock.new(**args)
             else
               raise ArgumentError, "unknown type: #{type}"
             end

@@ -97,6 +97,10 @@ module Anthropic
 
       variant const: -> { Anthropic::Models::AnthropicBeta::COMPACT_2026_09_04 }
 
+      variant const: -> { Anthropic::Models::AnthropicBeta::INLINE_TOOLS_2026_09_15 }
+
+      variant const: -> { Anthropic::Models::AnthropicBeta::MCP_CLIENT_2026_09_15 }
+
       variant String
 
       # @!method self.variants
@@ -154,6 +158,8 @@ module Anthropic
       THINKING_BINDING_CONTROLS_2026_08_01 = :"thinking-binding-controls-2026-08-01"
       MID_CONVERSATION_SYSTEM_CLEAR_AT_2026_08_21 = :"mid-conversation-system-clear-at-2026-08-21"
       COMPACT_2026_09_04 = :"compact-2026-09-04"
+      INLINE_TOOLS_2026_09_15 = :"inline-tools-2026-09-15"
+      MCP_CLIENT_2026_09_15 = :"mcp-client-2026-09-15"
 
       # @!endgroup
     end

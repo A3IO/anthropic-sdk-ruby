@@ -21,11 +21,15 @@ module Anthropic
             )
           end
           def retrieve(
-            # Path param: Path parameter memory_version_id
+            # Path param: The ID of the memory version to retrieve (`memver_...`).
             memory_version_id,
-            # Path param: Path parameter memory_store_id
+            # Path param: The ID of the memory store that holds the version (`memstore_...`).
             memory_store_id:,
-            # Query param: Query parameter for view
+            # Query param: Selects which projection of a `memory` or `memory_version` the
+            # server returns. `basic` returns the object with `content` set to `null`; `full`
+            # populates `content`. When omitted, the default is endpoint-specific: retrieve
+            # operations default to `full`; list, create, and update operations default to
+            # `basic`. Listing with `view=full` caps `limit` at 20.
             view: nil,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,
@@ -67,27 +71,37 @@ module Anthropic
             )
           end
           def list(
-            # Path param: Path parameter memory_store_id
+            # Path param: The ID of the memory store whose version history to list
+            # (`memstore_...`).
             memory_store_id,
-            # Query param: Query parameter for api_key_id
+            # Query param: Return only versions written with the API key that has this ID.
             api_key_id: nil,
             # Query param: Return versions created at or after this time (inclusive).
             created_at_gte: nil,
             # Query param: Return versions created at or before this time (inclusive).
             created_at_lte: nil,
-            # Query param: Query parameter for limit
+            # Query param: The maximum number of versions to return per page. Defaults to 20.
             limit: nil,
-            # Query param: Query parameter for memory_id
+            # Query param: Return only versions of the memory with this ID (`mem_...`).
+            #
+            # The filter still works after the memory is deleted. The results then include the
+            # version whose `operation` is `deleted`.
             memory_id: nil,
-            # Query param: Query parameter for operation
+            # Query param: Return only versions that record this kind of change.
             operation: nil,
-            # Query param: Query parameter for page
+            # Query param: The `next_page` value from a previous response, to get the next
+            # page. Omit it to get the first page.
             page: nil,
-            # Query param: Query parameter for service_account_id
+            # Query param: Return only versions written by the service account with this ID
+            # (`svac_...`).
             service_account_id: nil,
-            # Query param: Query parameter for session_id
+            # Query param: Return only versions written by the session with this ID.
             session_id: nil,
-            # Query param: Query parameter for view
+            # Query param: Selects which projection of a `memory` or `memory_version` the
+            # server returns. `basic` returns the object with `content` set to `null`; `full`
+            # populates `content`. When omitted, the default is endpoint-specific: retrieve
+            # operations default to `full`; list, create, and update operations default to
+            # `basic`. Listing with `view=full` caps `limit` at 20.
             view: nil,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,
@@ -116,9 +130,9 @@ module Anthropic
             )
           end
           def redact(
-            # Path param: Path parameter memory_version_id
+            # Path param: The ID of the memory version to redact (`memver_...`).
             memory_version_id,
-            # Path param: Path parameter memory_store_id
+            # Path param: The ID of the memory store that holds the version (`memstore_...`).
             memory_store_id:,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,

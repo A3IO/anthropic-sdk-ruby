@@ -14,6 +14,10 @@ module Anthropic
             )
           end
 
+        # The ID of the memory store that the dream writes its result to (`memstore_...`).
+        #
+        # With `output_behavior` set to `create_new`, this is a new memory store. With
+        # `update_existing`, it is the input memory store.
         sig { returns(String) }
         attr_accessor :memory_store_id
 
@@ -22,14 +26,21 @@ module Anthropic
         end
         attr_accessor :type
 
-        # An output memory store the dream writes consolidated memories into.
+        # The memory store that holds a dream's result, as an entry in `outputs`.
         sig do
           params(
             memory_store_id: String,
             type: Anthropic::Beta::BetaDreamMemoryStoreOutput::Type::OrSymbol
           ).returns(T.attached_class)
         end
-        def self.new(memory_store_id:, type:)
+        def self.new(
+          # The ID of the memory store that the dream writes its result to (`memstore_...`).
+          #
+          # With `output_behavior` set to `create_new`, this is a new memory store. With
+          # `update_existing`, it is the input memory store.
+          memory_store_id:,
+          type:
+        )
         end
 
         sig do

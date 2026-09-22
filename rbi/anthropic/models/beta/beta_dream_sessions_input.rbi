@@ -14,20 +14,39 @@ module Anthropic
             )
           end
 
+        # The IDs of the sessions whose transcripts the dream reads (`sesn_...`).
+        #
+        # Give 1 to 100 IDs, with no duplicates. Each session must be in the same
+        # workspace as the dream. Responses list the IDs in sorted order.
+        #
+        # The
+        # [limits table in the Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#limits)
+        # lists all the limits on a dream.
         sig { returns(T::Array[String]) }
         attr_accessor :session_ids
 
         sig { returns(Anthropic::Beta::BetaDreamSessionsInput::Type::OrSymbol) }
         attr_accessor :type
 
-        # Input session transcripts the dream reads.
+        # The sessions that a dream reads, given as an entry in `inputs`.
         sig do
           params(
             session_ids: T::Array[String],
             type: Anthropic::Beta::BetaDreamSessionsInput::Type::OrSymbol
           ).returns(T.attached_class)
         end
-        def self.new(session_ids:, type:)
+        def self.new(
+          # The IDs of the sessions whose transcripts the dream reads (`sesn_...`).
+          #
+          # Give 1 to 100 IDs, with no duplicates. Each session must be in the same
+          # workspace as the dream. Responses list the IDs in sorted order.
+          #
+          # The
+          # [limits table in the Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#limits)
+          # lists all the limits on a dream.
+          session_ids:,
+          type:
+        )
         end
 
         sig do

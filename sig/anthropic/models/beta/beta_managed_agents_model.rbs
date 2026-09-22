@@ -4,7 +4,8 @@ module Anthropic
 
     module Beta
       type beta_managed_agents_model =
-        :"claude-fable-5-1"
+        :"claude-opus-5-5"
+        | :"claude-fable-5-1"
         | :"claude-sonnet-5"
         | :"claude-fable-5"
         | :"claude-opus-5"
@@ -24,6 +25,9 @@ module Anthropic
         extend Anthropic::Internal::Type::Union
 
         def self?.variants: -> ::Array[Anthropic::Models::Beta::beta_managed_agents_model]
+
+        # Powerful intelligence for coding, knowledge work, and long-running agents
+        CLAUDE_OPUS_5_5: :"claude-opus-5-5"
 
         # Frontier intelligence for ambitious tasks across coding, scientific discovery, and enterprise workflows
         CLAUDE_FABLE_5_1: :"claude-fable-5-1"

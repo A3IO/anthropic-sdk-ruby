@@ -33,6 +33,7 @@ module Anthropic
               Anthropic::Beta::BetaCompactionBlockParam,
               Anthropic::Beta::BetaRequestToolAdditionBlock,
               Anthropic::Beta::BetaRequestToolRemovalBlock,
+              Anthropic::Beta::BetaMCPToolListingBlockParam,
               Anthropic::Beta::BetaFallbackBlockParam
             )
           end
@@ -154,6 +155,11 @@ module Anthropic
           TOOL_REMOVAL =
             T.let(
               :tool_removal,
+              Anthropic::Beta::BetaContentBlockParam::Type::TaggedSymbol
+            )
+          MCP_TOOL_LISTING =
+            T.let(
+              :mcp_tool_listing,
               Anthropic::Beta::BetaContentBlockParam::Type::TaggedSymbol
             )
           FALLBACK =
@@ -288,12 +294,31 @@ module Anthropic
             server_name: String,
             file_id: String,
             encrypted_content: T.nilable(String),
+            tool_changes:
+              T.nilable(
+                T::Array[
+                  T.any(
+                    Anthropic::Beta::BetaRequestToolAdditionBlock::OrHash,
+                    Anthropic::Beta::BetaRequestToolRemovalBlock::OrHash
+                  )
+                ]
+              ),
             tool:
               T.any(
-                Anthropic::Beta::BetaToolChangeToolReference::OrHash,
-                Anthropic::Beta::BetaToolChangeMCPToolReference::OrHash,
-                Anthropic::Beta::BetaToolChangeMCPToolsetReference::OrHash
+                T.any(
+                  Anthropic::Beta::BetaToolChangeToolReference::OrHash,
+                  Anthropic::Beta::BetaToolChangeMCPToolReference::OrHash,
+                  Anthropic::Beta::BetaToolChangeMCPToolsetReference::OrHash,
+                  Anthropic::Beta::BetaToolChangeToolDefinitionParam::OrHash
+                ),
+                T.any(
+                  Anthropic::Beta::BetaToolChangeToolReference::OrHash,
+                  Anthropic::Beta::BetaToolChangeMCPToolReference::OrHash,
+                  Anthropic::Beta::BetaToolChangeMCPToolsetReference::OrHash
+                )
               ),
+            mcp_server_name: String,
+            tools: T::Array[Anthropic::Beta::BetaMCPToolParam::OrHash],
             from: Anthropic::Beta::BetaFallbackInfoParam::OrHash,
             to: Anthropic::Beta::BetaFallbackInfoParam::OrHash,
             trigger: T.anything
@@ -339,7 +364,16 @@ module Anthropic
           file_id: nil,
           # Opaque metadata from prior compaction, to be round-tripped verbatim
           encrypted_content: nil,
+          # The tool changes of the compacted range, as the server returned them on this
+          # block: the `tool_addition` and `tool_removal` entries that take the request's
+          # `tools` to the tool set in effect at the end of the range. Send them back
+          # unchanged with the block.
+          tool_changes: nil,
           tool: nil,
+          # The name of the MCP server this listing came from, as `mcp_servers` declares it.
+          mcp_server_name: nil,
+          # The server's tools, exactly as the response listed them.
+          tools: nil,
           # Identifies one hop of a fallback transition.
           from: nil,
           # Identifies one hop of a fallback transition.

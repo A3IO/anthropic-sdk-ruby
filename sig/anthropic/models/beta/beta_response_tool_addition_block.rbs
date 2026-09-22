@@ -1,0 +1,84 @@
+module Anthropic
+  module Models
+    class BetaResponseToolAdditionBlock = Beta::BetaResponseToolAdditionBlock
+
+    module Beta
+      type beta_response_tool_addition_block =
+        {
+          tool: Anthropic::Models::Beta::BetaResponseToolAdditionBlock::tool,
+          type: :tool_addition
+        }
+
+      class BetaResponseToolAdditionBlock < Anthropic::Internal::Type::BaseModel
+        attr_accessor tool: Anthropic::Models::Beta::BetaResponseToolAdditionBlock::tool
+
+        attr_accessor type: :tool_addition
+
+        def initialize: (
+          tool: Anthropic::Models::Beta::BetaResponseToolAdditionBlock::tool,
+          ?type: :tool_addition
+        ) -> void
+
+        def to_hash: -> {
+          tool: Anthropic::Models::Beta::BetaResponseToolAdditionBlock::tool,
+          type: :tool_addition
+        }
+
+        type tool =
+          Anthropic::Beta::BetaResponseToolChangeToolReference
+          | Anthropic::Beta::BetaResponseToolChangeMCPToolReference
+          | Anthropic::Beta::BetaResponseToolChangeMCPToolsetReference
+          | Anthropic::Beta::BetaToolChangeToolDefinition
+
+        module Tool
+          extend Anthropic::Internal::Type::Union
+
+          type type_ =
+            :tool_reference
+            | :mcp_tool_reference
+            | :mcp_toolset_reference
+            | :tool_definition
+
+          module Type
+            extend Anthropic::Internal::Type::Enum
+
+            TOOL_REFERENCE: :tool_reference
+            MCP_TOOL_REFERENCE: :mcp_tool_reference
+            MCP_TOOLSET_REFERENCE: :mcp_toolset_reference
+            TOOL_DEFINITION: :tool_definition
+
+            def self?.values: -> ::Array[Anthropic::Models::Beta::BetaResponseToolAdditionBlock::Tool::type_]
+          end
+
+          def self?.variants: -> ::Array[Anthropic::Models::Beta::BetaResponseToolAdditionBlock::tool]
+
+          def self.new:
+            (
+              type: :tool_reference | "tool_reference",
+              name: String
+            ) -> Anthropic::Beta::BetaResponseToolChangeToolReference
+            | (
+              type: :mcp_tool_reference | "mcp_tool_reference",
+              name: String,
+              server_name: String
+            ) -> Anthropic::Beta::BetaResponseToolChangeMCPToolReference
+            | (
+              type: :mcp_toolset_reference | "mcp_toolset_reference",
+              server_name: String
+            ) -> Anthropic::Beta::BetaResponseToolChangeMCPToolsetReference
+            | (
+              type: :tool_definition | "tool_definition",
+              definition: Anthropic::Models::Beta::beta_response_tool_union
+            ) -> Anthropic::Beta::BetaToolChangeToolDefinition
+            | (
+              type: Anthropic::Models::Beta::BetaResponseToolAdditionBlock::Tool::type_
+              | String,
+              ?name: String,
+              ?server_name: String,
+              ?definition: Anthropic::Models::Beta::beta_response_tool_union
+            ) -> Anthropic::Models::Beta::BetaResponseToolAdditionBlock::tool
+        end
+      end
+    end
+  end
+end

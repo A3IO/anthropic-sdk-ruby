@@ -5,6 +5,7 @@ module Anthropic
     BetaDreamInput = Beta::BetaDreamInput
 
     module Beta
+      # A source that a dream reads, such as a memory store or a set of sessions.
       module BetaDreamInput
         extend Anthropic::Internal::Type::Union
 
@@ -60,7 +61,23 @@ module Anthropic
             session_ids: T::Array[String]
           ).returns(Anthropic::Beta::BetaDreamInput::Variants)
         end
-        def self.new(type:, memory_store_id: nil, session_ids: nil)
+        def self.new(
+          type:,
+          # The ID of the memory store for the dream to read (`memstore_...`).
+          #
+          # The memory store must be in the same workspace as the dream and must not be
+          # archived.
+          memory_store_id: nil,
+          # The IDs of the sessions whose transcripts the dream reads (`sesn_...`).
+          #
+          # Give 1 to 100 IDs, with no duplicates. Each session must be in the same
+          # workspace as the dream. Responses list the IDs in sorted order.
+          #
+          # The
+          # [limits table in the Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#limits)
+          # lists all the limits on a dream.
+          session_ids: nil
+        )
         end
       end
     end

@@ -31,6 +31,13 @@ module Anthropic
           end
         OrSymbol = T.type_alias { T.any(Symbol, String) }
 
+        # Powerful intelligence for coding, knowledge work, and long-running agents
+        CLAUDE_OPUS_5_5 =
+          T.let(
+            :"claude-opus-5-5",
+            Anthropic::Beta::BetaManagedAgentsModel::TaggedSymbol
+          )
+
         # Frontier intelligence for ambitious tasks across coding, scientific discovery, and enterprise workflows
         CLAUDE_FABLE_5_1 =
           T.let(

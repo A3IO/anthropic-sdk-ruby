@@ -11,6 +11,7 @@ module Anthropic
             T.any(Anthropic::Beta::BetaDream, Anthropic::Internal::AnyHash)
           end
 
+        # The unique ID of the dream (`drm_...`).
         sig { returns(String) }
         attr_accessor :id
 
@@ -35,14 +36,18 @@ module Anthropic
         end
         attr_writer :error
 
+        # The sources that the dream reads, from the request that created it.
         sig { returns(T::Array[Anthropic::Beta::BetaDreamInput::Variants]) }
         attr_accessor :inputs
 
+        # The guidance given when the dream was created, or `null` if none was given.
         sig { returns(T.nilable(String)) }
         attr_accessor :instructions
 
-        # Model identifier and configuration applied to every pipeline stage. Same wire
-        # shape as the Agents API ModelConfig.
+        # The model that runs a dream, from the request that created it.
+        #
+        # The dream uses this model for all of its work. The response always gives the
+        # model as an object, even if the request gave only a model ID.
         sig { returns(Anthropic::Beta::BetaDreamModelConfig) }
         attr_reader :model
 
@@ -51,35 +56,77 @@ module Anthropic
         end
         attr_writer :model
 
+        # Which memory store a dream writes its result to. Defaults to `create_new` when
+        # left out of a create request.
         sig { returns(Anthropic::Beta::BetaOutputBehavior::Variants) }
         attr_accessor :output_behavior
 
+        # The memory store that holds the dream's result, as a one-item array, or an empty
+        # array until the dream records that memory store.
+        #
+        # The array is empty while the dream is `pending` and for a short time after it
+        # starts `running`. It can stay empty if the dream fails or is canceled before
+        # then. The memory store holds the complete result only once `status` is
+        # `completed`.
+        #
+        # See the
+        # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#use-the-output)
+        # for how to review and use the result.
         sig { returns(T::Array[Anthropic::Beta::BetaDreamOutput]) }
         attr_accessor :outputs
 
+        # The ID of the session that runs the dream (`sesn_...`), or `null` if that
+        # session hasn't started.
+        #
+        # Stream that session's events to follow what the dream reads and writes.
+        #
+        # See the
+        # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#watch-the-pipeline-run)
+        # for how to watch a running dream.
         sig { returns(T.nilable(String)) }
         attr_accessor :session_id
 
-        # Lifecycle status of a Dream.
+        # Where a dream is in its lifecycle.
+        #
+        # `completed`, `failed`, and `canceled` are final: once a dream has one of these
+        # statuses, its status doesn't change again.
+        #
+        # See the
+        # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#lifecycle)
+        # for what each status means.
         sig { returns(Anthropic::Beta::BetaDreamStatus::TaggedSymbol) }
         attr_accessor :status
 
         sig { returns(Anthropic::Beta::BetaDream::Type::TaggedSymbol) }
         attr_accessor :type
 
-        # Cumulative token usage for the dream across every pipeline stage.
+        # The tokens that a dream has used so far.
+        #
+        # The counts are zero while the dream is `pending` and update while it is
+        # `running`. They can keep changing after a cancel.
+        #
+        # See the
+        # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#billing)
+        # for how dreams are billed. See the
+        # [prompt caching guide](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#tracking-cache-performance)
+        # for how the input token counts add up.
         sig { returns(Anthropic::Beta::BetaDreamUsage) }
         attr_reader :usage
 
         sig { params(usage: Anthropic::Beta::BetaDreamUsage::OrHash).void }
         attr_writer :usage
 
-        # An asynchronous memory-consolidation job that reads a memory store plus a set of
-        # session transcripts and writes consolidated memories into an output memory store
-        # — a new store by default, or an existing store chosen via output_behavior. The
-        # Dreams API is in research preview: the request and response shapes are volatile
-        # and may change without the deprecation period that applies to
-        # generally-available endpoints.
+        # An asynchronous job that reads a memory store and past sessions, then writes a
+        # reorganized version of that memory store.
+        #
+        # By default the dream writes its result to a new memory store and doesn't change
+        # the input memory store. With `output_behavior` set to `update_existing`, it
+        # writes its result into the input memory store instead. The Dreams API is in
+        # research preview, so this resource can still change.
+        #
+        # See the
+        # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#how-it-works)
+        # for what a dream reads and produces.
         sig do
           params(
             id: String,
@@ -109,6 +156,7 @@ module Anthropic
           ).returns(T.attached_class)
         end
         def self.new(
+          # The unique ID of the dream (`drm_...`).
           id:,
           # A timestamp in RFC 3339 format
           archived_at:,
@@ -118,18 +166,59 @@ module Anthropic
           ended_at:,
           # Failure detail for a Dream whose `status` is `failed`.
           error:,
+          # The sources that the dream reads, from the request that created it.
           inputs:,
+          # The guidance given when the dream was created, or `null` if none was given.
           instructions:,
-          # Model identifier and configuration applied to every pipeline stage. Same wire
-          # shape as the Agents API ModelConfig.
+          # The model that runs a dream, from the request that created it.
+          #
+          # The dream uses this model for all of its work. The response always gives the
+          # model as an object, even if the request gave only a model ID.
           model:,
+          # Which memory store a dream writes its result to. Defaults to `create_new` when
+          # left out of a create request.
           output_behavior:,
+          # The memory store that holds the dream's result, as a one-item array, or an empty
+          # array until the dream records that memory store.
+          #
+          # The array is empty while the dream is `pending` and for a short time after it
+          # starts `running`. It can stay empty if the dream fails or is canceled before
+          # then. The memory store holds the complete result only once `status` is
+          # `completed`.
+          #
+          # See the
+          # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#use-the-output)
+          # for how to review and use the result.
           outputs:,
+          # The ID of the session that runs the dream (`sesn_...`), or `null` if that
+          # session hasn't started.
+          #
+          # Stream that session's events to follow what the dream reads and writes.
+          #
+          # See the
+          # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#watch-the-pipeline-run)
+          # for how to watch a running dream.
           session_id:,
-          # Lifecycle status of a Dream.
+          # Where a dream is in its lifecycle.
+          #
+          # `completed`, `failed`, and `canceled` are final: once a dream has one of these
+          # statuses, its status doesn't change again.
+          #
+          # See the
+          # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#lifecycle)
+          # for what each status means.
           status:,
           type:,
-          # Cumulative token usage for the dream across every pipeline stage.
+          # The tokens that a dream has used so far.
+          #
+          # The counts are zero while the dream is `pending` and update while it is
+          # `running`. They can keep changing after a cancel.
+          #
+          # See the
+          # [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#billing)
+          # for how dreams are billed. See the
+          # [prompt caching guide](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#tracking-cache-performance)
+          # for how the input token counts add up.
           usage:
         )
         end

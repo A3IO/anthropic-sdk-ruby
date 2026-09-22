@@ -19,9 +19,9 @@ module Anthropic
             )
           end
           def retrieve(
-            # Path param: Path parameter resource_id
+            # Path param
             resource_id,
-            # Path param: Path parameter session_id
+            # Path param
             session_id:,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,
@@ -51,9 +51,9 @@ module Anthropic
             )
           end
           def update(
-            # Path param: Path parameter resource_id
+            # Path param
             resource_id,
-            # Path param: Path parameter session_id
+            # Path param
             session_id:,
             # Body param: New authorization token for the resource. Currently only
             # `github_repository` resources support token rotation.
@@ -88,7 +88,7 @@ module Anthropic
             )
           end
           def list(
-            # Path param: Path parameter session_id
+            # Path param
             session_id,
             # Query param: Maximum number of resources to return per page (max 1000). If
             # omitted, returns all resources.
@@ -122,9 +122,9 @@ module Anthropic
             )
           end
           def delete(
-            # Path param: Path parameter resource_id
+            # Path param
             resource_id,
-            # Path param: Path parameter session_id
+            # Path param
             session_id:,
             # Header param: Optional header to specify the beta version(s) you want to use.
             betas: nil,
@@ -154,7 +154,7 @@ module Anthropic
             ).returns(Anthropic::Beta::Sessions::BetaManagedAgentsFileResource)
           end
           def add(
-            # Path param: Path parameter session_id
+            # Path param
             session_id,
             # Body param: ID of a previously uploaded file.
             file_id:,

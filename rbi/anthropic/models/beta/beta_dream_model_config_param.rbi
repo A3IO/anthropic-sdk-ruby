@@ -14,7 +14,13 @@ module Anthropic
             )
           end
 
-        # Model identifier, e.g. "claude-opus-5". 1-256 characters.
+        # The ID of the model to run the dream with.
+        #
+        # The ID can be 1 to 256 characters long.
+        #
+        # The
+        # [limits table in the Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#limits)
+        # lists the supported models.
         sig { returns(String) }
         attr_accessor :id
 
@@ -30,7 +36,7 @@ module Anthropic
         end
         attr_accessor :speed
 
-        # Model identifier and configuration applied to every pipeline stage.
+        # The object form of `model` in a request to create a dream.
         sig do
           params(
             id: String,
@@ -41,7 +47,13 @@ module Anthropic
           ).returns(T.attached_class)
         end
         def self.new(
-          # Model identifier, e.g. "claude-opus-5". 1-256 characters.
+          # The ID of the model to run the dream with.
+          #
+          # The ID can be 1 to 256 characters long.
+          #
+          # The
+          # [limits table in the Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#limits)
+          # lists the supported models.
           id:,
           # Inference speed mode. `fast` provides significantly faster output token
           # generation at premium pricing. Not all models support `fast`; invalid

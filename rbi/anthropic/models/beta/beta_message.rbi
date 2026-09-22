@@ -84,8 +84,8 @@ module Anthropic
         end
         attr_writer :context_management
 
-        # Response envelope for request-level diagnostics. Present (possibly null)
-        # whenever the caller supplied `diagnostics` on the request.
+        # Request-level diagnostics: why the prompt cache could not fully reuse the prefix
+        # of the request named by `diagnostics.previous_message_id`.
         sig { returns(T.nilable(Anthropic::Beta::BetaDiagnostics)) }
         attr_reader :diagnostics
 
@@ -228,7 +228,8 @@ module Anthropic
                   Anthropic::Beta::BetaMCPToolResultBlock::OrHash,
                   Anthropic::Beta::BetaContainerUploadBlock::OrHash,
                   Anthropic::Beta::BetaCompactionBlock::OrHash,
-                  Anthropic::Beta::BetaFallbackBlock::OrHash
+                  Anthropic::Beta::BetaFallbackBlock::OrHash,
+                  Anthropic::Beta::BetaMCPToolListingBlock::OrHash
                 )
               ],
             context_management:
@@ -298,8 +299,8 @@ module Anthropic
           #
           # Information about context management strategies applied during the request.
           context_management:,
-          # Response envelope for request-level diagnostics. Present (possibly null)
-          # whenever the caller supplied `diagnostics` on the request.
+          # Request-level diagnostics: why the prompt cache could not fully reuse the prefix
+          # of the request named by `diagnostics.previous_message_id`.
           diagnostics:,
           # The model that will complete your prompt.
           #

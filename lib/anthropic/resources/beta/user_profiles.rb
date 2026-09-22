@@ -52,7 +52,7 @@ module Anthropic
         #
         # @overload retrieve(user_profile_id, betas: nil, workspace_id: nil, request_options: {})
         #
-        # @param user_profile_id [String] Path parameter user_profile_id
+        # @param user_profile_id [String] The ID of the user profile to get (`uprof_...`).
         #
         # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #
@@ -81,7 +81,7 @@ module Anthropic
         #
         # @overload update(user_profile_id, access_type: nil, external_id: nil, external_user_details: nil, external_user_onboarded_at: nil, metadata: nil, name: nil, betas: nil, workspace_id: nil, request_options: {})
         #
-        # @param user_profile_id [String] Path param: Path parameter user_profile_id
+        # @param user_profile_id [String] Path param: The ID of the user profile to update (`uprof_...`).
         #
         # @param access_type [Symbol, Anthropic::Models::Beta::UserProfileUpdateParams::AccessType, nil] Body param: How the platform uses the API on behalf of the entity this profile r
         #
@@ -124,13 +124,13 @@ module Anthropic
         #
         # @overload list(limit: nil, order: nil, order_by: nil, page: nil, betas: nil, workspace_id: nil, request_options: {})
         #
-        # @param limit [Integer] Query param: Query parameter for limit
+        # @param limit [Integer] Query param: The maximum number of user profiles to return, from 1 to 100. Defau
         #
-        # @param order [Symbol, Anthropic::Models::Beta::UserProfileListParams::Order] Query param: Query parameter for order
+        # @param order [Symbol, Anthropic::Models::Beta::UserProfileListParams::Order] Query param: The sort direction, applied to the field that `order_by` selects. D
         #
-        # @param order_by [Symbol, Anthropic::Models::Beta::UserProfileListParams::OrderBy] Query param: Query parameter for order_by
+        # @param order_by [Symbol, Anthropic::Models::Beta::UserProfileListParams::OrderBy] Query param: The field to sort user profiles by, in the direction that `order` s
         #
-        # @param page [String] Query param: Query parameter for page
+        # @param page [String] Query param: The cursor for the page to return, taken from `next_page` in a prev
         #
         # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Header param: Optional header to specify the beta version(s) you want to use.
         #
@@ -167,7 +167,7 @@ module Anthropic
         #
         # @overload create_enrollment_url(user_profile_id, betas: nil, workspace_id: nil, request_options: {})
         #
-        # @param user_profile_id [String] Path parameter user_profile_id
+        # @param user_profile_id [String] The ID of the user profile to create an enrollment URL for (`uprof_...`).
         #
         # @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
         #

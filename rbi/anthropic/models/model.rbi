@@ -22,6 +22,10 @@ module Anthropic
       CLAUDE_FABLE_5_1 =
         T.let(:"claude-fable-5-1", Anthropic::Model::TaggedSymbol)
 
+      # Powerful intelligence for coding, knowledge work, and long-running agents
+      CLAUDE_OPUS_5_5 =
+        T.let(:"claude-opus-5-5", Anthropic::Model::TaggedSymbol)
+
       # Our most capable model for cybersecurity and biology research, available through trusted access programs
       CLAUDE_MYTHOS_5_1 =
         T.let(:"claude-mythos-5-1", Anthropic::Model::TaggedSymbol)

@@ -10,6 +10,7 @@ module Anthropic
           include Anthropic::Internal::Type::RequestParameters
 
           # @!attribute vault_id
+          #   Identifier of the vault to create the credential in.
           #
           #   @return [String]
           required :vault_id, String
@@ -40,6 +41,12 @@ module Anthropic
           optional :betas, -> { Anthropic::Internal::Type::ArrayOf[union: Anthropic::AnthropicBeta] }
 
           # @!attribute workspace_id
+          #   Optional header to select the Workspace for this request. The value is a
+          #   Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).
+          #
+          #   Only needed for credentials that can act on more than one Workspace. A
+          #   credential that belongs to a specific Workspace may omit it; if sent, it must
+          #   match that Workspace.
           #
           #   @return [String, nil]
           optional :workspace_id, String
@@ -48,7 +55,7 @@ module Anthropic
           #   Some parameter documentations has been truncated, see
           #   {Anthropic::Models::Beta::Vaults::CredentialCreateParams} for more details.
           #
-          #   @param vault_id [String]
+          #   @param vault_id [String] Identifier of the vault to create the credential in.
           #
           #   @param auth [Anthropic::Models::Beta::Vaults::BetaManagedAgentsMCPOAuthCreateParams, Anthropic::Models::Beta::Vaults::BetaManagedAgentsStaticBearerCreateParams, Anthropic::Models::Beta::Vaults::BetaManagedAgentsEnvironmentVariableCreateParams] Authentication details for creating a credential.
           #
@@ -58,7 +65,7 @@ module Anthropic
           #
           #   @param betas [Array<Symbol, String, Anthropic::Models::AnthropicBeta>] Optional header to specify the beta version(s) you want to use.
           #
-          #   @param workspace_id [String]
+          #   @param workspace_id [String] Optional header to select the Workspace for this request. The value is a Workspa
           #
           #   @param request_options [Anthropic::RequestOptions, Hash{Symbol=>Object}]
 

@@ -27,7 +27,8 @@ module Anthropic
               Anthropic::Beta::BetaMCPToolResultBlock,
               Anthropic::Beta::BetaContainerUploadBlock,
               Anthropic::Beta::BetaCompactionBlock,
-              Anthropic::Beta::BetaFallbackBlock
+              Anthropic::Beta::BetaFallbackBlock,
+              Anthropic::Beta::BetaMCPToolListingBlock
             )
           end
 
@@ -120,6 +121,11 @@ module Anthropic
           FALLBACK =
             T.let(
               :fallback,
+              Anthropic::Beta::BetaContentBlock::Type::TaggedSymbol
+            )
+          MCP_TOOL_LISTING =
+            T.let(
+              :mcp_tool_listing,
               Anthropic::Beta::BetaContentBlock::Type::TaggedSymbol
             )
 
@@ -217,9 +223,20 @@ module Anthropic
             is_error: T::Boolean,
             file_id: String,
             encrypted_content: T.nilable(String),
+            tool_changes:
+              T.nilable(
+                T::Array[
+                  T.any(
+                    Anthropic::Beta::BetaResponseToolAdditionBlock::OrHash,
+                    Anthropic::Beta::BetaResponseToolRemovalBlock::OrHash
+                  )
+                ]
+              ),
             from: Anthropic::Beta::BetaFallbackInfo::OrHash,
             to: Anthropic::Beta::BetaFallbackInfo::OrHash,
-            trigger: Anthropic::Beta::BetaFallbackRefusalTrigger::OrHash
+            trigger: Anthropic::Beta::BetaFallbackRefusalTrigger::OrHash,
+            mcp_server_name: String,
+            tools: T::Array[Anthropic::Beta::BetaMCPTool::OrHash]
           ).returns(Anthropic::Beta::BetaContentBlock::Variants)
         end
         def self.new(
@@ -271,6 +288,11 @@ module Anthropic
           file_id: nil,
           # Opaque metadata from prior compaction, to be round-tripped verbatim
           encrypted_content: nil,
+          # The tool changes of the compacted range: the `tool_addition` and `tool_removal`
+          # blocks that take the request's `tools` to the tool set in effect at the end of
+          # the range, or `[]` when the range changed no tool. Absent when the server did
+          # not compute them. Send the block back unchanged.
+          tool_changes: nil,
           # The model whose output ends at this point — the model that declined at this hop.
           # When the declining hop is the requested model, its `model` echoes the top-level
           # `model` string the caller sent (alias or canonical); when the declining hop is a
@@ -280,7 +302,9 @@ module Anthropic
           # always the canonical id.
           to: nil,
           # What caused the `from` model to hand over at this hop.
-          trigger: nil
+          trigger: nil,
+          mcp_server_name: nil,
+          tools: nil
         )
         end
       end

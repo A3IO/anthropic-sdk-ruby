@@ -40,7 +40,7 @@ module Anthropic
           sig do
             returns(
               T.nilable(
-                Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission::TaggedSymbol
+                Anthropic::Beta::Sessions::BetaManagedAgentsAgentEvaluatedPermission::TaggedSymbol
               )
             )
           end
@@ -49,7 +49,7 @@ module Anthropic
           sig do
             params(
               evaluated_permission:
-                Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission::OrSymbol
+                Anthropic::Beta::Sessions::BetaManagedAgentsAgentEvaluatedPermission::OrSymbol
             ).void
           end
           attr_writer :evaluated_permission
@@ -96,7 +96,7 @@ module Anthropic
               type:
                 Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::Type::OrSymbol,
               evaluated_permission:
-                Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission::OrSymbol,
+                Anthropic::Beta::Sessions::BetaManagedAgentsAgentEvaluatedPermission::OrSymbol,
               evaluation:
                 T.any(
                   Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolEvaluationAlwaysAllow::OrHash,
@@ -141,7 +141,7 @@ module Anthropic
                 type:
                   Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::Type::TaggedSymbol,
                 evaluated_permission:
-                  Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission::TaggedSymbol,
+                  Anthropic::Beta::Sessions::BetaManagedAgentsAgentEvaluatedPermission::TaggedSymbol,
                 evaluation:
                   Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolEvaluation::Variants,
                 session_thread_id: T.nilable(String)
@@ -173,46 +173,6 @@ module Anthropic
               override.returns(
                 T::Array[
                   Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::Type::TaggedSymbol
-                ]
-              )
-            end
-            def self.values
-            end
-          end
-
-          # AgentEvaluatedPermission enum
-          module EvaluatedPermission
-            extend Anthropic::Internal::Type::Enum
-
-            TaggedSymbol =
-              T.type_alias do
-                T.all(
-                  Symbol,
-                  Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission
-                )
-              end
-            OrSymbol = T.type_alias { T.any(Symbol, String) }
-
-            ALLOW =
-              T.let(
-                :allow,
-                Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission::TaggedSymbol
-              )
-            ASK =
-              T.let(
-                :ask,
-                Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission::TaggedSymbol
-              )
-            DENY =
-              T.let(
-                :deny,
-                Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission::TaggedSymbol
-              )
-
-            sig do
-              override.returns(
-                T::Array[
-                  Anthropic::Beta::Sessions::BetaManagedAgentsAgentToolUseEvent::EvaluatedPermission::TaggedSymbol
                 ]
               )
             end

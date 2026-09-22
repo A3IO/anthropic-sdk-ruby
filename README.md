@@ -15,7 +15,7 @@ Add to your application's Gemfile:
 <!-- x-release-please-start-version -->
 
 ```ruby
-gem "anthropic", "~> 1.72.0"
+gem "anthropic", "~> 1.73.0"
 ```
 
 <!-- x-release-please-end -->
@@ -33,7 +33,7 @@ anthropic = Anthropic::Client.new(
 message = anthropic.messages.create(
   max_tokens: 1024,
   messages: [{role: "user", content: "Hello, Claude"}],
-  model: "claude-opus-4-6"
+  model: "claude-opus-5-5"
 )
 
 puts(message.content)
